@@ -127,6 +127,23 @@
     .hero-stat strong{color:var(--muted);font-weight:400;display:block;font-size:24px;font-family:"Anton";letter-spacing:.04em;margin-bottom:2px;}
     .hero-stats{display:flex;gap:40px;}
 
+    /* YouTube subscribe button */
+    .yt-subscribe{
+      display:inline-flex;align-items:center;gap:10px;
+      font-family:"Space Grotesk";font-weight:700;font-size:13px;letter-spacing:.06em;
+      padding:11px 20px;border-radius:100px;
+      background:#fff;color:#0f0f0f;border:none;
+      text-decoration:none;white-space:nowrap;
+      transition:transform .18s var(--ease),box-shadow .2s,background .2s;
+      flex-shrink:0;
+    }
+    .yt-subscribe:hover{
+      transform:translateY(-2px);
+      box-shadow:0 8px 24px rgba(255,255,255,.2);
+      background:#f0f0f0;
+    }
+    .yt-subscribe svg{width:18px;height:18px;flex-shrink:0;}
+
     /* ══════════════════════════════════════
        CATEGORY FILTER BAR + SEARCH
     ══════════════════════════════════════ */
@@ -204,11 +221,10 @@
     .vfeat-row{
       display:grid;
       grid-template-columns: 1.72fr 1fr;
-      grid-template-rows: 1fr;  /* row height set by left card */
+      grid-template-rows: 1fr;
       gap:16px;
       margin-bottom:16px;
-      /* min-height so the row has substance even with 1 video */
-      min-height:420px;
+      min-height:580px;
     }
 
     /* Left (featured) card fills full row height */
@@ -440,6 +456,7 @@
       .hero-stats{gap:24px;}
       .search-input{width:160px;}
       .search-input:focus{width:200px;}
+      .hero-sub-row{flex-direction:column;align-items:flex-start;gap:20px;}
     }
     @media(max-width:600px){
       .wrap{padding:0 18px;}
@@ -506,6 +523,10 @@
           <div class="hero-stat" id="stat-videos"><strong>—</strong>Videos</div>
           <div class="hero-stat" id="stat-cats"><strong>—</strong>Categories</div>
         </div>
+        <a class="yt-subscribe" href="https://www.youtube.com/@wdhanband?sub_confirmation=1" target="_blank" rel="noopener" aria-label="Subscribe on YouTube">
+          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.2C0 8.08 0 12 0 12s0 3.92.5 5.8a3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14C24 15.92 24 12 24 12s0-3.92-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg>
+          Subscribe
+        </a>
       </div>
     </div>
   </div>
