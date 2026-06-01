@@ -128,7 +128,7 @@
     .hero-stats{display:flex;gap:40px;}
 
     /* ══════════════════════════════════════
-       CATEGORY FILTER BAR
+       CATEGORY FILTER BAR + SEARCH
     ══════════════════════════════════════ */
     .filter-bar{
       position:sticky;top:57px;z-index:30;
@@ -137,9 +137,14 @@
       border-bottom:1px solid var(--line);
       padding:0;
     }
+    .filter-bar-inner{
+      display:flex;align-items:center;gap:12px;
+      padding:12px 0;
+    }
     .filter-inner{
       display:flex;align-items:center;gap:6px;
-      padding:14px 0;overflow-x:auto;
+      flex:1;min-width:0;
+      overflow-x:auto;
       scrollbar-width:none;-ms-overflow-style:none;
     }
     .filter-inner::-webkit-scrollbar{display:none;}
@@ -153,17 +158,88 @@
     .filter-pill:hover{border-color:var(--ink);color:var(--ink);}
     .filter-pill.active{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
 
+    /* Search */
+    .search-wrap{
+      position:relative;flex-shrink:0;
+    }
+    .search-wrap svg{
+      position:absolute;left:14px;top:50%;transform:translateY(-50%);
+      width:14px;height:14px;color:var(--faint);pointer-events:none;
+      stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+    }
+    .search-input{
+      background:var(--card);
+      border:1px solid var(--card-line);
+      color:var(--ink);
+      padding:8px 16px 8px 36px;
+      border-radius:100px;
+      font-family:"Space Mono";font-size:11px;letter-spacing:.1em;
+      outline:none;width:200px;
+      transition:border-color .2s,width .3s var(--ease),background .2s;
+    }
+    .search-input::placeholder{color:var(--faint);}
+    .search-input:focus{
+      border-color:var(--accent);
+      background:color-mix(in srgb,var(--card) 80%,transparent);
+      width:260px;
+    }
+    .search-input.has-value{border-color:var(--muted);}
+    /* clear button */
+    .search-clear{
+      position:absolute;right:12px;top:50%;transform:translateY(-50%);
+      background:none;border:none;color:var(--faint);cursor:pointer;
+      display:none;align-items:center;justify-content:center;padding:2px;
+      transition:color .18s;
+    }
+    .search-clear:hover{color:var(--accent);}
+    .search-clear svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;}
+    .search-wrap.active .search-clear{display:flex;}
+
     /* ══════════════════════════════════════
        VIDEO GRID
     ══════════════════════════════════════ */
     .videos-main{position:relative;z-index:2;padding:64px 0 80px;}
 
-    /* Featured row — latest video spans 2/3 width */
+    /* Featured row — left large, right = 2 stacked equal cards */
     .vfeat-row{
       display:grid;
-      grid-template-columns:1.72fr 1fr;
+      grid-template-columns: 1.72fr 1fr;
+      grid-template-rows: 1fr;  /* row height set by left card */
       gap:16px;
       margin-bottom:16px;
+      /* min-height so the row has substance even with 1 video */
+      min-height:420px;
+    }
+
+    /* Left (featured) card fills full row height */
+    .vcard.feat{
+      display:flex;
+      flex-direction:column;
+      height:100%;
+    }
+    /* feat thumb fills all remaining space above body */
+    .vcard.feat .vthumb{
+      flex:1;
+      padding-top:0;   /* override ratio trick — let flex drive height */
+      min-height:0;
+    }
+
+    /* Right side wrapper — stacks 2 cards each taking 50% height */
+    .vfeat-side{
+      display:grid;
+      grid-template-rows: 1fr 1fr;
+      gap:16px;
+    }
+    /* side cards fill their row */
+    .vfeat-side .vcard{
+      display:flex;
+      flex-direction:column;
+      height:100%;
+    }
+    .vfeat-side .vcard .vthumb{
+      flex:1;
+      padding-top:0;
+      min-height:0;
     }
 
     /* Standard grid — 3 columns */
@@ -198,9 +274,6 @@
       filter:brightness(.85);
     }
     .vcard:hover .vthumb img{transform:scale(1.04);filter:brightness(.6);}
-
-    /* Featured card thumb — taller crop */
-    .vcard.feat .vthumb{padding-top:64%;}
 
     /* Play button overlay */
     .vthumb-overlay{
@@ -347,16 +420,38 @@
     @media(max-width:900px){
       .nav-links{display:none;}
       .nav-burger{display:block;}
-      .vfeat-row{grid-template-columns:1fr;}
+      .vfeat-row{
+        grid-template-columns:1fr;
+        grid-template-rows:auto;
+        min-height:auto;
+      }
+      .vcard.feat,.vfeat-side .vcard{
+        height:auto;
+      }
+      .vcard.feat .vthumb,.vfeat-side .vcard .vthumb{
+        padding-top:56.25%;
+        flex:none;
+      }
+      .vfeat-side{
+        grid-template-rows:auto;
+        grid-template-columns:1fr 1fr;
+      }
       .vgrid{grid-template-columns:1fr 1fr;}
       .hero-stats{gap:24px;}
+      .search-input{width:160px;}
+      .search-input:focus{width:200px;}
     }
     @media(max-width:600px){
       .wrap{padding:0 18px;}
       .vgrid{grid-template-columns:1fr;}
+      .vfeat-side{grid-template-columns:1fr;}
       .hero-h1{font-size:clamp(64px,18vw,120px);}
       .lb-meta{flex-direction:column;gap:12px;}
       .lb-actions{width:100%;justify-content:space-between;}
+      .filter-bar-inner{flex-wrap:wrap;gap:8px;}
+      .search-wrap{width:100%;}
+      .search-input{width:100%;}
+      .search-input:focus{width:100%;}
     }
 
     /* ── Reveal ── */
@@ -417,13 +512,30 @@
 </div>
 
 <!-- ══════════════════════════════════════
-     FILTER BAR
+     FILTER BAR + SEARCH
 ══════════════════════════════════════ -->
 <div class="filter-bar">
   <div class="wrap">
-    <div class="filter-inner" id="filter-inner">
-      <button class="filter-pill active" data-cat="all">All</button>
-      <!-- Additional pills injected by JS -->
+    <div class="filter-bar-inner">
+      <div class="filter-inner" id="filter-inner">
+        <button class="filter-pill active" data-cat="all">All</button>
+        <!-- Additional pills injected by JS -->
+      </div>
+      <div class="search-wrap" id="search-wrap">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input
+          class="search-input"
+          id="search-input"
+          type="search"
+          placeholder="Search videos…"
+          autocomplete="off"
+          spellcheck="false"
+          aria-label="Search videos"
+        />
+        <button class="search-clear" id="search-clear" aria-label="Clear search">
+          <svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
     </div>
   </div>
 </div>
@@ -536,8 +648,24 @@
   setTimeout(observe, 80);
 
   /* ── State ── */
-  let allVideos = [];
+  let allVideos    = [];
   let activeFilter = 'all';
+  let searchQuery  = '';
+
+  function getFiltered() {
+    let vids = activeFilter === 'all' ? allVideos : allVideos.filter(v => v.category === activeFilter);
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      vids = vids.filter(v =>
+        (v.title || '').toLowerCase().includes(q) ||
+        (v.description || '').toLowerCase().includes(q) ||
+        catLabel(v.category).toLowerCase().includes(q) ||
+        (v.relatedRelease?.title || '').toLowerCase().includes(q) ||
+        (v.relatedTrack?.title   || '').toLowerCase().includes(q)
+      );
+    }
+    return vids;
+  }
 
   /* ── Lightbox ── */
   function openLightbox(video) {
@@ -569,13 +697,28 @@
   /* ── Filter logic ── */
   function applyFilter(cat) {
     activeFilter = cat;
-
-    // Update pills
     document.querySelectorAll('.filter-pill').forEach(p =>
       p.classList.toggle('active', p.dataset.cat === cat));
+    renderGrid(getFiltered());
+  }
 
-    const filtered = cat === 'all' ? allVideos : allVideos.filter(v => v.category === cat);
-    renderGrid(filtered);
+  /* ── Search logic ── */
+  function setupSearch() {
+    const input = document.getElementById('search-input');
+    const wrap  = document.getElementById('search-wrap');
+    const clear = document.getElementById('search-clear');
+    if (!input) return;
+    input.addEventListener('input', () => {
+      searchQuery = input.value.trim();
+      wrap.classList.toggle('active', searchQuery.length > 0);
+      input.classList.toggle('has-value', searchQuery.length > 0);
+      renderGrid(getFiltered());
+    });
+    clear.addEventListener('click', () => {
+      input.value = ''; searchQuery = '';
+      wrap.classList.remove('active'); input.classList.remove('has-value');
+      input.focus(); renderGrid(getFiltered());
+    });
   }
 
   /* ── Build filter pills from data ── */
@@ -606,12 +749,15 @@
       return;
     }
 
-    const [feat, second, ...rest] = videos;
+    const [feat, second, third, ...rest] = videos;
 
-    /* Featured row — first two videos */
-    featRow.innerHTML = [feat, second].filter(Boolean).map((v, i) =>
-      buildCard(v, i === 0 ? 'feat' : '')
-    ).join('');
+    /* Featured row — left large card + right column with up to 2 stacked cards */
+    let featHtml = feat ? buildCard(feat, 'feat') : '';
+    const sideCards = [second, third].filter(Boolean);
+    const sideHtml = sideCards.length
+      ? `<div class="vfeat-side">${sideCards.map(v => buildCard(v, '')).join('')}</div>`
+      : '';
+    featRow.innerHTML = featHtml + sideHtml;
 
     /* Remaining in 3-col grid */
     mainGrid.innerHTML = rest.length
@@ -712,6 +858,9 @@
 
     /* Filters */
     buildFilters(allVideos);
+
+    /* Search */
+    setupSearch();
 
     /* Render */
     renderGrid(allVideos);
