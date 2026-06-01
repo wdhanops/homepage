@@ -1,7 +1,6 @@
 /*
  * nav.css — WD-HAN shared navigation styles
  * Link on every page: <link rel="stylesheet" href="/assets/css/nav.css">
- * OR paste the contents into each page's <style> block.
  */
 
 /* ── Desktop nav ── */
@@ -14,6 +13,17 @@
   align-items: center;
   padding: 22px 36px;
   gap: 20px;
+  /* Scroll background transition */
+  border-bottom: 1px solid transparent;
+  transition: background .3s ease, border-color .3s ease;
+}
+
+/* Applied by JS on scroll */
+.nav.scrolled {
+  background: color-mix(in srgb, var(--bg) 88%, transparent);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-bottom-color: var(--line);
 }
 
 .nav-logo {
@@ -109,8 +119,11 @@
 
 /* ── Responsive ── */
 @media (max-width: 800px) {
-  .nav-center { display: none; }
-  .nav-cta    { display: none; }   /* hide Spotify button on mobile — burger takes priority */
+  /* nav.js builds .nav-center; index.html uses .nav-left/.nav-right — hide all */
+  .nav-center,
+  .nav-left,
+  .nav-right { display: none; }
+  .nav-cta   { display: none; }
   .nav-burger { display: block; }
   .nav { grid-template-columns: 1fr auto; }
 }
