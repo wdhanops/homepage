@@ -121,7 +121,7 @@
       padding:12px 28px;
     }
     .nav-wordmark{
-      font-family:"Anton",sans-serif;font-size:22px;letter-spacing:.04em;
+      var(--font-display);font-size:22px;letter-spacing:.04em;
       color:var(--ink);text-decoration:none;
     }
     /* fallback text wordmark — replace with <img src="assets/wdhan-logo.png"> once asset exists */
@@ -178,7 +178,7 @@
 
     /* Hero wordmark — text fallback until SVG asset is ready */
     .hero-wordmark{
-      font-family:"Anton",sans-serif;
+      var(--font-display);
       font-size:clamp(60px,14vw,160px);
       line-height:.88;letter-spacing:.02em;text-transform:uppercase;
       color:var(--ink);
