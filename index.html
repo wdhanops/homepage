@@ -498,9 +498,8 @@
       <a href="about.html">The Band</a>
       <a href="music.html">Music</a>
       <a href="videos.html">Videos</a>
-      <a href="shows.html">Tour</a>
+      <a href="shows.html" id="nav-tour-link" style="display:none">Tour</a>
       <a href="https://wd-han.myshopify.com" target="_blank" rel="noopener">Merch</a>
-      <a href="/sync">Sync</a>
     </div>
 
     <!-- Right: Spotify CTA -->
@@ -549,19 +548,19 @@
 
       <!-- LISTEN icons — right of center -->
       <div class="icon-cluster listen">
-        <a class="icon-btn" href="https://open.spotify.com/artist/2byXGURM0QAhEgdMIWGM5c" target="_blank" rel="noopener" aria-label="Spotify">
+        <a class="icon-btn" id="listen-spotify" href="#" target="_blank" rel="noopener" aria-label="Spotify" style="display:none">
           <svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.5 17.3a.75.75 0 0 1-1.03.25c-2.82-1.72-6.37-2.11-10.55-1.16a.75.75 0 1 1-.33-1.46c4.58-1.04 8.5-.6 11.66 1.34.36.22.47.69.25 1.03zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.23-1.99-8.16-2.56-11.98-1.4a.94.94 0 1 1-.55-1.8c4.37-1.32 9.8-.68 13.5 1.6.44.27.58.85.32 1.29zm.13-3.4C15.73 8.26 8.5 8.02 4.78 9.15a1.12 1.12 0 1 1-.65-2.15c4.28-1.3 12.26-1.05 16.55 1.5a1.12 1.12 0 1 1-1.15 1.93z"/></svg>
           <span class="icon-tooltip">Spotify</span>
         </a>
-        <a class="icon-btn" href="#" target="_blank" rel="noopener" aria-label="Apple Music" id="link-apple">
+        <a class="icon-btn" id="listen-apple" href="#" target="_blank" rel="noopener" aria-label="Apple Music" style="display:none">
           <svg viewBox="0 0 24 24"><path d="M16.36 12.6c-.02-2.3 1.88-3.4 1.96-3.46-1.07-1.56-2.73-1.78-3.32-1.8-1.41-.14-2.76.83-3.47.83-.72 0-1.82-.81-3-.79-1.54.02-2.96.9-3.75 2.27-1.6 2.78-.41 6.9 1.15 9.16.76 1.1 1.67 2.34 2.86 2.3 1.15-.05 1.58-.74 2.97-.74 1.38 0 1.77.74 2.98.72 1.23-.02 2.01-1.12 2.76-2.23.87-1.28 1.23-2.52 1.25-2.58-.03-.01-2.4-.92-2.42-3.65zM14.13 5.6c.63-.77 1.06-1.83.94-2.9-.91.04-2.02.61-2.67 1.37-.58.68-1.09 1.76-.95 2.8 1.02.08 2.05-.51 2.68-1.27z"/></svg>
           <span class="icon-tooltip">Apple Music</span>
         </a>
-        <a class="icon-btn" href="#" target="_blank" rel="noopener" aria-label="YouTube Music" id="link-ytmusic">
+        <a class="icon-btn" id="listen-ytmusic" href="#" target="_blank" rel="noopener" aria-label="YouTube Music" style="display:none">
           <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 14.5a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9zm0-7a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z"/><path d="M9.5 12l5-3v6z"/></svg>
           <span class="icon-tooltip">YouTube Music</span>
         </a>
-        <a class="icon-btn" href="#" target="_blank" rel="noopener" aria-label="Tidal" id="link-tidal">
+        <a class="icon-btn" id="listen-tidal" href="#" target="_blank" rel="noopener" aria-label="Tidal" style="display:none">
           <svg viewBox="0 0 24 24"><path d="M12 3L8 7l4 4-4 4 4 4 4-4-4-4 4-4zM4 7l4 4-4 4 4 4 4-4-4-4zM20 7l-4 4 4 4-4 4-4-4 4-4z"/></svg>
           <span class="icon-tooltip">Tidal</span>
         </a>
@@ -584,19 +583,19 @@
 
       <!-- SOCIAL icons — left of center -->
       <div class="icon-cluster social">
-        <a class="icon-btn" href="https://instagram.com/wdhanband" target="_blank" rel="noopener" aria-label="Instagram">
+        <a class="icon-btn" id="social-instagram" href="#" target="_blank" rel="noopener" aria-label="Instagram" style="display:none">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="fill:none"><rect x="2.5" y="2.5" width="19" height="19" rx="5.2" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"/></svg>
           <span class="icon-tooltip">Instagram</span>
         </a>
-        <a class="icon-btn" href="https://youtube.com/@wdhanband" target="_blank" rel="noopener" aria-label="YouTube">
+        <a class="icon-btn" id="social-youtube" href="#" target="_blank" rel="noopener" aria-label="YouTube" style="display:none">
           <svg viewBox="0 0 24 24"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.2C0 8.08 0 12 0 12s0 3.92.5 5.8a3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14C24 15.92 24 12 24 12s0-3.92-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg>
           <span class="icon-tooltip">YouTube</span>
         </a>
-        <a class="icon-btn" href="https://tiktok.com/@wdhanband" target="_blank" rel="noopener" aria-label="TikTok">
+        <a class="icon-btn" id="social-tiktok" href="#" target="_blank" rel="noopener" aria-label="TikTok" style="display:none">
           <svg viewBox="0 0 24 24"><path d="M16.6 5.82A4.28 4.28 0 0 1 15.54 3h-3.1v12.4a2.6 2.6 0 1 1-2.6-2.6c.27 0 .53.04.78.12v-3.16a5.7 5.7 0 1 0 4.92 5.64V8.99a7.34 7.34 0 0 0 4.3 1.38V7.27a4.28 4.28 0 0 1-3.24-1.45z"/></svg>
           <span class="icon-tooltip">TikTok</span>
         </a>
-        <a class="icon-btn" href="https://facebook.com/wdhanband" target="_blank" rel="noopener" aria-label="Facebook">
+        <a class="icon-btn" id="social-facebook" href="#" target="_blank" rel="noopener" aria-label="Facebook" style="display:none">
           <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
           <span class="icon-tooltip">Facebook</span>
         </a>
@@ -616,9 +615,8 @@
   <a href="about.html">The Band</a>
   <a href="music.html">Music</a>
   <a href="videos.html">Videos</a>
-  <a href="shows.html">Tour</a>
+  <a href="shows.html" id="nav-tour-link-mobile" style="display:none">Tour</a>
   <a href="https://wd-han.myshopify.com" target="_blank" rel="noopener">Merch</a>
-  <a href="/sync">Sync</a>
 </nav>
 
 <!-- ══ Newsletter Modal ══ -->
@@ -665,7 +663,6 @@
 
   /* ── Background photo slideshow ── */
   (async function initSlideshow() {
-    // Fetch all images flagged as homepageBackground: true
     const q = `*[_type == "galleryImage" && homepageBackground == true] {
       "url": image.asset->url
     }`;
@@ -677,13 +674,9 @@
     } catch(e) {
       console.warn('Slideshow fetch failed', e);
     }
-
-    if (!slides.length) return; // no images — bg stays dark, orbs still show
-
+    if (!slides.length) return;
     const stage = document.getElementById('bg-stage');
     const overlay = stage.querySelector('.bg-overlay');
-
-    // Build slide elements
     const slideEls = slides.map(url => {
       const el = document.createElement('div');
       el.className = 'bg-slide';
@@ -691,17 +684,9 @@
       stage.insertBefore(el, overlay);
       return el;
     });
-
-    if (slideEls.length === 1) {
-      // Single image — just show it, no crossfade needed
-      slideEls[0].classList.add('active');
-      return;
-    }
-
-    // Multi-image crossfade every 10 seconds
+    if (slideEls.length === 1) { slideEls[0].classList.add('active'); return; }
     let current = 0;
     slideEls[0].classList.add('active');
-
     setInterval(() => {
       slideEls[current].classList.remove('active');
       current = (current + 1) % slideEls.length;
@@ -709,7 +694,45 @@
     }, 10000);
   })();
 
-  /* ── Sanity: update hero + streaming links from featured release ── */
+  /* ── Sanity: Site Settings — populate all social + streaming links ── */
+  (async function initSiteSettings() {
+    const q = `*[_type == "siteSettings"][0] { socials }`;
+    try {
+      const res = await fetch(sanityUrl(q));
+      const { result } = await res.json();
+      const s = result?.socials || {};
+
+      function wire(id, url) {
+        if (!url) return;
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.href = url;
+        el.style.display = '';
+      }
+
+      // Footer listen cluster
+      wire('listen-spotify',  s.spotify);
+      wire('listen-apple',    s.appleMusic);
+      wire('listen-ytmusic',  s.youtubeMusic);
+      wire('listen-tidal',    s.tidal);
+
+      // Footer social cluster
+      wire('social-instagram', s.instagram);
+      wire('social-youtube',   s.youtube);
+      wire('social-tiktok',    s.tiktok);
+      wire('social-facebook',  s.facebook);
+
+      // Nav Spotify play button
+      if (s.spotify) {
+        const navCta = document.querySelector('.nav-cta');
+        if (navCta) navCta.href = s.spotify;
+      }
+    } catch(e) {
+      console.warn('Site settings fetch failed', e);
+    }
+  })();
+
+  /* ── Sanity: hero release date ── */
   (async function initHero() {
     const q = `*[_type == "release"] | order(featured desc, releaseDate desc) [0] {
       title, releaseDate, streamingLinks
@@ -717,33 +740,38 @@
     try {
       const res = await fetch(sanityUrl(q));
       const { result: rel } = await res.json();
-      if (!rel) return;
-
-      // Update countdown date
-      if (rel.releaseDate) {
-        const d = new Date(rel.releaseDate);
-        const label = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
-        document.getElementById('hero-sub').innerHTML =
-          `The new single from WD-HAN. Out <strong>${label}</strong>. Pre-save it now.`;
-        startCountdown(rel.releaseDate + 'T00:00:00');
-      }
-
-      // Update streaming icon links
-      const links = rel.streamingLinks || {};
-      if (links.appleMusic) setLink('link-apple', links.appleMusic);
-      if (links.youtubeMusic) setLink('link-ytmusic', links.youtubeMusic);
-      if (links.tidal) setLink('link-tidal', links.tidal);
+      if (!rel?.releaseDate) return;
+      const d = new Date(rel.releaseDate);
+      const label = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+      document.getElementById('hero-sub').innerHTML =
+        `The new single from WD-HAN. Out <strong>${label}</strong>. Pre-save it now.`;
     } catch(e) {
       console.warn('Hero Sanity fetch failed', e);
     }
   })();
 
-  function setLink(id, url) {
-    const el = document.getElementById(id);
-    if (el && url) el.href = url;
-  }
+  /* ── Bandsintown: show Tour nav link only when upcoming events exist ── */
+  (async function initTourNav() {
+    const BIT_ARTIST = 'wd-han';
+    const BIT_APP_ID = 'wdhan-website';
+    try {
+      const res = await fetch(
+        `https://rest.bandsintown.com/artists/${encodeURIComponent(BIT_ARTIST)}/events?app_id=${BIT_APP_ID}&date=upcoming`,
+        { headers: { 'Accept': 'application/json' } }
+      );
+      const events = await res.json();
+      if (Array.isArray(events) && events.length > 0) {
+        const desktop = document.getElementById('nav-tour-link');
+        const mobile  = document.getElementById('nav-tour-link-mobile');
+        if (desktop) desktop.style.display = '';
+        if (mobile)  mobile.style.display  = '';
+      }
+    } catch(e) {
+      console.warn('Bandsintown fetch failed — Tour link stays hidden', e);
+    }
+  })();
 
-  /* ── Countdown ── */
+  /* ── Countdown — midnight Eastern June 24 2026 (04:00 UTC = EDT midnight) ── */
   let _cdTimer;
   function startCountdown(target) {
     const release = new Date(target).getTime();
@@ -757,59 +785,47 @@
       document.getElementById('cd-sec').textContent  = pad(Math.floor((diff % 6e4) / 1e3));
     }, 1000);
   }
-  startCountdown('2026-06-12T00:00:00');
+  startCountdown('2026-06-24T04:00:00Z');
 
   /* ── Mobile nav ── */
-  const burger     = document.getElementById('nav-burger-btn');
-  const mobileNav  = document.getElementById('nav-mobile');
-  const mobileClose= document.getElementById('nav-mobile-close');
+  const burger      = document.getElementById('nav-burger-btn');
+  const mobileNav   = document.getElementById('nav-mobile');
+  const mobileClose = document.getElementById('nav-mobile-close');
   burger.addEventListener('click', () => mobileNav.classList.add('open'));
   mobileClose.addEventListener('click', () => mobileNav.classList.remove('open'));
   mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileNav.classList.remove('open')));
 
   /* ── Newsletter modal ── */
-  const newsModal  = document.getElementById('news-modal');
-  const newsClose  = document.getElementById('news-modal-close');
-  const subBtn     = document.getElementById('subscribe-btn');
-
+  const newsModal = document.getElementById('news-modal');
+  const newsClose = document.getElementById('news-modal-close');
+  const subBtn    = document.getElementById('subscribe-btn');
   subBtn.addEventListener('click', () => newsModal.classList.add('open'));
   newsClose.addEventListener('click', () => newsModal.classList.remove('open'));
   newsModal.addEventListener('click', e => { if (e.target === newsModal) newsModal.classList.remove('open'); });
 
-  /* Newsletter form — POST to Shopify contact endpoint */
+  /* Newsletter form */
   document.getElementById('news-form').addEventListener('submit', async function(e) {
     e.preventDefault();
     const email = document.getElementById('news-email').value.trim();
     if (!email || !email.includes('@')) return;
-
     const btn = this.querySelector('.news-submit');
     btn.textContent = 'Signing up…';
     btn.disabled = true;
-
     try {
       const body = new URLSearchParams({
-        'form_type': 'customer',
-        'utf8': '✓',
-        'contact[email]': email,
-        'contact[tags]': 'newsletter',
+        'form_type': 'customer', 'utf8': '✓',
+        'contact[email]': email, 'contact[tags]': 'newsletter',
       });
-
-      // Shopify contact form endpoint — no-cors because Shopify redirects on success
       await fetch('https://wd-han.myshopify.com/contact', {
-        method: 'POST',
-        mode: 'no-cors',
+        method: 'POST', mode: 'no-cors',
         headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
         body: body.toString()
       });
-
-      // Can't read the response in no-cors, so show success optimistically
       this.querySelector('input[type="email"]').style.display = 'none';
       btn.style.display = 'none';
       this.querySelector('.news-legal').style.display = 'none';
       document.getElementById('news-ok').style.display = 'block';
-
     } catch(err) {
-      console.warn('Newsletter submit error', err);
       btn.textContent = 'Sign Me Up';
       btn.disabled = false;
     }
