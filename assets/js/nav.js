@@ -62,7 +62,7 @@
     { label: 'Music',    href: `${root}music.html` },
     { label: 'Videos',  href: `${root}videos.html` },
     { label: 'Tour',    href: `${root}shows.html`, id: 'nav-tour-link', hidden: true },
-    { label: 'Merch',   href: 'https://wd-han.myshopify.com', external: true },
+    { label: 'Merch',   href: 'https://wd-han.myshopify.com'},
   ];
 
   /* ── Inject nav HTML ── */
