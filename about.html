@@ -1,0 +1,1107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Band — WD-HAN</title>
+  <meta name="description" content="Meet WD-HAN — the band, the people, the story." />
+  <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg" />
+  <link rel="apple-touch-icon" href="/assets/img/favicon.svg" />
+  <link rel="stylesheet" href="/assets/css/nav.css" />
+
+  <style>
+    /* ─── TOKENS (match existing site) ─────────────────────────── */
+    :root {
+      --bg:           #08080a;
+      --surface:      #111114;
+      --surface-2:    #18181c;
+      --border:       rgba(245,241,230,0.08);
+      --text:         #f5f1e6;
+      --text-muted:   rgba(245,241,230,0.45);
+      --accent:       #c8a96e;
+      --accent-dim:   rgba(200,169,110,0.15);
+      --font-display: 'Splatink', 'Anton', sans-serif;
+      --font-body:    'DM Sans', 'Helvetica Neue', sans-serif;
+      --ease-out:     cubic-bezier(0.16,1,0.3,1);
+    }
+
+    @font-face {
+      font-family: 'Splatink';
+      src: url('/assets/fonts/Splatink.otf') format('opentype');
+      font-display: swap;
+    }
+
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap');
+
+    /* ─── RESET ─────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ─── GRAIN OVERLAY ─────────────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      background-size: 256px 256px;
+      pointer-events: none;
+      z-index: 1000;
+      opacity: 0.6;
+    }
+
+    /* ─── PAGE WRAPPER ──────────────────────────────────────────── */
+    .page-wrapper {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 32px;
+    }
+
+    /* ─── HERO ──────────────────────────────────────────────────── */
+    .band-hero {
+      position: relative;
+      padding: 160px 0 80px;
+      overflow: hidden;
+    }
+
+    .band-hero::before {
+      content: '';
+      position: absolute;
+      top: -200px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 800px;
+      height: 600px;
+      background: radial-gradient(ellipse at center, rgba(200,169,110,0.08) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .band-hero-eyebrow {
+      font-family: var(--font-body);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+      opacity: 0;
+      animation: fadeUp 0.7s var(--ease-out) 0.1s forwards;
+    }
+
+    .band-hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(64px, 9vw, 120px);
+      line-height: 0.92;
+      letter-spacing: -0.01em;
+      margin-bottom: 40px;
+      opacity: 0;
+      animation: fadeUp 0.8s var(--ease-out) 0.2s forwards;
+    }
+
+    /* ─── BIO SECTION ───────────────────────────────────────────── */
+    .bio-section {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 64px;
+      align-items: start;
+      padding: 0 0 100px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .bio-text-col {
+      opacity: 0;
+      animation: fadeUp 0.8s var(--ease-out) 0.3s forwards;
+    }
+
+    .bio-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .bio-text {
+      font-size: 17px;
+      font-weight: 300;
+      line-height: 1.75;
+      color: rgba(245,241,230,0.8);
+    }
+
+    .bio-text p + p { margin-top: 1.2em; }
+
+    .bio-text.skeleton {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .bio-text.skeleton span {
+      display: block;
+      height: 14px;
+      border-radius: 3px;
+      background: linear-gradient(90deg, var(--surface) 25%, var(--surface-2) 50%, var(--surface) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+    }
+
+    /* ─── SOCIALS COL ───────────────────────────────────────────── */
+    .socials-col {
+      opacity: 0;
+      animation: fadeUp 0.8s var(--ease-out) 0.45s forwards;
+    }
+
+    .socials-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .social-links-list {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .social-link-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 18px;
+      border-radius: 10px;
+      border: 1px solid transparent;
+      text-decoration: none;
+      color: var(--text);
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .social-link-row:hover {
+      background: var(--surface-2);
+      border-color: var(--border);
+    }
+
+    .social-link-row .soc-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--surface-2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+
+    .social-link-row:hover .soc-icon {
+      background: var(--accent-dim);
+    }
+
+    .social-link-row .soc-icon svg {
+      width: 16px;
+      height: 16px;
+      fill: var(--text-muted);
+      transition: fill 0.2s;
+    }
+
+    .social-link-row:hover .soc-icon svg { fill: var(--accent); }
+
+    .soc-info { flex: 1; }
+    .soc-platform {
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+    .soc-handle {
+      font-size: 15px;
+      font-weight: 400;
+      color: var(--text);
+      margin-top: 1px;
+    }
+    .soc-follow {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      padding: 6px 14px;
+      border: 1px solid rgba(200,169,110,0.3);
+      border-radius: 20px;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .social-link-row:hover .soc-follow {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+    }
+
+    /* ─── MEMBERS SECTION ───────────────────────────────────────── */
+    .members-section {
+      padding: 100px 0 120px;
+    }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 20px;
+      margin-bottom: 60px;
+    }
+
+    .section-label {
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .section-rule {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ─── MEMBER GRID ───────────────────────────────────────────── */
+    .members-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 2px;
+    }
+
+    .member-card {
+      position: relative;
+      aspect-ratio: 3/4;
+      cursor: pointer;
+      overflow: hidden;
+      background: var(--surface);
+      transition: transform 0.4s var(--ease-out);
+    }
+
+    .member-card:hover {
+      z-index: 2;
+      transform: scale(1.02);
+    }
+
+    /* Photo */
+    .member-photo {
+      position: absolute;
+      inset: 0;
+      background: var(--surface-2);
+      background-size: cover;
+      background-position: center top;
+      transition: transform 0.6s var(--ease-out), filter 0.4s;
+    }
+
+    .member-card:hover .member-photo {
+      transform: scale(1.06);
+      filter: brightness(0.6);
+    }
+
+    /* Placeholder avatar */
+    .member-photo-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .member-photo-placeholder svg {
+      width: 80px;
+      height: 80px;
+      opacity: 0.1;
+    }
+
+    /* Gradient overlay */
+    .member-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        to top,
+        rgba(8,8,10,0.95) 0%,
+        rgba(8,8,10,0.4) 40%,
+        transparent 70%
+      );
+      transition: opacity 0.4s;
+    }
+
+    /* Info */
+    .member-info {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 28px 24px;
+      transform: translateY(0);
+      transition: transform 0.4s var(--ease-out);
+    }
+
+    .member-role {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .member-name {
+      font-family: var(--font-display);
+      font-size: 28px;
+      line-height: 1;
+      letter-spacing: 0.01em;
+    }
+
+    .member-cta {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      margin-top: 12px;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: opacity 0.3s, transform 0.3s var(--ease-out), color 0.2s;
+    }
+
+    .member-cta svg {
+      width: 14px;
+      height: 14px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      flex-shrink: 0;
+      transition: transform 0.3s;
+    }
+
+    .member-card:hover .member-cta {
+      opacity: 1;
+      transform: translateY(0);
+      color: var(--accent);
+    }
+
+    .member-card:hover .member-cta svg {
+      transform: translateX(4px);
+    }
+
+    /* ─── MODAL ─────────────────────────────────────────────────── */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(8,8,10,0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 9000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s;
+    }
+
+    .modal-backdrop.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .modal {
+      position: relative;
+      display: grid;
+      grid-template-columns: 380px 1fr;
+      max-width: 960px;
+      width: 100%;
+      max-height: 90vh;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      overflow: hidden;
+      transform: translateY(24px) scale(0.98);
+      transition: transform 0.4s var(--ease-out);
+    }
+
+    .modal-backdrop.open .modal {
+      transform: translateY(0) scale(1);
+    }
+
+    /* Modal left */
+    .modal-left {
+      position: relative;
+      background: var(--surface-2);
+      min-height: 540px;
+    }
+
+    .modal-photo {
+      position: absolute;
+      inset: 0;
+      background-size: cover;
+      background-position: center top;
+    }
+
+    .modal-photo-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-photo-placeholder svg {
+      width: 100px;
+      height: 100px;
+      opacity: 0.08;
+    }
+
+    /* Gradient at bottom of photo */
+    .modal-photo-foot {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 32px 28px;
+      background: linear-gradient(to top, rgba(8,8,10,0.95) 0%, transparent 100%);
+    }
+
+    .modal-member-role {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 4px;
+    }
+
+    .modal-member-name {
+      font-family: var(--font-display);
+      font-size: 36px;
+      line-height: 1;
+    }
+
+    /* Modal socials */
+    .modal-member-socials {
+      display: flex;
+      gap: 8px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .modal-soc-btn {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      background: rgba(245,241,230,0.06);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      text-decoration: none;
+      color: var(--text-muted);
+      font-size: 11px;
+      font-weight: 500;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
+    }
+
+    .modal-soc-btn:hover {
+      background: var(--accent-dim);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .modal-soc-btn svg {
+      width: 13px;
+      height: 13px;
+      fill: currentColor;
+      flex-shrink: 0;
+    }
+
+    /* Modal right */
+    .modal-right {
+      padding: 48px 44px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .modal-bio-label {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .modal-bio-text {
+      font-size: 16px;
+      font-weight: 300;
+      line-height: 1.8;
+      color: rgba(245,241,230,0.75);
+    }
+
+    .modal-bio-text p + p { margin-top: 1em; }
+
+    .modal-bio-placeholder {
+      font-size: 15px;
+      font-style: italic;
+      color: var(--text-muted);
+      line-height: 1.7;
+    }
+
+    /* Instruments / tags */
+    .modal-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 28px;
+    }
+
+    .modal-tag {
+      font-size: 10px;
+      font-weight: 500;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      padding: 5px 10px;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+    }
+
+    /* Close button */
+    .modal-close {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(8,8,10,0.6);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 10;
+      transition: background 0.2s;
+    }
+
+    .modal-close:hover { background: rgba(8,8,10,0.9); }
+
+    .modal-close svg {
+      width: 16px;
+      height: 16px;
+      stroke: var(--text-muted);
+      fill: none;
+      stroke-width: 2;
+    }
+
+    /* ─── FOOTER SPACER ─────────────────────────────────────────── */
+    .page-footer {
+      border-top: 1px solid var(--border);
+      padding: 48px 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .footer-copy {
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: 0.06em;
+    }
+
+    .footer-back {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      font-weight: 500;
+      transition: color 0.2s;
+    }
+
+    .footer-back:hover { color: var(--accent); }
+
+    /* ─── ANIMATIONS ─────────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .stagger-1 { animation-delay: 0.1s !important; }
+    .stagger-2 { animation-delay: 0.15s !important; }
+    .stagger-3 { animation-delay: 0.2s !important; }
+    .stagger-4 { animation-delay: 0.25s !important; }
+    .stagger-5 { animation-delay: 0.3s !important; }
+
+    .member-card {
+      opacity: 0;
+      animation: fadeUp 0.7s var(--ease-out) forwards;
+    }
+
+    /* ─── RESPONSIVE ─────────────────────────────────────────────── */
+    @media (max-width: 900px) {
+      .bio-section {
+        grid-template-columns: 1fr;
+        gap: 48px;
+      }
+
+      .modal {
+        grid-template-columns: 1fr;
+        max-height: 95vh;
+      }
+
+      .modal-left {
+        min-height: 360px;
+      }
+
+      .modal-right {
+        padding: 32px 28px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .page-wrapper { padding: 0 20px; }
+      .members-grid { grid-template-columns: 1fr 1fr; gap: 2px; }
+      .band-hero { padding: 130px 0 60px; }
+      .modal { grid-template-columns: 1fr; border-radius: 0; }
+      .modal-left { min-height: 300px; }
+      .modal-right { padding: 24px 20px; }
+    }
+
+    @media (max-width: 380px) {
+      .members-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Nav injected here -->
+  <div id="nav-mount"></div>
+
+  <!-- ── HERO ──────────────────────────────────────────────────── -->
+  <div class="page-wrapper">
+    <section class="band-hero">
+      <p class="band-hero-eyebrow">WD-HAN</p>
+      <h1 class="band-hero-title">The Band</h1>
+    </section>
+
+    <!-- ── BIO + SOCIALS ────────────────────────────────────────── -->
+    <section class="bio-section">
+
+      <div class="bio-text-col">
+        <p class="bio-label">Our Story</p>
+        <div class="bio-text" id="band-bio">
+          <!-- Skeleton while loading -->
+          <div class="bio-text skeleton" id="bio-skeleton">
+            <span style="width:90%"></span>
+            <span style="width:100%"></span>
+            <span style="width:80%"></span>
+            <span style="width:95%"></span>
+            <span style="width:70%"></span>
+            <span style="width:100%"></span>
+            <span style="width:85%"></span>
+          </div>
+        </div>
+      </div>
+
+      <div class="socials-col">
+        <p class="socials-label">Follow Us</p>
+        <div class="social-links-list" id="social-links-list">
+          <!-- populated from Sanity siteSettings -->
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ── MEMBERS ───────────────────────────────────────────────── -->
+    <section class="members-section">
+      <div class="section-header">
+        <span class="section-label">The People</span>
+        <div class="section-rule"></div>
+      </div>
+
+      <div class="members-grid" id="members-grid">
+        <!-- Skeleton cards -->
+        <div class="member-card" style="animation-delay:0.05s">
+          <div class="member-photo" style="background:var(--surface-2)"></div>
+          <div class="member-gradient"></div>
+          <div class="member-info">
+            <div style="height:10px;width:60px;background:var(--surface);border-radius:3px;margin-bottom:10px"></div>
+            <div style="height:28px;width:140px;background:var(--surface);border-radius:3px"></div>
+          </div>
+        </div>
+        <div class="member-card" style="animation-delay:0.1s">
+          <div class="member-photo" style="background:var(--surface-2)"></div>
+          <div class="member-gradient"></div>
+          <div class="member-info">
+            <div style="height:10px;width:60px;background:var(--surface);border-radius:3px;margin-bottom:10px"></div>
+            <div style="height:28px;width:120px;background:var(--surface);border-radius:3px"></div>
+          </div>
+        </div>
+        <div class="member-card" style="animation-delay:0.15s">
+          <div class="member-photo" style="background:var(--surface-2)"></div>
+          <div class="member-gradient"></div>
+          <div class="member-info">
+            <div style="height:10px;width:60px;background:var(--surface);border-radius:3px;margin-bottom:10px"></div>
+            <div style="height:28px;width:150px;background:var(--surface);border-radius:3px"></div>
+          </div>
+        </div>
+        <div class="member-card" style="animation-delay:0.2s">
+          <div class="member-photo" style="background:var(--surface-2)"></div>
+          <div class="member-gradient"></div>
+          <div class="member-info">
+            <div style="height:10px;width:60px;background:var(--surface);border-radius:3px;margin-bottom:10px"></div>
+            <div style="height:28px;width:130px;background:var(--surface);border-radius:3px"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── FOOTER ─────────────────────────────────────────────────── -->
+    <footer class="page-footer">
+      <span class="footer-copy">© 2026 WD-HAN</span>
+      <a href="/" class="footer-back">← Home</a>
+    </footer>
+  </div>
+
+
+  <!-- ── MEMBER MODAL ───────────────────────────────────────────── -->
+  <div class="modal-backdrop" id="member-modal" role="dialog" aria-modal="true" aria-label="Band member details">
+    <div class="modal">
+      <button class="modal-close" id="modal-close-btn" aria-label="Close">
+        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+
+      <!-- Left: photo + name + socials -->
+      <div class="modal-left">
+        <div class="modal-photo" id="modal-photo">
+          <div class="modal-photo-placeholder">
+            <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <circle cx="40" cy="28" r="16" fill="currentColor" opacity="0.3"/>
+              <path d="M8 72c0-17.673 14.327-32 32-32s32 14.327 32 32" fill="currentColor" opacity="0.2"/>
+            </svg>
+          </div>
+        </div>
+        <div class="modal-photo-foot">
+          <p class="modal-member-role" id="modal-role"></p>
+          <h2 class="modal-member-name" id="modal-name"></h2>
+          <div class="modal-member-socials" id="modal-socials"></div>
+        </div>
+      </div>
+
+      <!-- Right: bio -->
+      <div class="modal-right">
+        <p class="modal-bio-label">About</p>
+        <div class="modal-bio-text" id="modal-bio"></div>
+        <div class="modal-tags" id="modal-tags"></div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ── SCRIPTS ────────────────────────────────────────────────── -->
+  <script src="/assets/js/nav.js"></script>
+
+  <script>
+    // ── CONFIG ──────────────────────────────────────────────────────
+    const SANITY_PROJECT = 'oz4mxjaz';
+    const SANITY_DATASET = 'production';
+    const SANITY_BASE    = `https://api.sanity.io/v2021-06-07/data/query/${SANITY_DATASET}`;
+
+    function sanityQuery(query) {
+      return fetch(`${SANITY_BASE}?projectId=${SANITY_PROJECT}&query=${encodeURIComponent(query)}`)
+        .then(r => r.json())
+        .then(d => d.result);
+    }
+
+    function sanityImageUrl(ref) {
+      if (!ref) return null;
+      // ref looks like: image-abc123-800x600-jpg
+      const parts = ref.replace('image-','').split('-');
+      const ext = parts.pop();
+      const id  = parts.join('-');
+      return `https://cdn.sanity.io/images/${SANITY_PROJECT}/${SANITY_DATASET}/${id}.${ext}`;
+    }
+
+    // ── BLOCK CONTENT RENDERER ───────────────────────────────────────
+    function renderBlockContent(blocks) {
+      if (!blocks || !Array.isArray(blocks)) return '';
+      return blocks.map(block => {
+        if (block._type !== 'block') return '';
+        const text = (block.children || []).map(c => {
+          let t = (c.text || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+          if (c.marks && c.marks.includes('strong')) t = `<strong>${t}</strong>`;
+          if (c.marks && c.marks.includes('em'))     t = `<em>${t}</em>`;
+          return t;
+        }).join('');
+        return `<p>${text}</p>`;
+      }).join('');
+    }
+
+
+    // ── SOCIAL ICONS ────────────────────────────────────────────────
+    const SOCIAL_META = {
+      instagram:   { label: 'Instagram',   handle: '@wdhanband', icon: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>` },
+      youtube:     { label: 'YouTube',     handle: '@wdhanband', icon: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>` },
+      tiktok:      { label: 'TikTok',      handle: '@wdhanband', icon: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>` },
+      spotify:     { label: 'Spotify',     handle: 'WD-HAN',     icon: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.521 17.34c-.24.359-.66.48-1.021.24-2.82-1.74-6.36-2.101-10.561-1.141-.418.122-.779-.179-.899-.539-.12-.421.18-.78.54-.9 4.56-1.021 8.52-.6 11.64 1.32.42.18.479.659.301 1.02zm1.44-3.3c-.301.42-.841.6-1.262.3-3.239-1.98-8.159-2.58-11.939-1.38-.479.12-1.02-.12-1.14-.6-.12-.48.12-1.021.6-1.141C9.6 9.9 15 10.561 18.72 12.84c.361.181.54.78.241 1.2zm.12-3.36C15.24 8.4 8.82 8.16 5.16 9.301c-.6.179-1.2-.181-1.38-.721-.18-.601.18-1.2.72-1.381 4.26-1.26 11.28-1.02 15.721 1.621.539.3.719 1.02.419 1.56-.299.421-1.02.599-1.559.3z"/></svg>` },
+      facebook:    { label: 'Facebook',    handle: 'WD-HAN',     icon: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>` },
+      appleMusic:  { label: 'Apple Music', handle: 'WD-HAN',     icon: `<svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M23.994 6.124a9.23 9.23 0 0 0-.24-2.19c-.317-1.31-1.048-2.31-2.07-3.04a6.304 6.304 0 0 0-1.977-.737c-.686-.152-1.386-.204-2.083-.233-.874-.04-1.173-.053-3.424-.053H9.8c-2.25 0-2.55.01-3.424.053-.697.029-1.397.08-2.083.233A6.304 6.304 0 0 0 2.316.894C1.294 1.624.563 2.624.246 3.934a9.23 9.23 0 0 0-.24 2.19C-.003 7.122 0 7.41 0 9.716v4.568c0 2.306.003 2.594.006 3.592a9.23 9.23 0 0 0 .24 2.19c.317 1.31 1.048 2.31 2.07 3.04a6.304 6.304 0 0 0 1.977.737c.686.152 1.386.204 2.083.233.874.04 1.173.053 3.424.053h4.4c2.25 0 2.55-.01 3.424-.053.697-.029 1.397-.08 2.083-.233a6.304 6.304 0 0 0 1.977-.737c1.022-.73 1.753-1.73 2.07-3.04a9.23 9.23 0 0 0 .24-2.19c.003-.998.006-1.286.006-3.592V9.716c0-2.306-.003-2.594-.006-3.592zM12 17.5a5.5 5.5 0 1 1 0-11 5.5 5.5 0 0 1 0 11zm0-9a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zm5.5-2a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3z"/></svg>` },
+    };
+
+    const SOCIAL_ORDER = ['spotify','appleMusic','instagram','youtube','tiktok','facebook'];
+
+    // ── LOAD BAND DATA FROM SANITY ────────────────────────────────────
+    async function loadBandData() {
+      try {
+        // 1. Site settings for bio + socials
+        const settings = await sanityQuery(`*[_type == "siteSettings"][0]{
+          bandBio,
+          bandBioRaw,
+          socials
+        }`);
+
+        renderBio(settings);
+        renderSocialLinks(settings?.socials || {});
+
+        // 2. Band members
+        const members = await sanityQuery(`*[_type == "member"] | order(order asc) {
+          _id, name, role, bio, instruments,
+          "photoUrl": photo.asset->url,
+          "photoRef": photo.asset._ref,
+          socialLinks
+        }`);
+
+        renderMembers(members);
+
+      } catch (err) {
+        console.warn('Sanity fetch failed, showing fallback state', err);
+        renderBioFallback();
+        renderSocialLinks({});
+        renderMembersFallback();
+      }
+    }
+
+    // ── BIO ──────────────────────────────────────────────────────────
+    function renderBio(settings) {
+      const el = document.getElementById('band-bio');
+      let html = '';
+
+      // Try block content first, then plain string, then fallback
+      if (settings?.bandBioRaw && Array.isArray(settings.bandBioRaw)) {
+        html = renderBlockContent(settings.bandBioRaw);
+      } else if (settings?.bandBio) {
+        html = settings.bandBio.split('\n\n').map(p => `<p>${p}</p>`).join('');
+      }
+
+      if (html) {
+        el.innerHTML = html;
+      } else {
+        renderBioFallback();
+      }
+    }
+
+    function renderBioFallback() {
+      const el = document.getElementById('band-bio');
+      el.innerHTML = `<p style="color:var(--text-muted);font-style:italic">
+        Band bio coming soon — add it in Sanity Studio under Site Settings → Band Bio.
+      </p>`;
+    }
+
+    // ── SOCIAL LINKS ─────────────────────────────────────────────────
+    function renderSocialLinks(socials) {
+      const el = document.getElementById('social-links-list');
+      const rows = [];
+
+      for (const key of SOCIAL_ORDER) {
+        const url = socials[key];
+        if (!url) continue;
+        const meta = SOCIAL_META[key] || { label: key, handle: '', icon: '' };
+        rows.push(`
+          <a href="${url}" target="_blank" rel="noopener" class="social-link-row">
+            <div class="soc-icon">${meta.icon}</div>
+            <div class="soc-info">
+              <div class="soc-platform">${meta.label}</div>
+              <div class="soc-handle">${meta.handle}</div>
+            </div>
+            <span class="soc-follow">Follow</span>
+          </a>
+        `);
+      }
+
+      if (rows.length === 0) {
+        el.innerHTML = `<p style="color:var(--text-muted);font-size:14px;font-style:italic">
+          Populate social URLs in Sanity Studio → Site Settings → Socials.
+        </p>`;
+      } else {
+        el.innerHTML = rows.join('');
+      }
+    }
+
+    // ── MEMBERS ──────────────────────────────────────────────────────
+    function renderMembers(members) {
+      const grid = document.getElementById('members-grid');
+
+      if (!members || members.length === 0) {
+        renderMembersFallback();
+        return;
+      }
+
+      grid.innerHTML = members.map((m, i) => {
+        const photoStyle = m.photoUrl
+          ? `background-image:url('${m.photoUrl}')`
+          : '';
+        const delay = (0.05 + i * 0.07).toFixed(2) + 's';
+
+        return `
+          <div class="member-card" style="animation-delay:${delay}"
+               data-id="${m._id}" role="button" tabindex="0"
+               aria-label="View ${m.name}'s profile">
+            <div class="member-photo" style="${photoStyle}">
+              ${!m.photoUrl ? `<div class="member-photo-placeholder">
+                <svg viewBox="0 0 80 80" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <circle cx="40" cy="28" r="16" fill="white" opacity="0.15"/>
+                  <path d="M8 72c0-17.673 14.327-32 32-32s32 14.327 32 32" fill="white" opacity="0.1"/>
+                </svg>
+              </div>` : ''}
+            </div>
+            <div class="member-gradient"></div>
+            <div class="member-info">
+              <p class="member-role">${m.role || ''}</p>
+              <h3 class="member-name">${m.name || ''}</h3>
+              <div class="member-cta">
+                Read more
+                <svg viewBox="0 0 24 24"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // Attach click handlers
+      grid.querySelectorAll('.member-card').forEach(card => {
+        card.addEventListener('click', () => {
+          const id = card.dataset.id;
+          const member = members.find(m => m._id === id);
+          if (member) openModal(member);
+        });
+        card.addEventListener('keydown', e => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            card.click();
+          }
+        });
+      });
+    }
+
+    function renderMembersFallback() {
+      const grid = document.getElementById('members-grid');
+      grid.innerHTML = `
+        <div style="grid-column:1/-1;padding:60px 0;text-align:center;color:var(--text-muted);font-style:italic">
+          No band members yet — add them in Sanity Studio under Member documents.
+        </div>
+      `;
+    }
+
+    // ── MODAL ─────────────────────────────────────────────────────────
+    const modal   = document.getElementById('member-modal');
+    const closeBtn = document.getElementById('modal-close-btn');
+
+    function openModal(member) {
+      // Photo
+      const photoEl = document.getElementById('modal-photo');
+      if (member.photoUrl) {
+        photoEl.style.backgroundImage = `url('${member.photoUrl}')`;
+        photoEl.querySelector('.modal-photo-placeholder') && 
+          (photoEl.querySelector('.modal-photo-placeholder').style.display = 'none');
+      } else {
+        photoEl.style.backgroundImage = '';
+      }
+
+      // Name + role
+      document.getElementById('modal-name').textContent = member.name || '';
+      document.getElementById('modal-role').textContent = member.role || '';
+
+      // Member socials
+      const socEl = document.getElementById('modal-socials');
+      const memberSocials = member.socialLinks || {};
+      const socBtns = [];
+      for (const key of ['instagram','tiktok','youtube','spotify','facebook']) {
+        const url = memberSocials[key];
+        if (!url) continue;
+        const meta = SOCIAL_META[key] || { label: key, icon: '' };
+        socBtns.push(`
+          <a href="${url}" target="_blank" rel="noopener" class="modal-soc-btn">
+            ${meta.icon}
+            ${meta.label}
+          </a>
+        `);
+      }
+      socEl.innerHTML = socBtns.join('');
+
+      // Bio
+      const bioEl = document.getElementById('modal-bio');
+      if (member.bio) {
+        if (Array.isArray(member.bio)) {
+          bioEl.innerHTML = renderBlockContent(member.bio);
+        } else {
+          bioEl.innerHTML = member.bio.split('\n\n').map(p => `<p>${p}</p>`).join('');
+        }
+      } else {
+        bioEl.innerHTML = `<p class="modal-bio-placeholder">
+          Full bio coming soon — add it in Sanity Studio under this member's document.
+        </p>`;
+      }
+
+      // Instrument tags
+      const tagsEl = document.getElementById('modal-tags');
+      const tags = member.instruments || [];
+      tagsEl.innerHTML = tags.map(t => `<span class="modal-tag">${t}</span>`).join('');
+
+      // Open
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+
+      // Focus trap
+      closeBtn.focus();
+    }
+
+    function closeModal() {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+    }
+
+    closeBtn.addEventListener('click', closeModal);
+    modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+    // ── INIT ─────────────────────────────────────────────────────────
+    loadBandData();
+  </script>
+
+</body>
+</html>
