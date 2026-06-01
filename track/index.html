@@ -3,17 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WD-HAN</title>
-  <meta name="description" content="" />
+  <title>WD-HAN</title><!-- filled by JS -->
+  <meta name="description" content="" /><!-- filled by JS -->
 
+  <link rel="stylesheet" href="/assets/css/nav.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 
   <style>
     @font-face {
       font-family: 'Splatink';
-      src: url('../assets/fonts/Splatink.otf') format('opentype');
+      src: url('/assets/fonts/Splatink.otf') format('opentype');
       font-display: swap;
     }
 
@@ -34,30 +35,8 @@
     ::selection{background:var(--accent);color:var(--accent-ink);}
     .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;}
 
-    /* ── Nav ── */
-    .nav{
-      position:fixed;top:0;left:0;right:0;z-index:50;
-      display:flex;align-items:center;justify-content:space-between;
-      padding:18px 28px;
-      background:color-mix(in srgb,var(--bg) 82%,transparent);
-      backdrop-filter:blur(8px);border-bottom:1px solid var(--line);
-    }
-    .nav-wordmark{font-family:var(--font-display);font-size:22px;letter-spacing:.04em;color:var(--ink);}
-    .nav-links{display:flex;align-items:center;gap:28px;}
-    .nav-links a{font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;color:var(--muted);transition:color .2s;}
-    .nav-links a:hover{color:var(--ink);}
-    .nav-burger{display:none;background:none;border:none;color:var(--ink);padding:4px;}
-    .nav-burger svg{width:22px;height:22px;stroke:currentColor;stroke-width:2;stroke-linecap:round;fill:none;}
-    .nav-mobile{display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:49;background:var(--bg);padding:90px 28px 40px;flex-direction:column;gap:32px;}
-    .nav-mobile.open{display:flex;}
-    .nav-mobile a{font-family:"Anton";font-size:clamp(34px,9vw,56px);text-transform:uppercase;color:var(--ink);}
-
     /* ── Track hero ── */
-    .track-hero{
-      position:relative;z-index:2;
-      padding:110px 0 72px;
-    }
-    /* blurred artwork bg from parent release */
+    .track-hero{position:relative;z-index:2;padding:110px 0 72px;}
     .hero-blur-bg{
       position:absolute;inset:0;z-index:0;
       background-size:cover;background-position:center;
@@ -80,24 +59,22 @@
     .breadcrumb a:hover{color:var(--accent);}
     .breadcrumb span{opacity:.5;}
 
-    /* Main layout */
-    .hero-grid{
-      display:grid;
-      grid-template-columns:300px 1fr;
-      gap:52px;
-      align-items:start;
-    }
+    /* Layout */
+    .hero-grid{display:grid;grid-template-columns:300px 1fr;gap:52px;align-items:start;}
 
-    /* Artwork — parent release artwork */
+    /* Artwork */
     .track-artwork{
       position:relative;border-radius:14px;overflow:hidden;
       box-shadow:0 30px 60px rgba(0,0,0,.55);
       aspect-ratio:1;background:var(--card);flex-shrink:0;
     }
     .track-artwork img{width:100%;height:100%;object-fit:cover;display:block;}
-    .artwork-ph{width:100%;height:100%;background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--ink) 7%,transparent) 0 2px,transparent 2px 12px),color-mix(in srgb,var(--ink) 5%,transparent);display:flex;align-items:center;justify-content:center;}
+    .artwork-ph{
+      width:100%;height:100%;
+      background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--ink) 7%,transparent) 0 2px,transparent 2px 12px),color-mix(in srgb,var(--ink) 5%,transparent);
+      display:flex;align-items:center;justify-content:center;
+    }
     .artwork-ph span{font-family:"Space Mono";font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);}
-    /* Track number badge over artwork */
     .track-num-badge{
       position:absolute;top:12px;left:12px;
       font-family:"Space Mono";font-size:10px;letter-spacing:.18em;text-transform:uppercase;
@@ -116,34 +93,21 @@
     .track-title{
       font-family:var(--font-display);
       font-size:clamp(44px,6.5vw,96px);
-      line-height:.88;text-transform:uppercase;letter-spacing:.01em;
-      margin-bottom:12px;
+      line-height:.88;text-transform:uppercase;letter-spacing:.01em;margin-bottom:12px;
     }
-    .track-credits{
-      font-family:"Space Mono";font-size:11px;letter-spacing:.14em;text-transform:uppercase;
-      color:var(--faint);margin-bottom:8px;
-    }
-    .track-duration{
-      font-family:"Space Mono";font-size:12px;letter-spacing:.18em;text-transform:uppercase;
-      color:var(--faint);margin-bottom:28px;
-    }
+    .track-credits{font-family:"Space Mono";font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-bottom:8px;}
+    .track-duration{font-family:"Space Mono";font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);margin-bottom:28px;}
 
     /* Spotify embed */
-    .spotify-embed{
-      border-radius:12px;overflow:hidden;margin-bottom:24px;background:var(--card);
-    }
+    .spotify-embed{border-radius:12px;overflow:hidden;margin-bottom:24px;background:var(--card);}
     .spotify-embed iframe{width:100%;height:80px;border:none;display:block;}
 
     /* Streaming links */
-    .streaming-label{
-      font-family:"Space Mono";font-size:10px;letter-spacing:.26em;text-transform:uppercase;
-      color:var(--faint);margin-bottom:12px;
-    }
+    .streaming-label{font-family:"Space Mono";font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--faint);margin-bottom:12px;}
     .streaming-links{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:28px;}
     .slink{
       display:inline-flex;align-items:center;gap:6px;
-      padding:9px 16px;border-radius:100px;
-      border:1px solid var(--card-line);
+      padding:9px 16px;border-radius:100px;border:1px solid var(--card-line);
       font-family:"Space Mono";font-size:10px;letter-spacing:.12em;text-transform:uppercase;
       color:var(--muted);transition:all .18s var(--ease);white-space:nowrap;
     }
@@ -152,13 +116,12 @@
     .slink.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
     .slink.primary:hover{background:color-mix(in srgb,var(--accent) 85%,white);}
 
-    /* Tags row */
-    .tags-row{display:flex;flex-wrap:wrap;gap:7px;margin-bottom:0;}
+    /* Tags */
+    .tags-row{display:flex;flex-wrap:wrap;gap:7px;}
     .tag{
-      display:inline-block;
-      font-family:"Space Mono";font-size:9px;letter-spacing:.18em;text-transform:uppercase;
-      background:var(--card);border:1px solid var(--card-line);
-      color:var(--faint);padding:5px 11px;border-radius:100px;
+      display:inline-block;font-family:"Space Mono";font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+      background:var(--card);border:1px solid var(--card-line);color:var(--faint);
+      padding:5px 11px;border-radius:100px;
     }
     .tag.mood{border-color:color-mix(in srgb,var(--accent) 30%,transparent);color:color-mix(in srgb,var(--accent) 70%,var(--faint));}
 
@@ -166,56 +129,39 @@
     .content-section{position:relative;z-index:2;padding:64px 0;}
     .content-section + .content-section{border-top:1px solid var(--line);}
     .section-heading{
-      font-family:var(--font-display);
-      font-size:clamp(30px,4vw,54px);
-      line-height:.92;text-transform:uppercase;
-      margin-bottom:32px;
+      font-family:var(--font-display);font-size:clamp(30px,4vw,54px);
+      line-height:.92;text-transform:uppercase;margin-bottom:32px;
     }
     .section-heading em{color:var(--accent);font-style:normal;}
 
-    /* ── Lyrics ── */
+    /* Lyrics */
     .lyrics-block{
-      position:relative;
-      border-left:2px solid var(--accent);
-      padding:4px 0 4px 28px;
-      max-width:52ch;
+      position:relative;border-left:2px solid var(--accent);
+      padding:4px 0 4px 28px;max-width:52ch;
     }
-    .lyrics-text{
-      font-family:"Space Mono";font-size:15px;line-height:1.9;
-      color:var(--muted);white-space:pre-wrap;
-    }
+    .lyrics-text{font-family:"Space Mono";font-size:15px;line-height:1.9;color:var(--muted);white-space:pre-wrap;}
     .lyrics-fade{
       position:absolute;bottom:0;left:0;right:0;height:60px;
-      background:linear-gradient(transparent,var(--bg));
-      pointer-events:none;
+      background:linear-gradient(transparent,var(--bg));pointer-events:none;
     }
 
-    /* ── Parent release card ── */
+    /* Release card */
     .release-card{
       display:flex;align-items:center;gap:20px;
-      padding:20px 22px;
-      border:1px solid var(--card-line);border-radius:16px;background:var(--card);
-      max-width:480px;
-      transition:border-color .2s var(--ease),transform .2s var(--ease);
+      padding:20px 22px;border:1px solid var(--card-line);border-radius:16px;background:var(--card);
+      max-width:480px;transition:border-color .2s var(--ease),transform .2s var(--ease);
     }
     .release-card:hover{border-color:var(--accent);transform:translateY(-2px);}
-    .rc-art{
-      width:72px;height:72px;border-radius:10px;overflow:hidden;flex-shrink:0;background:var(--card-line);
-    }
+    .rc-art{width:72px;height:72px;border-radius:10px;overflow:hidden;flex-shrink:0;background:var(--card-line);}
     .rc-art img{width:100%;height:100%;object-fit:cover;}
-    .rc-info{}
     .rc-type{font-family:"Space Mono";font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);margin-bottom:4px;}
     .rc-title{font-weight:700;font-size:17px;color:var(--ink);}
     .rc-year{font-family:"Space Mono";font-size:10px;letter-spacing:.12em;color:var(--faint);margin-top:3px;}
     .rc-arrow{margin-left:auto;flex-shrink:0;color:var(--faint);transition:color .2s,transform .2s;}
     .release-card:hover .rc-arrow{color:var(--accent);transform:translate(3px,-3px);}
 
-    /* ── Videos ── */
-    .videos-grid{
-      display:grid;
-      grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-      gap:16px;
-    }
+    /* Videos grid */
+    .videos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px;}
     .vcard{
       border:1px solid var(--card-line);border-radius:14px;overflow:hidden;
       background:var(--bg2);cursor:pointer;
@@ -234,7 +180,7 @@
     .vcat{font-family:"Space Mono";font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:4px;}
     .vtitle{font-weight:700;font-size:14px;line-height:1.3;}
 
-    /* ── Lightbox ── */
+    /* Lightbox */
     .lightbox{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.95);backdrop-filter:blur(12px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s var(--ease);}
     .lightbox.open{opacity:1;pointer-events:auto;}
     .lb-inner{position:relative;width:100%;max-width:960px;transform:scale(.97);transition:transform .35s var(--ease);}
@@ -247,32 +193,34 @@
     .lb-close:hover{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);}
     .lb-close svg{width:16px;height:16px;}
 
-    /* ── Skeleton ── */
+    /* Skeleton */
     @keyframes shimmer{0%,100%{opacity:.3;}50%{opacity:.7;}}
     .sk{background:var(--card-line);border-radius:8px;animation:shimmer 1.6s ease-in-out infinite;}
 
-    /* ── Not found ── */
+    /* Not found */
     .not-found{text-align:center;padding:120px 24px;display:flex;flex-direction:column;align-items:center;gap:16px;}
     .not-found h2{font-family:var(--font-display);font-size:clamp(40px,8vw,80px);text-transform:uppercase;}
     .not-found p{color:var(--muted);font-size:16px;}
 
-    /* ── Footer ── */
+    /* Footer */
     .foot{position:relative;z-index:2;padding:56px 0 36px;border-top:1px solid var(--line);margin-top:24px;}
     .foot-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;}
-    .foot-wordmark{font-family:"Anton";font-size:22px;letter-spacing:.04em;}
+    .foot-wordmark{font-family:var(--font-display);font-size:22px;letter-spacing:.04em;}
     .foot-copy{font-family:"Space Mono";font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);}
     .foot-links{display:flex;gap:24px;}
-    .foot-links a{font-family:"Space Mono";font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:1px;transition:color .2s,border-color .2s;}
+    .foot-links a{
+      font-family:"Space Mono";font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+      color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:1px;
+      transition:color .2s,border-color .2s;
+    }
     .foot-links a:hover{color:var(--accent);border-color:var(--accent);}
 
-    /* ── Reveal ── */
+    /* Reveal */
     .reveal{opacity:0;transform:translateY(20px);transition:opacity .65s var(--ease),transform .65s var(--ease);}
     .reveal.in{opacity:1;transform:none;}
 
-    /* ── Responsive ── */
+    /* Responsive */
     @media(max-width:900px){
-      .nav-links{display:none;}
-      .nav-burger{display:block;}
       .hero-grid{grid-template-columns:1fr;gap:28px;}
       .track-artwork{max-width:240px;}
     }
@@ -285,28 +233,8 @@
 </head>
 <body>
 
-<!-- ── Nav ── -->
-<nav class="nav" id="nav">
-  <a href="../" class="nav-wordmark">WD-HAN</a>
-  <div class="nav-links">
-    <a href="../#listen">Listen</a>
-    <a href="../music.html">Music</a>
-    <a href="../videos.html">Videos</a>
-    <a href="../#band">Band</a>
-    <a href="../#tour">Tour</a>
-    <a href="https://your-shopify-store.myshopify.com">Merch</a>
-  </div>
-  <button class="nav-burger" id="nav-burger-btn" aria-label="Menu">
-    <svg viewBox="0 0 22 22"><line x1="2" y1="5" x2="20" y2="5"/><line x1="2" y1="11" x2="20" y2="11"/><line x1="2" y1="17" x2="20" y2="17"/></svg>
-  </button>
-</nav>
-<nav class="nav-mobile" id="nav-mobile">
-  <a href="../" class="nav-mobile-link">Home</a>
-  <a href="../music.html" class="nav-mobile-link">Music</a>
-  <a href="../videos.html" class="nav-mobile-link">Videos</a>
-  <a href="../#tour" class="nav-mobile-link">Tour</a>
-  <a href="https://your-shopify-store.myshopify.com" class="nav-mobile-link">Merch</a>
-</nav>
+<!-- nav.js injects the nav here -->
+<div id="nav-mount"></div>
 
 <!-- ── Content ── -->
 <div id="page-content">
@@ -350,8 +278,8 @@
         <div class="foot-copy" style="margin-top:6px;">© 2026 · All rights reserved</div>
       </div>
       <div class="foot-links" id="foot-links">
-        <a href="../music.html">← All Music</a>
-        <a href="../">Home</a>
+        <a href="/music.html">← All Music</a>
+        <a href="/">Home</a>
       </div>
     </div>
   </div>
@@ -374,6 +302,7 @@
     return m ? m[1] : null;
   }
   function ytThumb(id) { return `https://img.youtube.com/vi/${id}/maxresdefault.jpg`; }
+
   const CAT_LABELS = {'music-video':'Music Video','live':'Live','bts':'Behind the Scenes','lyric-video':'Lyric Video','interview':'Interview','other':'Other'};
   function catLabel(c) { return CAT_LABELS[c] || (c ? c.charAt(0).toUpperCase()+c.slice(1).replace(/-/g,' ') : 'Video'); }
 
@@ -397,12 +326,6 @@
       `<a class="slink${i === 0 ? ' primary' : ''}" href="${esc(links[k])}" target="_blank" rel="noopener">${ICONS[k]||''}${labels[k]}</a>`
     ).join('');
   }
-
-  /* ── Nav ── */
-  document.getElementById('nav-burger-btn').addEventListener('click', () =>
-    document.getElementById('nav-mobile').classList.toggle('open'));
-  document.querySelectorAll('.nav-mobile-link').forEach(l =>
-    l.addEventListener('click', () => document.getElementById('nav-mobile').classList.remove('open')));
 
   /* ── Scroll reveal ── */
   const revIO = new IntersectionObserver(entries =>
@@ -434,29 +357,14 @@
 
   async function fetchTrack(slug) {
     const query = `*[_type == "track" && slug.current == $slug][0] {
-      title,
-      "slug": slug.current,
-      trackNumber,
-      duration,
-      isrc,
-      composerCredits,
-      lyricsExcerpt,
-      streamingLinks,
-      syncMeta,
+      title, "slug": slug.current, trackNumber, duration, isrc,
+      composerCredits, lyricsExcerpt, streamingLinks, syncMeta,
       "parentRelease": parentRelease->{
-        title,
-        "slug": slug.current,
-        releaseType,
-        releaseDate,
-        "artworkUrl": artwork.asset->url,
-        streamingLinks
+        title, "slug": slug.current, releaseType, releaseDate,
+        "artworkUrl": artwork.asset->url, streamingLinks
       },
       "videos": *[_type == "video" && relatedTrack._ref == ^._id] | order(publishDate desc) {
-        title,
-        youtubeUrl,
-        "embedId": coalesce(embedId, null),
-        category,
-        publishDate
+        title, youtubeUrl, "embedId": coalesce(embedId, null), category, publishDate
       }
     }`;
 
@@ -476,7 +384,6 @@
 
     if (!track) { showNotFound(); return; }
 
-    // Resolve video IDs
     if (track.videos) {
       track.videos = track.videos
         .map(v => ({ ...v, _vid: v.embedId || ytId(v.youtubeUrl) }))
@@ -497,7 +404,6 @@
     const relYear = rel?.releaseDate ? new Date(rel.releaseDate).getFullYear() : '';
     const relType = rel?.releaseType ? rel.releaseType.toUpperCase() : '';
 
-    // Spotify embed — prefer track-level link, fall back to release
     const spUrl = t.streamingLinks?.spotify || rel?.streamingLinks?.spotify;
     const spSrc = (() => {
       const s = spotifyId(spUrl);
@@ -505,13 +411,12 @@
       return `https://open.spotify.com/embed/${s.type}/${s.id}?utm_source=generator&theme=0`;
     })();
 
-    // Sync tags
     const moodTags  = t.syncMeta?.moodTags  || [];
     const genreTags = t.syncMeta?.genreTags  || [];
     const allTags   = [
       ...moodTags.map(tag  => `<span class="tag mood">${esc(tag)}</span>`),
       ...genreTags.map(tag => `<span class="tag">${esc(tag)}</span>`),
-      ...(t.syncMeta?.bpm       ? [`<span class="tag">${esc(String(t.syncMeta.bpm))} BPM</span>`] : []),
+      ...(t.syncMeta?.bpm        ? [`<span class="tag">${esc(String(t.syncMeta.bpm))} BPM</span>`] : []),
       ...(t.syncMeta?.musicalKey ? [`<span class="tag">${esc(t.syncMeta.musicalKey)}</span>`] : []),
     ].join('');
 
@@ -520,18 +425,16 @@
         ${artUrl ? `<div class="hero-blur-bg" style="background-image:url('${artUrl}')"></div>` : ''}
         <div class="hero-content">
           <div class="wrap">
-
             ${rel ? `
             <div class="breadcrumb">
-              <a href="../music.html">Music</a>
+              <a href="/music.html">Music</a>
               <span>›</span>
-              <a href="../release/?slug=${esc(relSlug)}">${esc(rel.title)}</a>
+              <a href="/release/?slug=${esc(relSlug)}">${esc(rel.title)}</a>
               <span>›</span>
               <span style="color:var(--muted)">${esc(t.title)}</span>
             </div>` : ''}
 
             <div class="hero-grid">
-
               <div class="track-artwork reveal">
                 ${artUrl
                   ? `<img src="${artUrl}" alt="${esc(rel?.title || t.title)}" loading="eager">`
@@ -540,19 +443,16 @@
               </div>
 
               <div class="track-meta reveal">
-                ${rel ? `<div class="track-release-label">From <a href="../release/?slug=${esc(relSlug)}">${esc(rel.title)}</a></div>` : ''}
+                ${rel ? `<div class="track-release-label">From <a href="/release/?slug=${esc(relSlug)}">${esc(rel.title)}</a></div>` : ''}
                 <h1 class="track-title">${esc(t.title)}</h1>
                 ${t.composerCredits ? `<div class="track-credits">${esc(t.composerCredits)}</div>` : ''}
                 ${t.duration ? `<div class="track-duration">${esc(t.duration)}</div>` : ''}
 
                 ${spSrc ? `
                 <div class="spotify-embed">
-                  <iframe
-                    src="${esc(spSrc)}"
+                  <iframe src="${esc(spSrc)}"
                     allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                    loading="lazy"
-                    title="Play ${esc(t.title)}">
-                  </iframe>
+                    loading="lazy" title="Play ${esc(t.title)}"></iframe>
                 </div>` : ''}
 
                 <div class="streaming-label">Stream &amp; Save</div>
@@ -562,7 +462,6 @@
 
                 ${allTags ? `<div class="tags-row">${allTags}</div>` : ''}
               </div>
-
             </div>
           </div>
         </div>
@@ -585,7 +484,7 @@
       <section class="content-section">
         <div class="wrap">
           <h2 class="section-heading reveal">From the <em>release</em></h2>
-          <a class="release-card reveal" href="../release/?slug=${esc(relSlug)}">
+          <a class="release-card reveal" href="/release/?slug=${esc(relSlug)}">
             <div class="rc-art">
               ${artUrl ? `<img src="${artUrl}" alt="${esc(rel.title)}" loading="lazy">` : ''}
             </div>
@@ -629,11 +528,10 @@
     document.getElementById('page-content').innerHTML = html;
     document.getElementById('foot').style.display = '';
 
-    // Update footer back link to point to parent release
     if (rel) {
       document.getElementById('foot-links').innerHTML = `
-        <a href="../release/?slug=${esc(relSlug)}">← ${esc(rel.title)}</a>
-        <a href="../music.html">All Music</a>`;
+        <a href="/release/?slug=${esc(relSlug)}">← ${esc(rel.title)}</a>
+        <a href="/music.html">All Music</a>`;
     }
 
     setTimeout(observe, 80);
@@ -648,10 +546,12 @@
       <div class="not-found" style="padding-top:120px;">
         <h2>Not Found</h2>
         <p>This track doesn't exist or has been removed.</p>
-        <a href="../music.html" style="color:var(--accent);font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.2em;text-transform:uppercase;">← Back to Music</a>
+        <a href="/music.html" style="color:var(--accent);font-family:'Space Mono',monospace;font-size:12px;letter-spacing:.2em;text-transform:uppercase;">← Back to Music</a>
       </div>`;
     document.getElementById('foot').style.display = '';
   }
 </script>
+
+<script src="/assets/js/nav.js"></script>
 </body>
 </html>
