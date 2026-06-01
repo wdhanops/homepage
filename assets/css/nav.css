@@ -1,0 +1,116 @@
+/*
+ * nav.css — WD-HAN shared navigation styles
+ * Link on every page: <link rel="stylesheet" href="/assets/css/nav.css">
+ * OR paste the contents into each page's <style> block.
+ */
+
+/* ── Desktop nav ── */
+.nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 50;
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  padding: 22px 36px;
+  gap: 20px;
+}
+
+.nav-logo {
+  display: flex;
+  align-items: center;
+  color: var(--ink);
+  transition: color .2s;
+}
+.nav-logo:hover { color: var(--accent); }
+
+.nav-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+}
+.nav-center a {
+  font-size: 12px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  font-weight: 600;
+  color: var(--muted);
+  transition: color .2s;
+  text-decoration: none;
+}
+.nav-center a:hover,
+.nav-center a.active { color: var(--ink); }
+
+/* Spotify play button */
+.nav-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 42px; height: 42px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--accent-ink);
+  border: none;
+  text-decoration: none;
+  transition: transform .18s var(--ease, ease), box-shadow .2s;
+  flex-shrink: 0;
+}
+.nav-cta:hover {
+  transform: scale(1.08);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--accent) 50%, transparent);
+}
+
+/* Burger */
+.nav-burger {
+  display: none;
+  background: none;
+  border: none;
+  color: var(--ink);
+  padding: 4px;
+  cursor: pointer;
+}
+
+/* ── Mobile nav overlay ── */
+.nav-mobile {
+  display: none;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(8,8,10,.97);
+  backdrop-filter: blur(12px);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  padding: 40px;
+}
+.nav-mobile.open { display: flex; }
+
+.nav-mobile a {
+  font-family: var(--font-display, 'Splatink', 'Anton', sans-serif);
+  font-size: clamp(36px, 10vw, 60px);
+  text-transform: uppercase;
+  color: var(--ink);
+  text-decoration: none;
+  transition: color .2s;
+}
+.nav-mobile a:hover { color: var(--accent); }
+
+.nav-mobile-close {
+  position: absolute;
+  top: 24px; right: 28px;
+  background: none;
+  border: none;
+  color: var(--ink);
+  padding: 4px;
+  cursor: pointer;
+}
+
+/* ── Responsive ── */
+@media (max-width: 800px) {
+  .nav-center { display: none; }
+  .nav-cta    { display: none; }   /* hide Spotify button on mobile — burger takes priority */
+  .nav-burger { display: block; }
+  .nav { grid-template-columns: 1fr auto; }
+}
