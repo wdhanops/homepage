@@ -12,6 +12,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 
   <style>
+
+    @font-face {
+  font-family: 'Splatink';
+  src: url('assets/fonts/Splatink.otf') format('opentype');
+  font-display: swap;
+}
     /* ============================================================
        TOKENS + THEMES
     ============================================================ */
@@ -20,6 +26,7 @@
       --accent-ink: #0a0a0a;
       --maxw: 1240px;
       --ease: cubic-bezier(.22,.61,.36,1);
+      --font-display: 'Splatink', var(--font-display);
       --bg: #08080a; --bg2: #101014;
       --ink: #f5f1e6;
       --muted: rgba(245,241,230,.55);
