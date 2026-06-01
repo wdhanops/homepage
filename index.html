@@ -9,81 +9,86 @@
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 
   <style>
 
     @font-face {
-  font-family: 'Splatink';
-  src: url('assets/fonts/Splatink.otf') format('opentype');
-  font-display: swap;
-}
-    /* ============================================================
-       TOKENS + THEMES
-    ============================================================ */
-    :root {
-      --accent: #ff3b2e;
-      --accent-ink: #0a0a0a;
-      --maxw: 1240px;
-      --ease: cubic-bezier(.22,.61,.36,1);
-      --font-display: 'Splatink', "Anton", sans-serif;
-      --bg: #08080a; --bg2: #101014;
-      --ink: #f5f1e6;
-      --muted: rgba(245,241,230,.55);
-      --faint: rgba(245,241,230,.32);
-      --line: rgba(245,241,230,.14);
-      --card: rgba(245,241,230,.045);
-      --card-line: rgba(245,241,230,.10);
-      --logo-filter: invert(1);
-      --blob-blend: screen;
-      --blob-op: .46;
-    }
-    [data-theme="midnight"] {
-      --bg:#08080a; --bg2:#101014;
-      --ink:#f5f1e6; --muted:rgba(245,241,230,.55); --faint:rgba(245,241,230,.30);
-      --line:rgba(245,241,230,.13); --card:rgba(245,241,230,.045); --card-line:rgba(245,241,230,.10);
-      --logo-filter:invert(1); --blob-blend:screen; --blob-op:.46;
-    }
-    [data-theme="zine"] {
-      --bg:#e7e0cf; --bg2:#f1ebdc;
-      --ink:#14110c; --muted:rgba(20,17,12,.62); --faint:rgba(20,17,12,.4);
-      --line:rgba(20,17,12,.18); --card:rgba(20,17,12,.035); --card-line:rgba(20,17,12,.14);
-      --logo-filter:none; --blob-blend:multiply; --blob-op:.42;
+      font-family: 'Splatink';
+      src: url('assets/fonts/Splatink.otf') format('opentype');
+      font-display: swap;
     }
 
     /* ============================================================
-       RESET + BASE
+       TOKENS
+    ============================================================ */
+    :root {
+      --accent:      #ff3b2e;
+      --accent-ink:  #0a0a0a;
+      --ease:        cubic-bezier(.22,.61,.36,1);
+      --font-display:'Splatink', "Anton", sans-serif;
+      --bg:          #08080a;
+      --ink:         #f5f1e6;
+      --muted:       rgba(245,241,230,.60);
+      --faint:       rgba(245,241,230,.32);
+      --line:        rgba(245,241,230,.14);
+      --card:        rgba(245,241,230,.06);
+      --card-line:   rgba(245,241,230,.12);
+      --blob-blend:  screen;
+      --blob-op:     .42;
+    }
+
+    /* ============================================================
+       RESET
     ============================================================ */
     *{box-sizing:border-box;margin:0;padding:0;}
-    html{scroll-behavior:smooth;}
+    html,body{width:100%;height:100%;overflow:hidden;}
     body{
-      background:var(--bg); color:var(--ink);
+      background:var(--bg);color:var(--ink);
       font-family:"Space Grotesk",system-ui,sans-serif;
       -webkit-font-smoothing:antialiased;
-      overflow-x:hidden;
-      transition:background .5s var(--ease),color .5s var(--ease);
     }
-    img{display:block;max-width:100%;}
     a{color:inherit;text-decoration:none;}
     button{font-family:inherit;cursor:pointer;}
     ::selection{background:var(--accent);color:var(--accent-ink);}
-    .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;}
-    .mono{font-family:"Space Mono",ui-monospace,monospace;}
-    .kicker{
-      font-family:"Space Mono",monospace;
-      font-size:12px;letter-spacing:.34em;text-transform:uppercase;
-      color:var(--accent);
+
+    /* ============================================================
+       BACKGROUND PHOTO LAYER — crossfade slideshow
+    ============================================================ */
+    .bg-stage{
+      position:fixed;inset:0;z-index:0;
+      background:var(--bg);
+    }
+    .bg-slide{
+      position:absolute;inset:0;
+      background-size:cover;
+      background-position:center;
+      opacity:0;
+      transition:opacity 1.6s var(--ease);
+    }
+    .bg-slide.active{opacity:1;}
+    /* Dark overlay so content stays legible */
+    .bg-overlay{
+      position:absolute;inset:0;
+      background:linear-gradient(
+        to bottom,
+        rgba(8,8,10,.38) 0%,
+        rgba(8,8,10,.22) 40%,
+        rgba(8,8,10,.55) 78%,
+        rgba(8,8,10,.92) 100%
+      );
+      z-index:1;
     }
 
     /* ============================================================
-       GLOW FIELD
+       GLOW FIELD — orbs above photo, below content
     ============================================================ */
     .glow-field{
-      position:fixed;inset:0;z-index:0;pointer-events:none;
+      position:fixed;inset:0;z-index:2;pointer-events:none;
       opacity:var(--blob-op);mix-blend-mode:var(--blob-blend);contain:strict;
     }
     .glow{
-      position:absolute;border-radius:50%;transform:translateZ(0);
+      position:absolute;border-radius:50%;
       background:radial-gradient(circle at 50% 50%,
         var(--accent) 0%,
         color-mix(in srgb,var(--accent) 55%,transparent) 36%,
@@ -102,494 +107,366 @@
     .b4{animation:drift4 18s var(--ease) infinite;width:230px;height:230px;top:72%;left:18%;}
     .b5{animation:drift5 21s var(--ease) infinite;width:300px;height:300px;top:4%;left:68%;}
     .b6{animation:drift6 24s var(--ease) infinite;width:210px;height:210px;top:60%;left:44%;}
-    @media(prefers-reduced-motion:reduce){.glow{animation:none!important;}html{scroll-behavior:auto;}}
+    @media(prefers-reduced-motion:reduce){.glow{animation:none!important;}}
+
+    /* ============================================================
+       PAGE SHELL — full viewport, no scroll
+    ============================================================ */
+    .page{
+      position:relative;z-index:3;
+      width:100%;height:100vh;
+      display:flex;flex-direction:column;
+      overflow:hidden;
+    }
 
     /* ============================================================
        NAV
     ============================================================ */
     .nav{
-      position:fixed;top:0;left:0;right:0;z-index:50;
+      flex:0 0 auto;
       display:flex;align-items:center;justify-content:space-between;
-      padding:18px 28px;
-      transition:background .35s var(--ease),border-color .35s var(--ease),padding .35s var(--ease);
-      border-bottom:1px solid transparent;
+      padding:22px 36px;
+      position:relative;z-index:10;
     }
-    .nav.scrolled{
-      background:color-mix(in srgb,var(--bg) 82%,transparent);
-      backdrop-filter:blur(8px);
-      border-bottom:1px solid var(--line);
-      padding:12px 28px;
+    /* Left cluster: nav links */
+    .nav-left{
+      display:flex;align-items:center;gap:28px;
     }
-    .nav-wordmark{
-      font-family:var(--font-display);font-size:22px;letter-spacing:.04em;
-      color:var(--ink);text-decoration:none;
-    }
-    .nav-logo-img{height:30px;filter:var(--logo-filter);transition:height .35s var(--ease);}
-    .nav.scrolled .nav-logo-img{height:24px;}
-    .nav-links{display:flex;align-items:center;gap:30px;}
-    .nav-links a{
-      font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
+    .nav-left a{
+      font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;
       color:var(--muted);transition:color .2s;
     }
-    .nav-links a:hover{color:var(--ink);}
-    .nav-cta{
-      font-family:"Space Grotesk";font-weight:700;font-size:13px;letter-spacing:.12em;
-      text-transform:uppercase;color:var(--accent-ink);background:var(--accent);
-      padding:9px 18px;border-radius:100px;border:none;white-space:nowrap;
-      transition:transform .18s var(--ease),box-shadow .25s;
+    .nav-left a:hover{color:var(--ink);}
+
+    /* Right cluster: nav links */
+    .nav-right{
+      display:flex;align-items:center;gap:28px;
     }
-    .nav-cta:hover{transform:translateY(-1px);box-shadow:0 8px 24px color-mix(in srgb,var(--accent) 45%,transparent);}
-    .nav-burger{display:none;background:none;border:none;color:var(--ink);padding:4px;}
+    .nav-right a{
+      font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;
+      color:var(--muted);transition:color .2s;
+    }
+    .nav-right a:hover{color:var(--ink);}
+
+    /* Center: logo */
+    .nav-logo{
+      position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
+      display:flex;align-items:center;
+    }
+    .nav-logo svg{
+      height:38px;width:auto;
+      fill:var(--ink);
+      transition:fill .2s;
+      filter:drop-shadow(0 2px 12px rgba(0,0,0,.4));
+    }
+    .nav-logo:hover svg{fill:var(--accent);}
+
+    /* Mobile burger */
+    .nav-burger{
+      display:none;background:none;border:none;color:var(--ink);padding:4px;
+      position:relative;z-index:11;
+    }
     .nav-burger svg{width:22px;height:22px;stroke:currentColor;stroke-width:2;stroke-linecap:round;fill:none;}
-    .nav-mobile{
-      display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:49;
-      background:var(--bg);padding:90px 28px 40px;flex-direction:column;gap:32px;
-    }
-    .nav-mobile.open{display:flex;}
-    .nav-mobile a{font-family:"Anton";font-size:clamp(34px,9vw,56px);text-transform:uppercase;color:var(--ink);}
 
     /* ============================================================
-       HERO
+       HERO BODY — center of page
     ============================================================ */
     .hero{
-      position:relative;z-index:2;
-      min-height:100svh;
+      flex:1;
       display:flex;flex-direction:column;align-items:center;justify-content:center;
-      text-align:center;padding:120px 24px 60px;
+      text-align:center;padding:0 24px;
+      position:relative;
     }
-    .hero-inner{position:relative;z-index:3;width:100%;max-width:980px;}
-    [data-theme="midnight"] .hero-inner::before{
-      content:"";position:absolute;left:50%;top:36%;transform:translate(-50%,-50%);
-      width:72%;height:320px;z-index:-1;pointer-events:none;
-      background:radial-gradient(ellipse at center,color-mix(in srgb,var(--accent) 32%,transparent),transparent 70%);
-      filter:blur(50px);
+    /* Subtle radial glow behind text */
+    .hero::before{
+      content:"";position:absolute;left:50%;top:52%;transform:translate(-50%,-50%);
+      width:640px;height:320px;z-index:-1;pointer-events:none;
+      background:radial-gradient(ellipse at center,
+        color-mix(in srgb,var(--accent) 18%,transparent),transparent 70%);
+      filter:blur(40px);
     }
+
     .hero-kicker{
-      display:inline-flex;align-items:center;gap:12px;margin-bottom:30px;
+      display:inline-flex;align-items:center;gap:10px;margin-bottom:22px;
+      font-family:"Space Mono",monospace;
+      font-size:11px;letter-spacing:.34em;text-transform:uppercase;color:var(--accent);
     }
     .hero-kicker .dot{
-      width:8px;height:8px;border-radius:50%;background:var(--accent);
+      width:7px;height:7px;border-radius:50%;background:var(--accent);
       animation:pulse 1.8s var(--ease) infinite;
     }
-    @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.7);}}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.3;transform:scale(.65);}}
 
     .hero-wordmark{
       font-family:var(--font-display);
-      font-size:clamp(60px,14vw,160px);
+      font-size:clamp(56px,13vw,148px);
       line-height:.88;letter-spacing:.02em;text-transform:uppercase;
       color:var(--ink);
-      margin:0 auto 6px;
       animation:float 7s ease-in-out infinite;
       display:block;
+      text-shadow:0 4px 40px rgba(0,0,0,.5);
     }
     .hero-wordmark em{color:var(--accent);font-style:normal;}
-    @keyframes float{0%,100%{transform:translateY(0) rotate(-.4deg);}50%{transform:translateY(-12px) rotate(.4deg);}}
+    @keyframes float{0%,100%{transform:translateY(0) rotate(-.35deg);}50%{transform:translateY(-10px) rotate(.35deg);}}
 
     .hero-sub{
-      font-size:clamp(15px,1.7vw,19px);color:var(--muted);max-width:540px;
-      margin:22px auto 0;line-height:1.5;
+      font-size:clamp(14px,1.5vw,17px);color:var(--muted);
+      margin:18px auto 0;line-height:1.55;max-width:420px;
     }
 
-    .countdown{display:flex;gap:14px;justify-content:center;margin:38px 0 34px;flex-wrap:wrap;}
+    /* Countdown */
+    .countdown{display:flex;gap:12px;justify-content:center;margin:28px 0 26px;flex-wrap:wrap;}
     .cd-unit{
-      min-width:92px;padding:16px 10px 12px;text-align:center;
-      background:var(--card);border:1px solid var(--card-line);border-radius:14px;
+      min-width:80px;padding:13px 8px 10px;text-align:center;
+      background:rgba(8,8,10,.45);backdrop-filter:blur(10px);
+      border:1px solid var(--card-line);border-radius:12px;
     }
-    .cd-num{font-family:"Anton";font-size:clamp(34px,5vw,56px);line-height:.9;}
-    .cd-lbl{font-family:"Space Mono";font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--faint);margin-top:8px;}
+    .cd-num{font-family:var(--font-display);font-size:clamp(28px,4vw,46px);line-height:.9;}
+    .cd-lbl{font-family:"Space Mono";font-size:9px;letter-spacing:.26em;text-transform:uppercase;color:var(--faint);margin-top:7px;}
 
-    .cta-row{display:flex;gap:14px;justify-content:center;align-items:center;flex-wrap:wrap;}
+    /* CTA row */
+    .cta-row{display:flex;gap:12px;justify-content:center;align-items:center;flex-wrap:wrap;}
     .btn{
-      display:inline-flex;align-items:center;gap:10px;
-      font-family:"Space Grotesk";font-weight:700;font-size:15px;letter-spacing:.04em;
-      padding:16px 28px;border-radius:100px;border:1px solid transparent;white-space:nowrap;
-      transition:transform .18s var(--ease),box-shadow .25s,background .25s,color .25s;
+      display:inline-flex;align-items:center;gap:9px;
+      font-family:"Space Grotesk";font-weight:700;font-size:14px;letter-spacing:.05em;
+      padding:14px 26px;border-radius:100px;border:1px solid transparent;white-space:nowrap;
+      transition:transform .18s var(--ease),box-shadow .25s,background .2s,color .2s;
     }
-    .btn svg{width:18px;height:18px;}
-    .btn-primary{background:var(--accent);color:var(--accent-ink);}
-    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 34px color-mix(in srgb,var(--accent) 50%,transparent);}
-    .btn-ghost{background:transparent;color:var(--ink);border-color:var(--line);}
-    .btn-ghost:hover{border-color:var(--ink);transform:translateY(-2px);}
-
-    .scroll-cue{
-      position:absolute;bottom:26px;left:50%;transform:translateX(-50%);
-      font-family:"Space Mono";font-size:10px;letter-spacing:.3em;text-transform:uppercase;
-      color:var(--faint);display:flex;flex-direction:column;align-items:center;gap:8px;z-index:4;
+    .btn svg{width:16px;height:16px;}
+    .btn-primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
+    .btn-primary:hover{transform:translateY(-2px);box-shadow:0 12px 30px color-mix(in srgb,var(--accent) 50%,transparent);}
+    .btn-ghost{
+      background:rgba(8,8,10,.4);backdrop-filter:blur(8px);
+      color:var(--ink);border-color:var(--line);
     }
-    .scroll-cue .line{width:1px;height:34px;background:linear-gradient(var(--faint),transparent);animation:drop 2s var(--ease) infinite;}
-    @keyframes drop{0%{transform:scaleY(0);transform-origin:top;}50%{transform:scaleY(1);transform-origin:top;}51%{transform-origin:bottom;}100%{transform:scaleY(0);transform-origin:bottom;}}
+    .btn-ghost:hover{border-color:rgba(245,241,230,.5);transform:translateY(-2px);}
 
     /* ============================================================
-       SECTION FRAME
+       FOOTER — pinned to bottom
     ============================================================ */
-    .section{position:relative;z-index:2;padding:96px 0;}
-    .section-head{display:flex;align-items:flex-end;justify-content:space-between;gap:20px;margin-bottom:44px;flex-wrap:wrap;}
-    .section-title{font-family:var(--font-display);font-size:clamp(40px,7vw,96px);line-height:.92;text-transform:uppercase;letter-spacing:.005em;}
-    .section-title .accentword{color:var(--accent);}
-    .section-num{font-family:"Space Mono";font-size:12px;letter-spacing:.26em;color:var(--faint);text-transform:uppercase;}
+    .foot{
+      flex:0 0 auto;
+      padding:0 36px 24px;
+      position:relative;z-index:10;
+    }
 
-    /* ============================================================
-       LISTEN / PLATFORMS
-    ============================================================ */
-    .listen{background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);}
-    .platforms{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
-    .plat{
-      display:flex;align-items:center;gap:16px;padding:22px 24px;
-      border:1px solid var(--card-line);border-radius:16px;background:var(--card);
-      cursor:pointer;transition:transform .2s var(--ease),border-color .2s;
+    /* Thin rule */
+    .foot-rule{
+      width:100%;height:1px;
+      background:var(--line);
+      margin-bottom:20px;
     }
-    .plat:hover{transform:translateY(-3px);border-color:var(--accent);}
-    .plat .ic{width:30px;height:30px;flex:0 0 auto;}
-    .plat .ic svg{width:100%;height:100%;}
-    .plat .meta{display:flex;flex-direction:column;gap:2px;}
-    .plat .pname{font-weight:700;font-size:17px;}
-    .plat .paction{font-family:"Space Mono";font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);}
-    .plat .arrow-ic{margin-left:auto;color:var(--faint);transition:transform .2s var(--ease),color .2s;}
-    .plat:hover .arrow-ic{transform:translate(3px,-3px);color:var(--accent);}
 
-    /* ============================================================
-       MUSIC / RELEASES — Homepage grid
-    ============================================================ */
-    .releases{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:18px;}
+    /* Three-column layout: listen | logo | social */
+    .foot-inner{
+      display:grid;
+      grid-template-columns:1fr auto 1fr;
+      align-items:center;
+      gap:20px;
+    }
 
-    /* skeleton loader */
-    .rel-skeleton{
-      border:1px solid var(--card-line);border-radius:18px;overflow:hidden;background:var(--card);
+    /* Icon clusters */
+    .icon-cluster{
+      display:flex;align-items:center;gap:6px;
     }
-    .rel-skeleton .sk-art{aspect-ratio:1;background:var(--card-line);animation:shimmer 1.6s ease-in-out infinite;}
-    .rel-skeleton.feat .sk-art{aspect-ratio:auto;height:240px;}
-    .rel-skeleton .sk-body{padding:18px 20px;display:flex;flex-direction:column;gap:8px;}
-    .rel-skeleton .sk-line{height:14px;border-radius:6px;background:var(--card-line);animation:shimmer 1.6s ease-in-out infinite;}
-    .rel-skeleton .sk-line.short{width:55%;}
-    @keyframes shimmer{0%,100%{opacity:.4;}50%{opacity:.9;}}
+    .icon-cluster.listen{justify-content:flex-end;}
+    .icon-cluster.social{justify-content:flex-start;}
 
-    .rel{
-      border:1px solid var(--card-line);border-radius:18px;overflow:hidden;background:var(--card);
-      display:flex;flex-direction:column;transition:transform .25s var(--ease),border-color .25s;
-    }
-    .rel:hover{transform:translateY(-4px);border-color:var(--accent);}
-    .rel-art{aspect-ratio:1;position:relative;overflow:hidden;}
-    .rel-art img{width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease);}
-    .rel:hover .rel-art img{transform:scale(1.04);}
-    .rel-art .ph{
-      position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;
-      background:
-        repeating-linear-gradient(45deg,color-mix(in srgb,var(--ink) 7%,transparent) 0 2px,transparent 2px 11px),
-        color-mix(in srgb,var(--ink) 5%,transparent);
-    }
-    .rel-art .ph span{font-family:"Space Mono";font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--faint);padding:0 16px;}
-    .rel-feat .rel-art{aspect-ratio:auto;flex:1;min-height:240px;}
-    .rel-badge{
-      position:absolute;top:14px;left:14px;z-index:2;
-      font-family:"Space Mono";font-size:10px;letter-spacing:.2em;text-transform:uppercase;
-      background:var(--accent);color:var(--accent-ink);padding:6px 11px;border-radius:100px;
-    }
-    .rel-body{padding:18px 20px;display:flex;align-items:center;justify-content:space-between;gap:14px;}
-    .rel-name{font-weight:700;font-size:18px;}
-    .rel-type{font-family:"Space Mono";font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);margin-top:3px;}
-    .rel-play{
-      width:44px;height:44px;border-radius:50%;flex:0 0 auto;
+    .icon-btn{
+      width:40px;height:40px;border-radius:50%;
       display:flex;align-items:center;justify-content:center;
-      background:var(--accent);color:var(--accent-ink);border:none;
-      transition:transform .18s var(--ease);text-decoration:none;
+      color:var(--muted);
+      background:rgba(8,8,10,.35);backdrop-filter:blur(8px);
+      border:1px solid var(--line);
+      transition:all .2s var(--ease);
+      position:relative;
     }
-    .rel-play:hover{transform:scale(1.08);}
-    .rel-play svg{width:16px;height:16px;}
+    .icon-btn svg{width:17px;height:17px;fill:currentColor;}
+    .icon-btn:hover{
+      color:var(--ink);
+      border-color:rgba(245,241,230,.35);
+      background:rgba(245,241,230,.1);
+      transform:translateY(-2px);
+    }
+    .icon-btn:hover .icon-tooltip{opacity:1;transform:translateY(-4px);}
 
-    /* See all music link */
-    .music-footer{
-      display:flex;align-items:center;justify-content:center;margin-top:32px;
+    /* Tooltip on hover */
+    .icon-tooltip{
+      position:absolute;bottom:calc(100% + 8px);left:50%;transform:translateX(-50%) translateY(0);
+      font-family:"Space Mono";font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+      white-space:nowrap;color:var(--ink);
+      background:rgba(8,8,10,.85);backdrop-filter:blur(6px);
+      border:1px solid var(--line);border-radius:6px;padding:5px 9px;
+      opacity:0;transition:opacity .2s,transform .2s var(--ease);
+      pointer-events:none;
     }
-    .see-all{
-      font-family:"Space Mono";font-size:12px;letter-spacing:.22em;text-transform:uppercase;
-      color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:2px;
-      transition:color .2s,border-color .2s;
-    }
-    .see-all:hover{color:var(--accent);border-color:var(--accent);}
 
-    /* ============================================================
-       VIDEO SECTION — homepage
-    ============================================================ */
-    .video-block{margin-top:40px;display:grid;grid-template-columns:1fr;gap:14px;}
+    /* Divider between clusters and logo */
+    .foot-divider{
+      width:1px;height:28px;background:var(--line);
+      display:inline-block;margin:0 4px;
+      opacity:.6;
+    }
 
-    /* Hero video — big feature */
-    .vhero{
-      position:relative;border-radius:18px;overflow:hidden;cursor:pointer;
-      background:var(--bg2);border:1px solid var(--card-line);
-      aspect-ratio:16/8;
-    }
-    .vhero-thumb{
-      position:absolute;inset:0;
-      background-size:cover;background-position:center;
-      transition:transform .6s var(--ease),filter .4s;
-      filter:brightness(.75);
-    }
-    .vhero:hover .vhero-thumb{transform:scale(1.03);filter:brightness(.55);}
-    .vhero-grad{
-      position:absolute;inset:0;
-      background:linear-gradient(to top,rgba(8,8,10,.92) 0%,rgba(8,8,10,.3) 40%,transparent 70%);
-    }
-    .vhero-body{
-      position:absolute;bottom:0;left:0;right:0;padding:32px 36px;
-      display:flex;align-items:flex-end;justify-content:space-between;gap:24px;
-    }
-    .vhero-cat{
-      font-family:"Space Mono";font-size:10px;letter-spacing:.28em;text-transform:uppercase;
-      color:var(--accent);margin-bottom:8px;
-    }
-    .vhero-title{
-      font-family:var(--font-display);font-size:clamp(22px,3.5vw,42px);
-      line-height:.95;text-transform:uppercase;
-    }
-    .vhero-desc{
-      margin-top:8px;font-size:14px;color:var(--muted);max-width:46ch;
-      display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
-    }
-    .vhero-play{
-      flex-shrink:0;width:64px;height:64px;border-radius:50%;
-      background:var(--accent);color:var(--accent-ink);border:none;
+    /* Footer logo */
+    .foot-logo{
       display:flex;align-items:center;justify-content:center;
-      box-shadow:0 8px 32px rgba(0,0,0,.5);
-      transition:transform .2s var(--ease),box-shadow .2s;cursor:pointer;
     }
-    .vhero:hover .vhero-play{transform:scale(1.1);box-shadow:0 14px 44px color-mix(in srgb,var(--accent) 50%,transparent);}
-    .vhero-play svg{width:22px;height:22px;margin-left:3px;}
+    .foot-logo svg{
+      height:32px;width:auto;
+      fill:var(--muted);
+      transition:fill .25s var(--ease);
+      filter:drop-shadow(0 1px 8px rgba(0,0,0,.4));
+    }
+    .foot-logo:hover svg{fill:var(--ink);}
 
-    /* iframe slot — hidden until clicked */
-    .vhero-iframe{
-      position:absolute;inset:0;z-index:4;
-      display:none;
+    /* Footer copyright — below grid */
+    .foot-copy{
+      text-align:center;margin-top:14px;
+      font-family:"Space Mono";font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+      color:var(--faint);
     }
-    .vhero-iframe.active{display:block;}
-    .vhero-iframe iframe{width:100%;height:100%;border:none;display:block;}
-
-    /* Two smaller video cards below */
-    .vgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-    .vcard{
-      position:relative;border-radius:14px;overflow:hidden;cursor:pointer;
-      background:var(--bg2);border:1px solid var(--card-line);
-      aspect-ratio:16/9;
-    }
-    .vcard-thumb{
-      position:absolute;inset:0;background-size:cover;background-position:center;
-      transition:transform .5s var(--ease),filter .3s;filter:brightness(.7);
-    }
-    .vcard:hover .vcard-thumb{transform:scale(1.05);filter:brightness(.45);}
-    .vcard-grad{
-      position:absolute;inset:0;
-      background:linear-gradient(to top,rgba(8,8,10,.9) 0%,transparent 55%);
-    }
-    .vcard-body{
-      position:absolute;bottom:0;left:0;right:0;padding:18px 20px;
-      display:flex;align-items:flex-end;justify-content:space-between;gap:12px;
-    }
-    .vcard-cat{
-      font-family:"Space Mono";font-size:9px;letter-spacing:.26em;text-transform:uppercase;
-      color:var(--accent);margin-bottom:5px;
-    }
-    .vcard-title{
-      font-weight:700;font-size:clamp(14px,1.4vw,17px);line-height:1.2;
-    }
-    .vcard-play{
-      flex-shrink:0;width:40px;height:40px;border-radius:50%;
-      background:rgba(255,255,255,.15);backdrop-filter:blur(6px);
-      border:1px solid rgba(255,255,255,.25);color:white;
-      display:flex;align-items:center;justify-content:center;
-      transition:background .2s var(--ease),transform .2s;
-    }
-    .vcard:hover .vcard-play{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);transform:scale(1.08);}
-    .vcard-play svg{width:14px;height:14px;margin-left:2px;}
-    .vcard-iframe{position:absolute;inset:0;z-index:4;display:none;}
-    .vcard-iframe.active{display:block;}
-    .vcard-iframe iframe{width:100%;height:100%;border:none;display:block;}
-
-    /* skeleton for video block */
-    .vsk{border-radius:18px;aspect-ratio:16/8;background:var(--card);animation:shimmer 1.6s ease-in-out infinite;}
-    .vsk-sm{border-radius:14px;aspect-ratio:16/9;background:var(--card);animation:shimmer 1.6s ease-in-out infinite;}
-
-    .vlabel{font-family:"Space Mono";font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);}
-
-    /* video lightbox for homepage (mobile-friendly) */
-    .vid-lightbox{
-      position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.92);backdrop-filter:blur(10px);
-      display:flex;align-items:center;justify-content:center;padding:20px;
-      opacity:0;pointer-events:none;transition:opacity .28s var(--ease);
-    }
-    .vid-lightbox.open{opacity:1;pointer-events:auto;}
-    .vid-lightbox-inner{
-      position:relative;width:100%;max-width:900px;
-      transform:scale(.96);transition:transform .3s var(--ease);
-    }
-    .vid-lightbox.open .vid-lightbox-inner{transform:scale(1);}
-    .vid-lightbox-inner iframe{
-      width:100%;aspect-ratio:16/9;border:none;border-radius:14px;display:block;
-    }
-    .vid-lightbox-close{
-      position:absolute;top:-44px;right:0;
-      background:none;border:none;color:white;
-      font-family:"Space Mono";font-size:11px;letter-spacing:.22em;text-transform:uppercase;
-      cursor:pointer;opacity:.7;transition:opacity .2s;
-    }
-    .vid-lightbox-close:hover{opacity:1;}
 
     /* ============================================================
-       BAND
+       MOBILE NAV OVERLAY
     ============================================================ */
-    .band{display:grid;grid-template-columns:1.25fr .9fr;gap:48px;align-items:center;}
-    .band-photo{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--card-line);}
-    .band-photo-ph{
-      aspect-ratio:4/3;background:var(--card);
-      display:flex;align-items:center;justify-content:center;
-      background:
-        repeating-linear-gradient(45deg,color-mix(in srgb,var(--ink) 6%,transparent) 0 2px,transparent 2px 13px),
-        color-mix(in srgb,var(--ink) 4%,transparent);
+    .nav-mobile{
+      display:none;position:fixed;inset:0;z-index:200;
+      background:rgba(8,8,10,.97);backdrop-filter:blur(12px);
+      flex-direction:column;align-items:center;justify-content:center;gap:28px;
+      padding:40px;
     }
-    .band-photo-ph span{font-family:"Space Mono";font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);}
-    .band-photo img{width:100%;transition:transform 1s var(--ease);}
-    .band-photo:hover img{transform:scale(1.03);}
-    .band-copy h3{font-family:"Anton";font-size:clamp(30px,4vw,50px);line-height:.96;text-transform:uppercase;margin-bottom:18px;}
-    .band-copy p{color:var(--muted);line-height:1.65;font-size:16px;max-width:46ch;}
-    .members{margin-top:28px;display:flex;flex-direction:column;}
-    .member{display:flex;align-items:baseline;justify-content:space-between;gap:16px;padding:14px 0;border-top:1px solid var(--line);}
-    .member:last-child{border-bottom:1px solid var(--line);}
-    .member .mname{font-weight:700;font-size:18px;}
-    .member .mrole{font-family:"Space Mono";font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);}
+    .nav-mobile.open{display:flex;}
+    .nav-mobile a{
+      font-family:var(--font-display);
+      font-size:clamp(36px,10vw,60px);text-transform:uppercase;
+      color:var(--ink);transition:color .2s;
+    }
+    .nav-mobile a:hover{color:var(--accent);}
+    .nav-mobile-close{
+      position:absolute;top:24px;right:28px;
+      background:none;border:none;color:var(--ink);padding:4px;
+    }
+    .nav-mobile-close svg{width:24px;height:24px;stroke:currentColor;stroke-width:2;stroke-linecap:round;fill:none;}
 
     /* ============================================================
-       TOUR
-    ============================================================ */
-    .tour-list{display:flex;flex-direction:column;}
-    .tour-row{
-      display:grid;grid-template-columns:130px 1fr auto auto;gap:24px;align-items:center;
-      padding:22px 8px;border-top:1px solid var(--line);
-      transition:background .2s,padding .2s var(--ease);
-    }
-    .tour-row:last-child{border-bottom:1px solid var(--line);}
-    .tour-row:hover{background:var(--card);padding-left:18px;}
-    .tour-date{font-family:"Anton";font-size:22px;text-transform:uppercase;}
-    .tour-date small{display:block;font-family:"Space Mono";font-size:11px;letter-spacing:.12em;color:var(--faint);margin-top:2px;}
-    .tour-venue{font-weight:600;font-size:17px;}
-    .tour-city{font-family:"Space Mono";font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-top:3px;}
-    .tour-status{font-family:"Space Mono";font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);}
-    .tour-tix{
-      font-family:"Space Grotesk";font-weight:700;font-size:13px;letter-spacing:.1em;text-transform:uppercase;
-      padding:10px 20px;border-radius:100px;border:1px solid var(--line);background:transparent;color:var(--ink);
-      transition:all .18s var(--ease);
-    }
-    .tour-tix:hover{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
-    .tour-tix.sold{opacity:.4;pointer-events:none;}
-
-    /* ============================================================
-       NEWSLETTER
-    ============================================================ */
-    .news{background:var(--bg2);border-top:1px solid var(--line);}
-    .news-inner{text-align:center;max-width:620px;margin:0 auto;}
-    .news-inner h2{font-family:"Anton";font-size:clamp(34px,5.5vw,68px);line-height:.94;text-transform:uppercase;margin-bottom:14px;}
-    .news-inner p{color:var(--muted);margin-bottom:30px;font-size:16px;}
-    .news-form{display:flex;gap:10px;max-width:480px;margin:0 auto;}
-    .news-form input{
-      flex:1;background:var(--card);border:1px solid var(--card-line);color:var(--ink);
-      padding:16px 20px;border-radius:100px;font-family:"Space Grotesk";font-size:15px;outline:none;
-      transition:border-color .2s;
-    }
-    .news-form input:focus{border-color:var(--accent);}
-    .news-form input::placeholder{color:var(--faint);}
-    .news-ok{color:var(--accent);font-family:"Space Mono";letter-spacing:.12em;text-transform:uppercase;font-size:13px;}
-
-    /* ============================================================
-       FOOTER
-    ============================================================ */
-    .foot{position:relative;z-index:2;padding:70px 0 40px;border-top:1px solid var(--line);}
-    .foot-top{display:flex;justify-content:space-between;align-items:flex-start;gap:40px;flex-wrap:wrap;margin-bottom:50px;}
-    .foot-wordmark{font-family:"Anton";font-size:28px;letter-spacing:.04em;color:var(--ink);display:block;margin-bottom:14px;}
-    .foot-tag{color:var(--muted);font-size:14px;max-width:30ch;line-height:1.5;}
-    .foot-cols{display:flex;gap:64px;flex-wrap:wrap;}
-    .foot-col h5{font-family:"Space Mono";font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);margin-bottom:16px;}
-    .foot-col a{display:block;font-size:15px;color:var(--muted);margin-bottom:11px;transition:color .18s;}
-    .foot-col a:hover{color:var(--accent);}
-    .foot-bottom{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;padding-top:28px;border-top:1px solid var(--line);}
-    .foot-bottom .mono{font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);}
-    .foot-socials{display:flex;gap:12px;}
-    .foot-socials a{
-      width:40px;height:40px;border-radius:50%;border:1px solid var(--line);
-      display:flex;align-items:center;justify-content:center;color:var(--muted);
-      transition:all .18s var(--ease);
-    }
-    .foot-socials a:hover{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);transform:translateY(-2px);}
-    .foot-socials svg{width:17px;height:17px;}
-
-    /* ============================================================
-       MODALS
+       NEWSLETTER MODAL
     ============================================================ */
     .modal-scrim{
-      position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.7);backdrop-filter:blur(6px);
+      position:fixed;inset:0;z-index:300;
+      background:rgba(0,0,0,.75);backdrop-filter:blur(8px);
       display:flex;align-items:center;justify-content:center;padding:24px;
       opacity:0;pointer-events:none;transition:opacity .28s var(--ease);
     }
     .modal-scrim.open{opacity:1;pointer-events:auto;}
+
     .modal{
-      background:var(--bg2);border:1px solid var(--card-line);border-radius:22px;padding:40px;
-      max-width:440px;width:100%;text-align:center;
-      transform:translateY(16px) scale(.97);
-      transition:transform .3s var(--ease);position:relative;
+      background:rgba(12,12,16,.96);
+      border:1px solid var(--card-line);border-radius:22px;
+      padding:44px 40px;max-width:460px;width:100%;
+      text-align:center;position:relative;
+      transform:translateY(14px) scale(.97);
+      transition:transform .3s var(--ease);
+      backdrop-filter:blur(20px);
     }
     .modal-scrim.open .modal{transform:translateY(0) scale(1);}
-    .modal h3{font-family:"Anton";font-size:34px;text-transform:uppercase;margin-bottom:8px;}
-    .modal p{color:var(--muted);font-size:15px;margin-bottom:26px;}
-    .presave-opts{display:flex;flex-direction:column;gap:10px;}
-    .ps{
-      display:flex;align-items:center;gap:14px;padding:15px 20px;border-radius:12px;
-      border:1px solid var(--card-line);background:var(--card);cursor:pointer;
-      transition:all .18s var(--ease);
-    }
-    .ps:hover{border-color:var(--accent);transform:translateY(-2px);}
-    .ps .ic{width:24px;height:24px;flex:0 0 auto;}
-    .ps .ic svg{width:100%;height:100%;}
-    .ps .ps-name{font-weight:700;}
-    .ps .arrow-ic{margin-left:auto;color:var(--faint);}
+
     .modal-close{
-      position:absolute;top:16px;right:16px;width:34px;height:34px;border-radius:50%;
-      border:1px solid var(--card-line);background:transparent;color:var(--ink);
-      display:flex;align-items:center;justify-content:center;transition:all .18s;
+      position:absolute;top:16px;right:16px;
+      width:32px;height:32px;border-radius:50%;
+      border:1px solid var(--card-line);background:transparent;color:var(--muted);
+      display:flex;align-items:center;justify-content:center;
+      transition:all .18s;
     }
     .modal-close:hover{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
-    .modal-close svg{width:16px;height:16px;}
+    .modal-close svg{width:14px;height:14px;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;fill:none;}
 
-    /* ============================================================
-       SCROLL REVEAL
-    ============================================================ */
-    .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s var(--ease),transform .7s var(--ease);}
-    .reveal.in{opacity:1;transform:none;}
+    /* Pre-save modal */
+    .modal-title{
+      font-family:var(--font-display);font-size:clamp(32px,5vw,48px);
+      text-transform:uppercase;line-height:.92;margin-bottom:10px;
+    }
+    .modal-sub{color:var(--muted);font-size:14px;line-height:1.55;margin-bottom:28px;}
+
+    .presave-opts{display:flex;flex-direction:column;gap:10px;}
+    .ps{
+      display:flex;align-items:center;gap:14px;padding:15px 20px;
+      border-radius:12px;border:1px solid var(--card-line);background:var(--card);
+      transition:all .18s var(--ease);cursor:pointer;
+    }
+    .ps:hover{border-color:var(--accent);transform:translateY(-2px);}
+    .ps .ps-ic{width:22px;height:22px;flex:0 0 auto;fill:currentColor;}
+    .ps .ps-ic svg{width:100%;height:100%;}
+    .ps .ps-name{font-weight:700;font-size:15px;}
+    .ps .ps-arrow{margin-left:auto;color:var(--faint);}
+    .ps .ps-arrow svg{width:16px;height:16px;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;fill:none;}
+
+    /* Newsletter modal */
+    .news-kicker{
+      font-family:"Space Mono";font-size:10px;letter-spacing:.32em;text-transform:uppercase;
+      color:var(--accent);margin-bottom:14px;
+    }
+    .news-body{margin-bottom:26px;color:var(--muted);font-size:14px;line-height:1.55;}
+    .news-form{display:flex;flex-direction:column;gap:10px;}
+    .news-form input{
+      background:var(--card);border:1px solid var(--card-line);color:var(--ink);
+      padding:15px 20px;border-radius:12px;
+      font-family:"Space Grotesk";font-size:15px;outline:none;
+      transition:border-color .2s;
+      text-align:center;
+    }
+    .news-form input:focus{border-color:var(--accent);}
+    .news-form input::placeholder{color:var(--faint);}
+    .news-submit{
+      background:var(--accent);color:var(--accent-ink);
+      font-family:"Space Grotesk";font-weight:700;font-size:14px;letter-spacing:.06em;
+      padding:15px 28px;border-radius:100px;border:none;
+      transition:transform .18s var(--ease),box-shadow .2s;
+    }
+    .news-submit:hover{transform:translateY(-2px);box-shadow:0 10px 28px color-mix(in srgb,var(--accent) 45%,transparent);}
+    .news-ok{
+      color:var(--accent);font-family:"Space Mono";
+      font-size:13px;letter-spacing:.14em;text-transform:uppercase;
+      margin-top:10px;display:none;
+    }
+    .news-legal{
+      margin-top:14px;font-size:11px;color:var(--faint);line-height:1.5;
+    }
 
     /* ============================================================
        RESPONSIVE
     ============================================================ */
-    @media(max-width:900px){
-      .nav-links{display:none;}
+    @media(max-width:800px){
+      .nav-left,.nav-right{display:none;}
       .nav-burger{display:block;}
-      .platforms{grid-template-columns:1fr 1fr;}
-      .releases{grid-template-columns:1fr 1fr;}
-      .rel-feat{grid-column:1/-1;}
-      .band{grid-template-columns:1fr;gap:30px;}
-      .tour-row{grid-template-columns:90px 1fr auto;}
-      .tour-status{display:none;}
+      .nav-logo svg{height:30px;}
+      .foot-inner{grid-template-columns:1fr 1fr;}
+      .icon-cluster.listen{grid-column:1;justify-content:flex-start;}
+      .icon-cluster.social{grid-column:2;justify-content:flex-end;}
+      .foot-logo{display:none;}
+      .foot-divider{display:none;}
+      .countdown{gap:8px;}
+      .cd-unit{min-width:66px;padding:11px 6px 8px;}
     }
-    @media(max-width:560px){
-      .wrap{padding:0 18px;}
-      .platforms{grid-template-columns:1fr;}
-      .releases{grid-template-columns:1fr;}
-      .cd-unit{min-width:70px;}
-      .news-form{flex-direction:column;}
-      .news-form .btn-primary{justify-content:center;}
-      .tour-row{grid-template-columns:70px 1fr;row-gap:6px;}
-      .tour-tix{grid-column:2;justify-self:start;}
-      .foot-cols{gap:32px;}
+    @media(max-width:480px){
+      .nav{padding:16px 20px;}
+      .foot{padding:0 20px 18px;}
+      .icon-btn{width:36px;height:36px;}
+      .icon-btn svg{width:15px;height:15px;}
+      .cta-row{gap:10px;}
+      .btn{padding:13px 20px;font-size:13px;}
     }
   </style>
 </head>
 <body>
 
-<!-- ── Glow field ── -->
+<!-- ══ Background photo stage ══ -->
+<div class="bg-stage" id="bg-stage">
+  <!-- Slides injected by JS -->
+  <div class="bg-overlay"></div>
+</div>
+
+<!-- ══ Orb glow field ══ -->
 <div class="glow-field" aria-hidden="true">
   <div class="glow b1"></div>
   <div class="glow b2"></div>
@@ -599,719 +476,358 @@
   <div class="glow b6"></div>
 </div>
 
-<!-- ── Nav ── -->
-<nav class="nav" id="nav">
-  <a href="#top" class="nav-wordmark">WD-HAN</a>
-  <div class="nav-links">
-    <a href="#listen">Listen</a>
-    <a href="#music">Music</a>
-    <a href="#band">Band</a>
-    <a href="#tour">Tour</a>
-    <a href="https://your-shopify-store.myshopify.com">Merch</a>
-    <a href="music.html">Music</a>
-    <a href="videos.html">Videos</a>
-  </div>
-  <button class="nav-cta" id="nav-presave-btn">Pre-Save</button>
-  <button class="nav-burger" id="nav-burger-btn" aria-label="Menu">
-    <svg viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
-      <line x1="2" y1="5" x2="20" y2="5"/><line x1="2" y1="11" x2="20" y2="11"/><line x1="2" y1="17" x2="20" y2="17"/>
-    </svg>
-  </button>
-</nav>
+<!-- ══ Page shell ══ -->
+<div class="page">
 
-<!-- ── Mobile nav overlay ── -->
-<nav class="nav-mobile" id="nav-mobile">
-  <a href="#listen" class="nav-mobile-link">Listen</a>
-  <a href="#music" class="nav-mobile-link">Music</a>
-  <a href="#band" class="nav-mobile-link">Band</a>
-  <a href="#tour" class="nav-mobile-link">Tour</a>
-  <a href="https://your-shopify-store.myshopify.com" class="nav-mobile-link">Merch</a>
-  <a href="music.html" class="nav-mobile-link">Music</a>
-  <a href="videos.html" class="nav-mobile-link">Videos</a>
-</nav>
+  <!-- ── Nav ── -->
+  <nav class="nav">
+    <!-- Left links -->
+    <div class="nav-left">
+      <a href="about.html">The Band</a>
+      <a href="music.html">Music</a>
+      <a href="videos.html">Videos</a>
+    </div>
 
-<!-- ── Hero ── -->
-<header class="hero" id="top">
-  <div class="hero-inner">
-    <div class="hero-kicker kicker"><span class="dot"></span> New Single</div>
-    <span class="hero-wordmark">Wild<br><em>Things</em></span>
-    <p class="hero-sub" id="hero-sub-text">The new single from WD-HAN. Out <strong>June 12</strong>. Pre-save it now and hear it the second it drops.</p>
+    <!-- Centre logo -->
+    <a href="/" class="nav-logo" aria-label="WD-HAN home">
+      <!-- SVG logo — fill set by CSS -->
+      <svg viewBox="0 0 400 370" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <g>
+          <path d="M175.919,182.501 C184.816,181.582 190.177,176.624 196.674,163.107 L206.221,143.586 C210.982,132.818 214.134,124.234 217.242,113.452 C224.768,86.799 230.381,75.392 246.422,52.998 C253.945,42.311 257.798,31.636 256.973,23.647 C255.38,8.212 243.454,-0.651 226.203,1.129 C215.671,2.216 209.132,13.536 208.627,31.756 C207.413,78.68 187.206,138.942 172.134,140.498 C164.507,141.285 158.385,135.31 156.961,121.509 C155.949,111.703 158.581,99.87 164.282,87.536 C172.439,70.544 178.561,48.073 177.605,38.812 C176.949,32.457 175.354,27.666 169.206,24.997 C163.84,22.798 160.484,24.062 156.532,26.672 C150.007,31.016 145.202,39.587 141.736,52.241 C138.973,62.803 137.592,74.324 136.332,83.447 C130.907,119.794 121.723,139.277 109.557,140.533 C104.472,141.058 101.825,136.743 100.756,126.392 C98.713,106.599 104.028,86.965 117.652,64.27 C124.573,53.095 128.314,41.33 127.471,33.159 C126.065,19.54 115.629,10.89 102.374,12.258 C84.578,14.095 77.41,33.554 81.196,70.235 C82.545,83.309 83.625,97.329 81.725,110.922 L76.74,142.635 C76.132,145.635 76.031,148.214 76.274,150.575 C77.83,165.647 92.31,177.916 106.655,176.436 C110.832,176.005 115.31,173.157 125.255,164.606 C130.29,160.049 133.44,156.787 136.728,156.631 C140.397,156.62 143.859,159.933 148.553,168.074 C154.981,178.789 164.297,183.7 175.919,182.501 z"/>
+          <path d="M247.679,168.304 C252.037,167.854 265.075,160.819 277.926,151.968 C288.891,144.413 301.109,136.545 305.969,133.842 C330.555,119.559 367.131,82.75 363.757,50.064 C362.183,34.81 347.809,21.796 336.81,13.021 C329.197,6.832 309.782,1.863 293.802,3.512 C286.72,4.243 279.331,5.556 274.522,6.97 C270.602,8.109 262.869,9.641 257.966,10.147 C246.163,11.365 242.054,16.01 243.141,26.542 C243.572,30.719 244.967,35.346 247.214,39.335 C249.336,43.888 250.675,47.971 251.05,51.603 C251.312,54.145 251.193,56.543 250.71,58.979 C244.541,89.896 247.462,77.299 239.421,107.859 C237.754,114.822 234.841,123.932 232.641,129.297 C229.816,137.48 229.458,139.352 229.814,142.803 C231.051,154.787 240.96,168.997 247.679,168.304 z M275.328,123.24 C266.793,124.121 261.184,119.561 260.303,111.026 C256.892,77.977 284.163,39.926 313.581,36.89 C322.66,35.953 327.086,39.717 328.06,49.16 C330.703,74.764 304.563,120.222 275.328,123.24 z"/>
+        </g>
+        <g>
+          <path d="M47.157,369.063 C58.597,367.883 62.688,357.734 60.476,336.306 C59.295,324.866 59.366,318.436 60.802,307.46 C63.744,284.399 65.554,282.377 87.163,280.147 C98.967,278.929 99.68,280.507 98.876,290.5 C97.615,299.623 94.114,306.591 91,315.538 C88.118,323.176 87.008,328.429 87.439,332.606 C88.264,340.596 98.574,349.809 106.019,349.04 C114.554,348.159 118.037,341.01 116.631,327.391 C114.082,302.695 119.611,276.247 127.601,275.423 C128.691,275.31 129.981,275.361 131.452,275.392 C132.742,275.443 133.831,275.33 135.103,275.199 C147.087,273.962 155.097,267.997 154.347,260.733 C153.673,254.196 149.084,250.632 140.963,250.186 C139.473,249.972 137.075,249.853 134.821,249.351 C132.185,248.706 130.801,247.748 130.67,246.476 C130.351,243.389 134.148,232.17 138.91,221.401 C151.056,196.84 154.064,188.638 153.464,182.827 C152.639,174.838 142.204,166.188 134.395,166.994 C131.671,167.275 128.659,168.32 126.505,170.561 C123.68,173.422 122.095,177.623 121.33,182.657 C117.022,210.263 112.251,235.164 111.085,239.872 C109.706,246.071 106.631,250.059 101.534,252.236 C96.944,253.995 91.114,254.413 84.759,255.069 C77.858,255.781 75.166,254.591 74.772,250.777 C74.229,245.511 78.445,234.799 85.981,222.459 C91.781,212.868 94.495,203.595 93.67,195.606 C92.508,184.347 81.703,173.9 72.261,174.875 C59.913,176.149 52.67,194.882 55.144,218.852 C55.912,226.297 57.507,236.41 55.845,245.207 C54.133,255.293 47.758,261.09 37.226,262.177 C22.517,263.695 8.352,270.479 5.427,275.92 C3.115,280.196 2.136,292.043 6.988,292.826 C13.731,294.149 32.01,289.877 41.428,286.886 C43.569,286.298 44.571,287.112 44.683,288.202 C44.815,289.473 42.758,299.779 36.092,316.984 C30.435,331.515 26.976,340.681 27.726,347.945 C28.738,357.751 39.893,369.813 47.157,369.063 z"/>
+          <path d="M148.184,350.378 C154.702,349.521 161.462,333.224 161.984,325.829 L164.568,304.641 C166.6,292.319 171.975,280.386 177.555,275.772 C180.129,274.039 185.846,272.531 193.654,271.725 L205.057,270.181 C209.778,269.694 210.999,270.852 211.881,274.065 C212.782,277.459 213.357,281.253 213.844,285.975 C214.632,293.601 213.903,304.321 214.315,308.316 C215.496,319.756 225.649,331.004 234.002,330.142 C241.447,329.373 250.737,314.467 249.762,305.024 C249.462,302.119 246.683,296.533 243.472,292.093 C241.92,289.5 238.365,285.279 238.008,281.829 C236.753,269.663 242.02,263.797 252.734,262.691 C264.719,261.454 275.441,251.538 274.522,242.641 C274.166,239.19 271.618,237.618 267.078,238.087 C265.807,238.218 264.192,238.568 260.816,239.651 C257.097,240.952 252.776,241.765 248.6,242.196 C241.699,242.908 240.497,241.931 239.823,235.394 C239.448,231.762 239.505,226.985 240.19,219.39 C241.576,209.704 239.993,203.26 240.896,196.01 C242.125,188.358 244.444,180.595 243.619,172.605 C242.532,162.073 230.612,155.044 217.356,156.413 C214.088,156.75 209.967,157.726 204.907,160.267 C197.581,163.959 187.128,172.93 188.046,181.827 C190.539,205.979 170.41,251 156.61,252.425 L147.205,253.762 C107.224,259.357 91.902,256.717 80.555,264.128 C69.207,271.539 81.769,291.898 89.759,291.074 C92.12,290.83 95.37,290.311 100.95,285.698 C109.066,278.987 133.399,276.476 147.713,276.467 C151.564,276.436 152.277,278.014 151.18,281.614 C148.843,289.197 138.627,304.015 134.294,306.481 C126.046,311.921 121.26,320.673 122.103,328.844 C122.947,337.016 136.944,351.721 148.184,350.378 z M210.084,245.988 C201.55,246.869 195.639,244.726 195.208,240.549 C194.346,232.196 204.719,215.343 211.075,214.687 C214.162,214.368 216.165,215.997 217.103,219.754 C218.148,222.766 218.379,226.78 218.735,230.23 C219.747,240.035 216.803,245.294 210.084,245.988 z"/>
+          <path d="M263.988,334.388 C269.617,333.807 274.083,327.29 277.367,314.655 C279.987,304.474 280.985,292.809 281.8,286.485 C285.213,257.32 295.452,226.716 301.989,226.042 C307.8,225.442 312.256,233.057 315.559,249.05 C318.142,261.629 319.077,276.031 319.715,282.205 C322.695,311.078 328.04,318.417 344.928,316.674 C356.005,315.531 364.404,306.222 364.726,293.342 C365.358,269.236 375.537,225.608 387.088,202.393 C395.245,185.401 397.169,179.147 396.288,170.612 C394.995,158.082 381.56,148.825 370.107,151.658 C360.432,153.942 356.348,160.603 356.415,170.139 L356.522,192.518 C356.169,229.993 350.652,260.109 343.933,260.803 C338.667,261.346 333.911,250.826 329.921,229.949 C326.925,213.374 325.414,195.178 324.833,189.549 C322.284,164.853 314.335,155.396 297.447,157.139 C280.741,158.863 272.146,175.166 274.695,199.862 C275.688,209.486 275.354,218.697 273.831,225.277 C270.641,238.82 259.902,266.356 251.289,282.477 L242.099,300.126 C239.412,306.093 238.553,310.219 238.946,314.032 C240.09,325.109 252.911,335.531 263.988,334.388 z"/>
+        </g>
+      </svg>
+    </a>
 
-    <div class="countdown" id="countdown">
+    <!-- Right links -->
+    <div class="nav-right">
+      <a href="shows.html">Tour</a>
+      <a href="https://wd-han.myshopify.com" target="_blank" rel="noopener">Merch</a>
+      <a href="/sync">Sync</a>
+    </div>
+
+    <!-- Mobile burger -->
+    <button class="nav-burger" id="nav-burger-btn" aria-label="Open menu">
+      <svg viewBox="0 0 22 22"><line x1="2" y1="5" x2="20" y2="5"/><line x1="2" y1="11" x2="20" y2="11"/><line x1="2" y1="17" x2="20" y2="17"/></svg>
+    </button>
+  </nav>
+
+  <!-- ── Hero ── -->
+  <main class="hero" role="main">
+    <div class="hero-kicker"><span class="dot"></span>New Single</div>
+
+    <span class="hero-wordmark" id="hero-wordmark">Wild<br><em>Things</em></span>
+
+    <p class="hero-sub" id="hero-sub">
+      The new single from WD-HAN. Out <strong>June 12</strong>. Pre-save it now.
+    </p>
+
+    <div class="countdown">
       <div class="cd-unit"><div class="cd-num" id="cd-days">—</div><div class="cd-lbl">Days</div></div>
       <div class="cd-unit"><div class="cd-num" id="cd-hrs">—</div><div class="cd-lbl">Hours</div></div>
-      <div class="cd-unit"><div class="cd-num" id="cd-min">—</div><div class="cd-lbl">Minutes</div></div>
-      <div class="cd-unit"><div class="cd-num" id="cd-sec">—</div><div class="cd-lbl">Seconds</div></div>
+      <div class="cd-unit"><div class="cd-num" id="cd-min">—</div><div class="cd-lbl">Mins</div></div>
+      <div class="cd-unit"><div class="cd-num" id="cd-sec">—</div><div class="cd-lbl">Secs</div></div>
     </div>
 
     <div class="cta-row">
-      <button class="btn btn-primary" id="hero-presave-btn">
+      <a class="btn btn-primary" href="https://nfan.link/wdhan" target="_blank" rel="noopener">
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.5 17.3a.75.75 0 0 1-1.03.25c-2.82-1.72-6.37-2.11-10.55-1.16a.75.75 0 1 1-.33-1.46c4.58-1.04 8.5-.6 11.66 1.34.36.22.47.69.25 1.03zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.23-1.99-8.16-2.56-11.98-1.4a.94.94 0 1 1-.55-1.8c4.37-1.32 9.8-.68 13.5 1.6.44.27.58.85.32 1.29zm.13-3.4C15.73 8.26 8.5 8.02 4.78 9.15a1.12 1.12 0 1 1-.65-2.15c4.28-1.3 12.26-1.05 16.55 1.5a1.12 1.12 0 1 1-1.15 1.93z"/></svg>
-        Pre-Save the Single
+        Pre-Save
+      </a>
+      <button class="btn btn-ghost" id="subscribe-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3z"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
+        Subscribe
       </button>
-      <button class="btn btn-ghost" id="hero-video-btn">
-        <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>
-        Watch Teaser
-      </button>
     </div>
-  </div>
-  <a href="#listen" class="scroll-cue">Scroll<span class="line"></span></a>
-</header>
+  </main>
 
-<!-- ── Listen ── -->
-<section class="section listen" id="listen">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <h2 class="section-title">Hear it<br><span class="accentword">everywhere</span></h2>
-      <span class="section-num">01 — Stream &amp; Save</span>
-    </div>
-    <div class="platforms">
-      <a class="plat reveal" id="plat-spotify" href="#" data-presave="true">
-        <span class="ic">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.5 17.3a.75.75 0 0 1-1.03.25c-2.82-1.72-6.37-2.11-10.55-1.16a.75.75 0 1 1-.33-1.46c4.58-1.04 8.5-.6 11.66 1.34.36.22.47.69.25 1.03zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.23-1.99-8.16-2.56-11.98-1.4a.94.94 0 1 1-.55-1.8c4.37-1.32 9.8-.68 13.5 1.6.44.27.58.85.32 1.29zm.13-3.4C15.73 8.26 8.5 8.02 4.78 9.15a1.12 1.12 0 1 1-.65-2.15c4.28-1.3 12.26-1.05 16.55 1.5a1.12 1.12 0 1 1-1.15 1.93z"/></svg>
-        </span>
-        <span class="meta"><span class="pname">Spotify</span><span class="paction" id="plat-spotify-action">Pre-save →</span></span>
-        <span class="arrow-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
+  <!-- ── Footer ── -->
+  <footer class="foot">
+    <div class="foot-rule"></div>
+    <div class="foot-inner">
+
+      <!-- LISTEN icons — right of center -->
+      <div class="icon-cluster listen">
+        <a class="icon-btn" href="https://open.spotify.com/artist/2byXGURM0QAhEgdMIWGM5c" target="_blank" rel="noopener" aria-label="Spotify">
+          <svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.5 17.3a.75.75 0 0 1-1.03.25c-2.82-1.72-6.37-2.11-10.55-1.16a.75.75 0 1 1-.33-1.46c4.58-1.04 8.5-.6 11.66 1.34.36.22.47.69.25 1.03zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.23-1.99-8.16-2.56-11.98-1.4a.94.94 0 1 1-.55-1.8c4.37-1.32 9.8-.68 13.5 1.6.44.27.58.85.32 1.29zm.13-3.4C15.73 8.26 8.5 8.02 4.78 9.15a1.12 1.12 0 1 1-.65-2.15c4.28-1.3 12.26-1.05 16.55 1.5a1.12 1.12 0 1 1-1.15 1.93z"/></svg>
+          <span class="icon-tooltip">Spotify</span>
+        </a>
+        <a class="icon-btn" href="#" target="_blank" rel="noopener" aria-label="Apple Music" id="link-apple">
+          <svg viewBox="0 0 24 24"><path d="M16.36 12.6c-.02-2.3 1.88-3.4 1.96-3.46-1.07-1.56-2.73-1.78-3.32-1.8-1.41-.14-2.76.83-3.47.83-.72 0-1.82-.81-3-.79-1.54.02-2.96.9-3.75 2.27-1.6 2.78-.41 6.9 1.15 9.16.76 1.1 1.67 2.34 2.86 2.3 1.15-.05 1.58-.74 2.97-.74 1.38 0 1.77.74 2.98.72 1.23-.02 2.01-1.12 2.76-2.23.87-1.28 1.23-2.52 1.25-2.58-.03-.01-2.4-.92-2.42-3.65zM14.13 5.6c.63-.77 1.06-1.83.94-2.9-.91.04-2.02.61-2.67 1.37-.58.68-1.09 1.76-.95 2.8 1.02.08 2.05-.51 2.68-1.27z"/></svg>
+          <span class="icon-tooltip">Apple Music</span>
+        </a>
+        <span class="foot-divider"></span>
+        <a class="icon-btn" href="#" target="_blank" rel="noopener" aria-label="YouTube Music" id="link-ytmusic">
+          <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 14.5a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9zm0-7a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z"/><path d="M9.5 12l5-3v6z"/></svg>
+          <span class="icon-tooltip">YouTube Music</span>
+        </a>
+        <a class="icon-btn" href="#" target="_blank" rel="noopener" aria-label="Tidal" id="link-tidal">
+          <svg viewBox="0 0 24 24"><path d="M12 3L8 7l4 4-4 4 4 4 4-4-4-4 4-4zM4 7l4 4-4 4 4 4 4-4-4-4zM20 7l-4 4 4 4-4 4-4-4 4-4z"/></svg>
+          <span class="icon-tooltip">Tidal</span>
+        </a>
+      </div>
+
+      <!-- LOGO — center -->
+      <a class="foot-logo" href="/" aria-label="WD-HAN">
+        <svg viewBox="0 0 400 370" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <g>
+            <path d="M175.919,182.501 C184.816,181.582 190.177,176.624 196.674,163.107 L206.221,143.586 C210.982,132.818 214.134,124.234 217.242,113.452 C224.768,86.799 230.381,75.392 246.422,52.998 C253.945,42.311 257.798,31.636 256.973,23.647 C255.38,8.212 243.454,-0.651 226.203,1.129 C215.671,2.216 209.132,13.536 208.627,31.756 C207.413,78.68 187.206,138.942 172.134,140.498 C164.507,141.285 158.385,135.31 156.961,121.509 C155.949,111.703 158.581,99.87 164.282,87.536 C172.439,70.544 178.561,48.073 177.605,38.812 C176.949,32.457 175.354,27.666 169.206,24.997 C163.84,22.798 160.484,24.062 156.532,26.672 C150.007,31.016 145.202,39.587 141.736,52.241 C138.973,62.803 137.592,74.324 136.332,83.447 C130.907,119.794 121.723,139.277 109.557,140.533 C104.472,141.058 101.825,136.743 100.756,126.392 C98.713,106.599 104.028,86.965 117.652,64.27 C124.573,53.095 128.314,41.33 127.471,33.159 C126.065,19.54 115.629,10.89 102.374,12.258 C84.578,14.095 77.41,33.554 81.196,70.235 C82.545,83.309 83.625,97.329 81.725,110.922 L76.74,142.635 C76.132,145.635 76.031,148.214 76.274,150.575 C77.83,165.647 92.31,177.916 106.655,176.436 C110.832,176.005 115.31,173.157 125.255,164.606 C130.29,160.049 133.44,156.787 136.728,156.631 C140.397,156.62 143.859,159.933 148.553,168.074 C154.981,178.789 164.297,183.7 175.919,182.501 z"/>
+            <path d="M247.679,168.304 C252.037,167.854 265.075,160.819 277.926,151.968 C288.891,144.413 301.109,136.545 305.969,133.842 C330.555,119.559 367.131,82.75 363.757,50.064 C362.183,34.81 347.809,21.796 336.81,13.021 C329.197,6.832 309.782,1.863 293.802,3.512 C286.72,4.243 279.331,5.556 274.522,6.97 C270.602,8.109 262.869,9.641 257.966,10.147 C246.163,11.365 242.054,16.01 243.141,26.542 C243.572,30.719 244.967,35.346 247.214,39.335 C249.336,43.888 250.675,47.971 251.05,51.603 C251.312,54.145 251.193,56.543 250.71,58.979 C244.541,89.896 247.462,77.299 239.421,107.859 C237.754,114.822 234.841,123.932 232.641,129.297 C229.816,137.48 229.458,139.352 229.814,142.803 C231.051,154.787 240.96,168.997 247.679,168.304 z M275.328,123.24 C266.793,124.121 261.184,119.561 260.303,111.026 C256.892,77.977 284.163,39.926 313.581,36.89 C322.66,35.953 327.086,39.717 328.06,49.16 C330.703,74.764 304.563,120.222 275.328,123.24 z"/>
+          </g>
+          <g>
+            <path d="M47.157,369.063 C58.597,367.883 62.688,357.734 60.476,336.306 C59.295,324.866 59.366,318.436 60.802,307.46 C63.744,284.399 65.554,282.377 87.163,280.147 C98.967,278.929 99.68,280.507 98.876,290.5 C97.615,299.623 94.114,306.591 91,315.538 C88.118,323.176 87.008,328.429 87.439,332.606 C88.264,340.596 98.574,349.809 106.019,349.04 C114.554,348.159 118.037,341.01 116.631,327.391 C114.082,302.695 119.611,276.247 127.601,275.423 C128.691,275.31 129.981,275.361 131.452,275.392 C132.742,275.443 133.831,275.33 135.103,275.199 C147.087,273.962 155.097,267.997 154.347,260.733 C153.673,254.196 149.084,250.632 140.963,250.186 C139.473,249.972 137.075,249.853 134.821,249.351 C132.185,248.706 130.801,247.748 130.67,246.476 C130.351,243.389 134.148,232.17 138.91,221.401 C151.056,196.84 154.064,188.638 153.464,182.827 C152.639,174.838 142.204,166.188 134.395,166.994 C131.671,167.275 128.659,168.32 126.505,170.561 C123.68,173.422 122.095,177.623 121.33,182.657 C117.022,210.263 112.251,235.164 111.085,239.872 C109.706,246.071 106.631,250.059 101.534,252.236 C96.944,253.995 91.114,254.413 84.759,255.069 C77.858,255.781 75.166,254.591 74.772,250.777 C74.229,245.511 78.445,234.799 85.981,222.459 C91.781,212.868 94.495,203.595 93.67,195.606 C92.508,184.347 81.703,173.9 72.261,174.875 C59.913,176.149 52.67,194.882 55.144,218.852 C55.912,226.297 57.507,236.41 55.845,245.207 C54.133,255.293 47.758,261.09 37.226,262.177 C22.517,263.695 8.352,270.479 5.427,275.92 C3.115,280.196 2.136,292.043 6.988,292.826 C13.731,294.149 32.01,289.877 41.428,286.886 C43.569,286.298 44.571,287.112 44.683,288.202 C44.815,289.473 42.758,299.779 36.092,316.984 C30.435,331.515 26.976,340.681 27.726,347.945 C28.738,357.751 39.893,369.813 47.157,369.063 z"/>
+            <path d="M148.184,350.378 C154.702,349.521 161.462,333.224 161.984,325.829 L164.568,304.641 C166.6,292.319 171.975,280.386 177.555,275.772 C180.129,274.039 185.846,272.531 193.654,271.725 L205.057,270.181 C209.778,269.694 210.999,270.852 211.881,274.065 C212.782,277.459 213.357,281.253 213.844,285.975 C214.632,293.601 213.903,304.321 214.315,308.316 C215.496,319.756 225.649,331.004 234.002,330.142 C241.447,329.373 250.737,314.467 249.762,305.024 C249.462,302.119 246.683,296.533 243.472,292.093 C241.92,289.5 238.365,285.279 238.008,281.829 C236.753,269.663 242.02,263.797 252.734,262.691 C264.719,261.454 275.441,251.538 274.522,242.641 C274.166,239.19 271.618,237.618 267.078,238.087 C265.807,238.218 264.192,238.568 260.816,239.651 C257.097,240.952 252.776,241.765 248.6,242.196 C241.699,242.908 240.497,241.931 239.823,235.394 C239.448,231.762 239.505,226.985 240.19,219.39 C241.576,209.704 239.993,203.26 240.896,196.01 C242.125,188.358 244.444,180.595 243.619,172.605 C242.532,162.073 230.612,155.044 217.356,156.413 C214.088,156.75 209.967,157.726 204.907,160.267 C197.581,163.959 187.128,172.93 188.046,181.827 C190.539,205.979 170.41,251 156.61,252.425 L147.205,253.762 C107.224,259.357 91.902,256.717 80.555,264.128 C69.207,271.539 81.769,291.898 89.759,291.074 C92.12,290.83 95.37,290.311 100.95,285.698 C109.066,278.987 133.399,276.476 147.713,276.467 C151.564,276.436 152.277,278.014 151.18,281.614 C148.843,289.197 138.627,304.015 134.294,306.481 C126.046,311.921 121.26,320.673 122.103,328.844 C122.947,337.016 136.944,351.721 148.184,350.378 z M210.084,245.988 C201.55,246.869 195.639,244.726 195.208,240.549 C194.346,232.196 204.719,215.343 211.075,214.687 C214.162,214.368 216.165,215.997 217.103,219.754 C218.148,222.766 218.379,226.78 218.735,230.23 C219.747,240.035 216.803,245.294 210.084,245.988 z"/>
+            <path d="M263.988,334.388 C269.617,333.807 274.083,327.29 277.367,314.655 C279.987,304.474 280.985,292.809 281.8,286.485 C285.213,257.32 295.452,226.716 301.989,226.042 C307.8,225.442 312.256,233.057 315.559,249.05 C318.142,261.629 319.077,276.031 319.715,282.205 C322.695,311.078 328.04,318.417 344.928,316.674 C356.005,315.531 364.404,306.222 364.726,293.342 C365.358,269.236 375.537,225.608 387.088,202.393 C395.245,185.401 397.169,179.147 396.288,170.612 C394.995,158.082 381.56,148.825 370.107,151.658 C360.432,153.942 356.348,160.603 356.415,170.139 L356.522,192.518 C356.169,229.993 350.652,260.109 343.933,260.803 C338.667,261.346 333.911,250.826 329.921,229.949 C326.925,213.374 325.414,195.178 324.833,189.549 C322.284,164.853 314.335,155.396 297.447,157.139 C280.741,158.863 272.146,175.166 274.695,199.862 C275.688,209.486 275.354,218.697 273.831,225.277 C270.641,238.82 259.902,266.356 251.289,282.477 L242.099,300.126 C239.412,306.093 238.553,310.219 238.946,314.032 C240.09,325.109 252.911,335.531 263.988,334.388 z"/>
+          </g>
+        </svg>
       </a>
-      <a class="plat reveal" id="plat-apple" href="#" data-presave="true">
-        <span class="ic">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.36 12.6c-.02-2.3 1.88-3.4 1.96-3.46-1.07-1.56-2.73-1.78-3.32-1.8-1.41-.14-2.76.83-3.47.83-.72 0-1.82-.81-3-.79-1.54.02-2.96.9-3.75 2.27-1.6 2.78-.41 6.9 1.15 9.16.76 1.1 1.67 2.34 2.86 2.3 1.15-.05 1.58-.74 2.97-.74 1.38 0 1.77.74 2.98.72 1.23-.02 2.01-1.12 2.76-2.23.87-1.28 1.23-2.52 1.25-2.58-.03-.01-2.4-.92-2.42-3.65zM14.13 5.6c.63-.77 1.06-1.83.94-2.9-.91.04-2.02.61-2.67 1.37-.58.68-1.09 1.76-.95 2.8 1.02.08 2.05-.51 2.68-1.27z"/></svg>
-        </span>
-        <span class="meta"><span class="pname">Apple Music</span><span class="paction" id="plat-apple-action">Pre-add →</span></span>
-        <span class="arrow-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
-      </a>
-      <a class="plat reveal" id="plat-youtube" href="#" target="_blank" rel="noopener">
-        <span class="ic">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.2C0 8.08 0 12 0 12s0 3.92.5 5.8a3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14C24 15.92 24 12 24 12s0-3.92-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg>
-        </span>
-        <span class="meta"><span class="pname">YouTube</span><span class="paction" id="plat-youtube-action">Subscribe →</span></span>
-        <span class="arrow-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
-      </a>
-    </div>
-  </div>
-</section>
 
-<!-- ── Music ── -->
-<section class="section" id="music">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <h2 class="section-title">The <span class="accentword">music</span></h2>
-      <span class="section-num">02 — Releases</span>
-    </div>
+      <!-- SOCIAL icons — left of center -->
+      <div class="icon-cluster social">
+        <a class="icon-btn" href="https://instagram.com/wdhanband" target="_blank" rel="noopener" aria-label="Instagram">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="fill:none"><rect x="2.5" y="2.5" width="19" height="19" rx="5.2" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="2" fill="none"/><circle cx="17.6" cy="6.4" r="1.1" fill="currentColor" stroke="none"/></svg>
+          <span class="icon-tooltip">Instagram</span>
+        </a>
+        <a class="icon-btn" href="https://youtube.com/@wdhanband" target="_blank" rel="noopener" aria-label="YouTube">
+          <svg viewBox="0 0 24 24"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.2C0 8.08 0 12 0 12s0 3.92.5 5.8a3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14C24 15.92 24 12 24 12s0-3.92-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg>
+          <span class="icon-tooltip">YouTube</span>
+        </a>
+        <span class="foot-divider"></span>
+        <a class="icon-btn" href="https://tiktok.com/@wdhanband" target="_blank" rel="noopener" aria-label="TikTok">
+          <svg viewBox="0 0 24 24"><path d="M16.6 5.82A4.28 4.28 0 0 1 15.54 3h-3.1v12.4a2.6 2.6 0 1 1-2.6-2.6c.27 0 .53.04.78.12v-3.16a5.7 5.7 0 1 0 4.92 5.64V8.99a7.34 7.34 0 0 0 4.3 1.38V7.27a4.28 4.28 0 0 1-3.24-1.45z"/></svg>
+          <span class="icon-tooltip">TikTok</span>
+        </a>
+        <a class="icon-btn" href="https://facebook.com/wdhanband" target="_blank" rel="noopener" aria-label="Facebook">
+          <svg viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 0 0-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 0 1 1-1h3z"/></svg>
+          <span class="icon-tooltip">Facebook</span>
+        </a>
+      </div>
 
-    <!-- Releases grid — populated by JS -->
-    <div class="releases" id="releases-grid">
-      <!-- Skeletons shown while loading -->
-      <div class="rel-skeleton feat">
-        <div class="sk-art"></div>
-        <div class="sk-body"><div class="sk-line"></div><div class="sk-line short"></div></div>
-      </div>
-      <div class="rel-skeleton">
-        <div class="sk-art"></div>
-        <div class="sk-body"><div class="sk-line"></div><div class="sk-line short"></div></div>
-      </div>
-      <div class="rel-skeleton">
-        <div class="sk-art"></div>
-        <div class="sk-body"><div class="sk-line"></div><div class="sk-line short"></div></div>
-      </div>
     </div>
+    <p class="foot-copy">© 2026 WD-HAN · All rights reserved</p>
+  </footer>
 
-    <div class="music-footer reveal">
-      <a href="music.html" class="see-all">View all releases →</a>
-    </div>
-  </div>
-</section>
+</div><!-- /page -->
 
-<!-- ── Videos ── -->
-<section class="section" id="videos" style="background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <h2 class="section-title">Watch <span class="accentword">it</span></h2>
-      <span class="section-num">03 — Videos</span>
-    </div>
+<!-- ══ Mobile nav ══ -->
+<nav class="nav-mobile" id="nav-mobile" aria-label="Mobile navigation">
+  <button class="nav-mobile-close" id="nav-mobile-close" aria-label="Close menu">
+    <svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
+  </button>
+  <a href="about.html">The Band</a>
+  <a href="music.html">Music</a>
+  <a href="videos.html">Videos</a>
+  <a href="shows.html">Tour</a>
+  <a href="https://wd-han.myshopify.com" target="_blank" rel="noopener">Merch</a>
+  <a href="/sync">Sync</a>
+</nav>
 
-    <!-- Video block — populated by Sanity JS -->
-    <div id="video-block-wrap">
-      <!-- Skeleton while loading -->
-      <div class="vsk reveal in"></div>
-      <div class="vgrid" style="margin-top:14px">
-        <div class="vsk-sm"></div>
-        <div class="vsk-sm"></div>
-      </div>
-    </div>
-
-    <div class="music-footer reveal" style="margin-top:28px;">
-      <a href="videos.html" class="see-all">See all videos →</a>
-    </div>
-  </div>
-</section>
-
-<!-- ── Band ── -->
-<section class="section" id="band">
-  <div class="wrap">
-    <div class="band">
-      <div class="band-photo reveal">
-        <div class="band-photo-ph"><span>Band photo</span></div>
-      </div>
-      <div class="band-copy reveal">
-        <span class="kicker">Who we are</span>
-        <h3 style="margin-top:14px">Three wild things making loud, lovely noise.</h3>
-        <p>WD-HAN is a trio built on big hooks, blown-out guitars, and a little bit of chaos. "Wild Things" is the first taste of everything coming next — turn it up.</p>
-        <div class="members">
-          <div class="member"><span class="mname">Spencer Barnes</span><span class="mrole">Vocals</span></div>
-          <div class="member"><span class="mname">Cal Henry</span><span class="mrole">Guitar</span></div>
-          <div class="member"><span class="mname">Lea Campbell</span><span class="mrole">Drums</span></div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── Tour ── -->
-<section class="section" id="tour">
-  <div class="wrap">
-    <div class="section-head reveal">
-      <h2 class="section-title">On the <span class="accentword">road</span></h2>
-      <span class="section-num">04 — Live Dates</span>
-    </div>
-    <div class="tour-list">
-      <div class="tour-row reveal">
-        <div class="tour-date">JUN 20<small>Fri · 2026</small></div>
-        <div><div class="tour-venue">The Echo</div><div class="tour-city">Los Angeles, CA</div></div>
-        <div class="tour-status">Low tickets</div>
-        <button class="tour-tix">Tickets</button>
-      </div>
-      <div class="tour-row reveal">
-        <div class="tour-date">JUN 27<small>Fri · 2026</small></div>
-        <div><div class="tour-venue">Bottom of the Hill</div><div class="tour-city">San Francisco, CA</div></div>
-        <div class="tour-status">On sale</div>
-        <button class="tour-tix">Tickets</button>
-      </div>
-      <div class="tour-row reveal">
-        <div class="tour-date">JUL 11<small>Sat · 2026</small></div>
-        <div><div class="tour-venue">Doug Fir Lounge</div><div class="tour-city">Portland, OR</div></div>
-        <div class="tour-status">Sold out</div>
-        <button class="tour-tix sold">Sold Out</button>
-      </div>
-      <div class="tour-row reveal">
-        <div class="tour-date">JUL 18<small>Sat · 2026</small></div>
-        <div><div class="tour-venue">Bowery Ballroom</div><div class="tour-city">New York, NY</div></div>
-        <div class="tour-status">On sale</div>
-        <button class="tour-tix">Tickets</button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ── Newsletter ── -->
-<section class="section news" id="news">
-  <div class="wrap">
-    <div class="news-inner reveal">
-      <span class="kicker">Don't miss the drop</span>
-      <h2 style="margin-top:16px">Join the<br>wild ones</h2>
-      <p>First dibs on the single, tour presales, and merch. No spam — just the good stuff.</p>
-      <form class="news-form" id="news-form">
-        <input type="email" placeholder="your@email.com" required />
-        <button class="btn btn-primary" type="submit">Sign Up</button>
-      </form>
-      <p class="news-ok" id="news-ok" style="display:none">✓ You're in. Welcome to the pack.</p>
-    </div>
-  </div>
-</section>
-
-<!-- ── Footer ── -->
-<footer class="foot">
-  <div class="wrap">
-    <div class="foot-top">
-      <div>
-        <span class="foot-wordmark">WD-HAN</span>
-        <p class="foot-tag">New single "Wild Things" out June 2026. Stay loud.</p>
-      </div>
-      <div class="foot-cols">
-        <div class="foot-col">
-          <h5>Listen</h5>
-          <a href="#" data-presave="true">Spotify</a>
-          <a href="#" data-presave="true">Apple Music</a>
-          <a href="#">YouTube</a>
-        </div>
-        <div class="foot-col">
-          <h5>More</h5>
-          <a href="https://your-shopify-store.myshopify.com">Merch Store</a>
-          <a href="#tour">Tour Dates</a>
-          <a href="#news">Mailing List</a>
-          <a href="music.html">All Music</a>
-          <a href="videos.html">Videos</a>
-        </div>
-        <div class="foot-col">
-          <h5>Contact</h5>
-          <a href="mailto:booking@wd-han.com">Booking</a>
-          <a href="mailto:hello@wd-han.com">General</a>
-          <a href="mailto:press@wd-han.com">Press</a>
-        </div>
-      </div>
-    </div>
-    <div class="foot-bottom">
-      <span class="mono">© 2026 WD-HAN · All rights reserved</span>
-      <div class="foot-socials">
-        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5.2"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg></a>
-        <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82A4.28 4.28 0 0 1 15.54 3h-3.1v12.4a2.6 2.6 0 1 1-2.6-2.6c.27 0 .53.04.78.12v-3.16a5.7 5.7 0 1 0 4.92 5.64V8.99a7.34 7.34 0 0 0 4.3 1.38V7.27a4.28 4.28 0 0 1-3.24-1.45z"/></svg></a>
-        <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.2C0 8.08 0 12 0 12s0 3.92.5 5.8a3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14C24 15.92 24 12 24 12s0-3.92-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg></a>
-        <a href="#" aria-label="Spotify"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.5 17.3a.75.75 0 0 1-1.03.25c-2.82-1.72-6.37-2.11-10.55-1.16a.75.75 0 1 1-.33-1.46c4.58-1.04 8.5-.6 11.66 1.34.36.22.47.69.25 1.03zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.23-1.99-8.16-2.56-11.98-1.4a.94.94 0 1 1-.55-1.8c4.37-1.32 9.8-.68 13.5 1.6.44.27.58.85.32 1.29zm.13-3.4C15.73 8.26 8.5 8.02 4.78 9.15a1.12 1.12 0 1 1-.65-2.15c4.28-1.3 12.26-1.05 16.55 1.5a1.12 1.12 0 1 1-1.15 1.93z"/></svg></a>
-      </div>
-    </div>
-  </div>
-</footer>
-
-<!-- ── Pre-Save Modal ── -->
-<div class="modal-scrim" id="presave-modal">
+<!-- ══ Newsletter Modal ══ -->
+<div class="modal-scrim" id="news-modal" role="dialog" aria-modal="true" aria-label="Subscribe to newsletter">
   <div class="modal">
-    <button class="modal-close" id="presave-close">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
+    <button class="modal-close" id="news-modal-close" aria-label="Close">
+      <svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
     </button>
-    <h3>Pre-Save</h3>
-    <p>Get "Wild Things" added to your library the moment it drops on June 12.</p>
-    <div class="presave-opts">
-      <a class="ps" href="#" target="_blank" rel="noopener">
-        <span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.5 17.3a.75.75 0 0 1-1.03.25c-2.82-1.72-6.37-2.11-10.55-1.16a.75.75 0 1 1-.33-1.46c4.58-1.04 8.5-.6 11.66 1.34.36.22.47.69.25 1.03zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.23-1.99-8.16-2.56-11.98-1.4a.94.94 0 1 1-.55-1.8c4.37-1.32 9.8-.68 13.5 1.6.44.27.58.85.32 1.29zm.13-3.4C15.73 8.26 8.5 8.02 4.78 9.15a1.12 1.12 0 1 1-.65-2.15c4.28-1.3 12.26-1.05 16.55 1.5a1.12 1.12 0 1 1-1.15 1.93z"/></svg></span>
-        <span class="ps-name">Pre-save on Spotify</span>
-        <span class="arrow-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
-      </a>
-      <a class="ps" href="#" target="_blank" rel="noopener">
-        <span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.36 12.6c-.02-2.3 1.88-3.4 1.96-3.46-1.07-1.56-2.73-1.78-3.32-1.8-1.41-.14-2.76.83-3.47.83-.72 0-1.82-.81-3-.79-1.54.02-2.96.9-3.75 2.27-1.6 2.78-.41 6.9 1.15 9.16.76 1.1 1.67 2.34 2.86 2.3 1.15-.05 1.58-.74 2.97-.74 1.38 0 1.77.74 2.98.72 1.23-.02 2.01-1.12 2.76-2.23.87-1.28 1.23-2.52 1.25-2.58-.03-.01-2.4-.92-2.42-3.65zM14.13 5.6c.63-.77 1.06-1.83.94-2.9-.91.04-2.02.61-2.67 1.37-.58.68-1.09 1.76-.95 2.8 1.02.08 2.05-.51 2.68-1.27z"/></svg></span>
-        <span class="ps-name">Pre-add on Apple Music</span>
-        <span class="arrow-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
-      </a>
-      <a class="ps" href="#" target="_blank" rel="noopener">
-        <span class="ic"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.2C0 8.08 0 12 0 12s0 3.92.5 5.8a3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14C24 15.92 24 12 24 12s0-3.92-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg></span>
-        <span class="ps-name">Subscribe on YouTube</span>
-        <span class="arrow-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
-      </a>
-    </div>
-  </div>
-</div>
+    <p class="news-kicker">Stay in the loop</p>
+    <div class="modal-title">Join the<br><em style="color:var(--accent);font-style:normal;">wild ones</em></div>
+    <p class="news-body" style="margin-top:10px;">
+      First dibs on the single, tour presales, and merch drops.<br>No spam — just the good stuff.
+    </p>
 
-<!-- ── Video Lightbox (homepage) ── -->
-<div class="vid-lightbox" id="vid-lightbox">
-  <div class="vid-lightbox-inner">
-    <button class="vid-lightbox-close" id="vid-lightbox-close">✕ &nbsp;Close</button>
-    <iframe id="vid-lightbox-iframe" src="" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="WD-HAN video"></iframe>
+    <form class="news-form" id="news-form" action="https://wd-han.myshopify.com/contact#contact_form" method="POST" novalidate>
+      <!-- Shopify contact form fields -->
+      <input type="hidden" name="form_type" value="customer" />
+      <input type="hidden" name="utf8" value="✓" />
+      <input type="hidden" name="contact[tags]" value="newsletter" />
+
+      <input
+        type="email"
+        name="contact[email]"
+        id="news-email"
+        placeholder="your@email.com"
+        required
+        autocomplete="email"
+      />
+      <button type="submit" class="news-submit">Sign Me Up</button>
+      <p class="news-ok" id="news-ok">✓ You're in. Welcome to the pack.</p>
+      <p class="news-legal">By signing up you agree to receive emails from WD-HAN. Unsubscribe anytime.</p>
+    </form>
   </div>
 </div>
 
 <script>
-  /* ── Sanity config ── */
-  const SANITY_PROJECT_ID = 'oz4mxjaz';
-  const SANITY_DATASET    = 'production';
+  /* ── Sanity ── */
+  const SANITY_PROJECT = 'oz4mxjaz';
+  const SANITY_DATASET = 'production';
 
-  function sanityUrl(query) {
-    return `https://${SANITY_PROJECT_ID}.api.sanity.io/v2021-10-21/data/query/${SANITY_DATASET}?query=${encodeURIComponent(query)}`;
-  }
-  function sanityImg(url, width) {
-    return url ? `${url}?w=${width}&auto=format&fit=crop` : null;
+  function sanityUrl(q) {
+    return `https://${SANITY_PROJECT}.api.sanity.io/v2021-10-21/data/query/${SANITY_DATASET}?query=${encodeURIComponent(q)}`;
   }
 
-  /* ── Countdown (static fallback, overridden by Sanity) ── */
-  let _cdInterval;
+  /* ── Background photo slideshow ── */
+  (async function initSlideshow() {
+    // Fetch all images flagged as homepageBackground: true
+    const q = `*[_type == "image" && homepageBackground == true] {
+      "url": asset->url
+    }`;
+    let slides = [];
+    try {
+      const res = await fetch(sanityUrl(q));
+      const { result } = await res.json();
+      slides = (result || []).map(r => r.url).filter(Boolean);
+    } catch(e) {
+      console.warn('Slideshow fetch failed', e);
+    }
+
+    if (!slides.length) return; // no images — bg stays dark, orbs still show
+
+    const stage = document.getElementById('bg-stage');
+    const overlay = stage.querySelector('.bg-overlay');
+
+    // Build slide elements
+    const slideEls = slides.map(url => {
+      const el = document.createElement('div');
+      el.className = 'bg-slide';
+      el.style.backgroundImage = `url('${url}?w=1800&auto=format&fit=crop')`;
+      stage.insertBefore(el, overlay);
+      return el;
+    });
+
+    if (slideEls.length === 1) {
+      // Single image — just show it, no crossfade needed
+      slideEls[0].classList.add('active');
+      return;
+    }
+
+    // Multi-image crossfade every 10 seconds
+    let current = 0;
+    slideEls[0].classList.add('active');
+
+    setInterval(() => {
+      slideEls[current].classList.remove('active');
+      current = (current + 1) % slideEls.length;
+      slideEls[current].classList.add('active');
+    }, 10000);
+  })();
+
+  /* ── Sanity: update hero + streaming links from featured release ── */
+  (async function initHero() {
+    const q = `*[_type == "release"] | order(featured desc, releaseDate desc) [0] {
+      title, releaseDate, streamingLinks
+    }`;
+    try {
+      const res = await fetch(sanityUrl(q));
+      const { result: rel } = await res.json();
+      if (!rel) return;
+
+      // Update countdown date
+      if (rel.releaseDate) {
+        const d = new Date(rel.releaseDate);
+        const label = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+        document.getElementById('hero-sub').innerHTML =
+          `The new single from WD-HAN. Out <strong>${label}</strong>. Pre-save it now.`;
+        startCountdown(rel.releaseDate + 'T00:00:00');
+      }
+
+      // Update streaming icon links
+      const links = rel.streamingLinks || {};
+      if (links.appleMusic) setLink('link-apple', links.appleMusic);
+      if (links.youtubeMusic) setLink('link-ytmusic', links.youtubeMusic);
+      if (links.tidal) setLink('link-tidal', links.tidal);
+    } catch(e) {
+      console.warn('Hero Sanity fetch failed', e);
+    }
+  })();
+
+  function setLink(id, url) {
+    const el = document.getElementById(id);
+    if (el && url) el.href = url;
+  }
+
+  /* ── Countdown ── */
+  let _cdTimer;
   function startCountdown(target) {
-    const RELEASE = new Date(target).getTime();
-    const els = {
-      days: document.getElementById('cd-days'),
-      hrs:  document.getElementById('cd-hrs'),
-      min:  document.getElementById('cd-min'),
-      sec:  document.getElementById('cd-sec'),
-    };
-    function pad(n) { return String(n).padStart(2, '0'); }
-    clearInterval(_cdInterval);
-    _cdInterval = setInterval(() => {
-      const diff = Math.max(0, RELEASE - Date.now());
-      els.days.textContent = Math.floor(diff / 864e5);
-      els.hrs.textContent  = pad(Math.floor((diff % 864e5) / 36e5));
-      els.min.textContent  = pad(Math.floor((diff % 36e5) / 6e4));
-      els.sec.textContent  = pad(Math.floor((diff % 6e4) / 1e3));
+    const release = new Date(target).getTime();
+    const pad = n => String(n).padStart(2,'0');
+    clearInterval(_cdTimer);
+    _cdTimer = setInterval(() => {
+      const diff = Math.max(0, release - Date.now());
+      document.getElementById('cd-days').textContent = Math.floor(diff / 864e5);
+      document.getElementById('cd-hrs').textContent  = pad(Math.floor((diff % 864e5) / 36e5));
+      document.getElementById('cd-min').textContent  = pad(Math.floor((diff % 36e5) / 6e4));
+      document.getElementById('cd-sec').textContent  = pad(Math.floor((diff % 6e4) / 1e3));
     }, 1000);
   }
   startCountdown('2026-06-12T00:00:00');
 
-  /* ── Nav scroll ── */
-  (function() {
-    const nav = document.getElementById('nav');
-    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40), { passive: true });
-  })();
-
   /* ── Mobile nav ── */
-  (function() {
-    const btn   = document.getElementById('nav-burger-btn');
-    const panel = document.getElementById('nav-mobile');
-    btn.addEventListener('click', () => panel.classList.toggle('open'));
-    panel.querySelectorAll('.nav-mobile-link').forEach(l => l.addEventListener('click', () => panel.classList.remove('open')));
-  })();
+  const burger     = document.getElementById('nav-burger-btn');
+  const mobileNav  = document.getElementById('nav-mobile');
+  const mobileClose= document.getElementById('nav-mobile-close');
+  burger.addEventListener('click', () => mobileNav.classList.add('open'));
+  mobileClose.addEventListener('click', () => mobileNav.classList.remove('open'));
+  mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileNav.classList.remove('open')));
 
-  /* ── Modal helpers ── */
-  function openModal(id) { document.getElementById(id).classList.add('open'); }
-  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
-  function openPresave() { openModal('presave-modal'); }
+  /* ── Newsletter modal ── */
+  const newsModal  = document.getElementById('news-modal');
+  const newsClose  = document.getElementById('news-modal-close');
+  const subBtn     = document.getElementById('subscribe-btn');
 
-  document.getElementById('nav-presave-btn').addEventListener('click', openPresave);
-  document.getElementById('hero-presave-btn').addEventListener('click', openPresave);
-  document.getElementById('presave-close').addEventListener('click', () => closeModal('presave-modal'));
-  document.getElementById('presave-modal').addEventListener('click', e => { if (e.target === document.getElementById('presave-modal')) closeModal('presave-modal'); });
+  subBtn.addEventListener('click', () => newsModal.classList.add('open'));
+  newsClose.addEventListener('click', () => newsModal.classList.remove('open'));
+  newsModal.addEventListener('click', e => { if (e.target === newsModal) newsModal.classList.remove('open'); });
 
-  document.getElementById('hero-video-btn').addEventListener('click', () => {
-    // If we have a featured video ID from Sanity, open lightbox; else do nothing gracefully
-    if (window._featuredVideoId) {
-      openVideoLightbox(window._featuredVideoId);
+  /* Newsletter form — POST to Shopify contact endpoint */
+  document.getElementById('news-form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const email = document.getElementById('news-email').value.trim();
+    if (!email || !email.includes('@')) return;
+
+    const btn = this.querySelector('.news-submit');
+    btn.textContent = 'Signing up…';
+    btn.disabled = true;
+
+    try {
+      const body = new URLSearchParams({
+        'form_type': 'customer',
+        'utf8': '✓',
+        'contact[email]': email,
+        'contact[tags]': 'newsletter',
+      });
+
+      // Shopify contact form endpoint — no-cors because Shopify redirects on success
+      await fetch('https://wd-han.myshopify.com/contact', {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: body.toString()
+      });
+
+      // Can't read the response in no-cors, so show success optimistically
+      this.querySelector('input[type="email"]').style.display = 'none';
+      btn.style.display = 'none';
+      this.querySelector('.news-legal').style.display = 'none';
+      document.getElementById('news-ok').style.display = 'block';
+
+    } catch(err) {
+      console.warn('Newsletter submit error', err);
+      btn.textContent = 'Sign Me Up';
+      btn.disabled = false;
     }
   });
 
-  document.querySelectorAll('[data-presave="true"]').forEach(el => el.addEventListener('click', e => { e.preventDefault(); openPresave(); }));
+  /* ── Keyboard close ── */
   window.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
-      closeModal('presave-modal');
-      closeVideoLightbox();
+      newsModal.classList.remove('open');
+      mobileNav.classList.remove('open');
     }
   });
-
-  /* ── Video Lightbox ── */
-  function openVideoLightbox(videoId) {
-    const lb  = document.getElementById('vid-lightbox');
-    const ifr = document.getElementById('vid-lightbox-iframe');
-    ifr.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
-    lb.classList.add('open');
-  }
-  function closeVideoLightbox() {
-    const lb  = document.getElementById('vid-lightbox');
-    const ifr = document.getElementById('vid-lightbox-iframe');
-    lb.classList.remove('open');
-    setTimeout(() => { ifr.src = ''; }, 300);
-  }
-  document.getElementById('vid-lightbox-close').addEventListener('click', closeVideoLightbox);
-  document.getElementById('vid-lightbox').addEventListener('click', e => {
-    if (e.target === document.getElementById('vid-lightbox')) closeVideoLightbox();
-  });
-
-  /* ── Sanity: fetch videos for homepage ── */
-  /* YouTube thumbnail helper — maxresdefault → hqdefault fallback */
-  function ytThumb(videoId, quality = 'hqdefault') {
-    return `https://img.youtube.com/vi/${videoId}/${quality}.jpg`;
-  }
-  /* Extract YouTube video ID from a URL */
-  function ytId(url) {
-    if (!url) return null;
-    const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);
-    return m ? m[1] : null;
-  }
-  /* Category label prettifier */
-  function catLabel(cat) {
-    const map = {
-      'music-video':'Music Video','live':'Live','bts':'Behind the Scenes',
-      'lyric-video':'Lyric Video','interview':'Interview','other':'Other'
-    };
-    return map[cat] || (cat ? cat.charAt(0).toUpperCase() + cat.slice(1).replace(/-/g,' ') : 'Video');
-  }
-
-  (async function fetchVideos() {
-    const query = `*[_type == "video"] | order(releaseDate desc) [0..2] {
-      title,
-      description,
-      youtubeUrl,
-      "embedId": coalesce(embedId, null),
-      category,
-      releaseDate
-    }`;
-
-    let videos;
-    try {
-      const res = await fetch(sanityUrl(query));
-      const { result } = await res.json();
-      videos = result;
-    } catch(err) {
-      console.warn('Sanity video fetch failed', err);
-      renderVideoFallback();
-      return;
-    }
-
-    if (!videos?.length) { renderVideoFallback(); return; }
-
-    // Resolve video IDs — prefer embedId field, fallback parse from youtubeUrl
-    videos = videos.map(v => ({ ...v, _vid: v.embedId || ytId(v.youtubeUrl) })).filter(v => v._vid);
-
-    if (!videos.length) { renderVideoFallback(); return; }
-
-    // Store featured ID for hero button
-    window._featuredVideoId = videos[0]._vid;
-
-    renderHomeVideos(videos);
-  })();
-
-  function renderHomeVideos(videos) {
-    const wrap = document.getElementById('video-block-wrap');
-    if (!wrap) return;
-
-    const [hero, ...rest] = videos;
-    const smallCards = rest.slice(0, 2);
-
-    const heroThumb = ytThumb(hero._vid, 'maxresdefault');
-    const heroCat   = catLabel(hero.category);
-
-    let html = `
-      <div class="vhero reveal" onclick="openVideoLightbox('${hero._vid}')">
-        <div class="vhero-thumb" style="background-image:url('${heroThumb}')"></div>
-        <div class="vhero-grad"></div>
-        <div class="vhero-body">
-          <div>
-            <div class="vhero-cat">${escHtml(heroCat)}</div>
-            <div class="vhero-title">${escHtml(hero.title)}</div>
-            ${hero.description ? `<div class="vhero-desc">${escHtml(hero.description)}</div>` : ''}
-          </div>
-          <button class="vhero-play" aria-label="Play ${escHtml(hero.title)}">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>
-          </button>
-        </div>
-      </div>`;
-
-    if (smallCards.length) {
-      html += `<div class="vgrid" style="margin-top:14px">` +
-        smallCards.map(v => {
-          const thumb = ytThumb(v._vid, 'hqdefault');
-          const cat   = catLabel(v.category);
-          return `
-            <div class="vcard reveal" onclick="openVideoLightbox('${v._vid}')">
-              <div class="vcard-thumb" style="background-image:url('${thumb}')"></div>
-              <div class="vcard-grad"></div>
-              <div class="vcard-body">
-                <div>
-                  <div class="vcard-cat">${escHtml(cat)}</div>
-                  <div class="vcard-title">${escHtml(v.title)}</div>
-                </div>
-                <div class="vcard-play">
-                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>
-                </div>
-              </div>
-            </div>`;
-        }).join('') +
-        `</div>`;
-    }
-
-    wrap.innerHTML = html;
-    reObserveReveals();
-  }
-
-  function renderVideoFallback() {
-    const wrap = document.getElementById('video-block-wrap');
-    if (!wrap) return;
-    wrap.innerHTML = `
-      <div class="vhero reveal" style="display:flex;align-items:center;justify-content:center;background:
-        repeating-linear-gradient(45deg,color-mix(in srgb,var(--ink) 6%,transparent) 0 2px,transparent 2px 13px),
-        color-mix(in srgb,var(--ink) 4%,transparent);">
-        <span class="vlabel">Videos coming soon</span>
-      </div>`;
-    reObserveReveals();
-  }
-
-  /* ── Newsletter ── */
-  document.getElementById('news-form').addEventListener('submit', e => {
-    e.preventDefault();
-    if (e.target.querySelector('input[type="email"]').value.includes('@')) {
-      e.target.style.display = 'none';
-      document.getElementById('news-ok').style.display = 'block';
-    }
-  });
-
-  /* ── Scroll reveal ── */
-  (function() {
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
-    }, { threshold: 0.12 });
-    setTimeout(() => document.querySelectorAll('.reveal').forEach(el => io.observe(el)), 100);
-  })();
-
-  function reObserveReveals() {
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
-    }, { threshold: 0.12 });
-    document.querySelectorAll('.reveal:not(.in)').forEach(el => io.observe(el));
-  }
-
-  /* ── Sanity: homepage music grid ── */
-  (async function () {
-    /*
-      Priority order for the homepage grid:
-        1. featured releases (featured: true), newest first
-        2. remaining releases, newest first
-      We fetch more than 3 so we can fill the 3 slots correctly.
-    */
-    const query = `*[_type == "release"] | order(featured desc, releaseDate desc) [0..5] {
-      title,
-      slug,
-      releaseType,
-      releaseDate,
-      featured,
-      "artworkUrl": artwork.asset->url,
-      streamingLinks,
-      "spotifyId": streamingLinks.spotify
-    }`;
-
-    let releases;
-    try {
-      const res = await fetch(sanityUrl(query));
-      const { result } = await res.json();
-      releases = result;
-    } catch (err) {
-      console.warn('Sanity fetch failed — showing static fallback', err);
-      renderStaticFallback();
-      return;
-    }
-
-    if (!releases?.length) { renderStaticFallback(); return; }
-
-    // Sort: featured first, then by date
-    releases.sort((a, b) => {
-      if (a.featured && !b.featured) return -1;
-      if (!a.featured && b.featured) return 1;
-      return new Date(b.releaseDate) - new Date(a.releaseDate);
-    });
-
-    const top3 = releases.slice(0, 3);
-    renderReleasesGrid(top3);
-    updateHeroFromSanity(releases[0]);
-    updatePlatformLinks(releases[0].streamingLinks);
-  })();
-
-  /* ── Hero update ── */
-  function updateHeroFromSanity(rel) {
-    if (!rel) return;
-
-    if (rel.releaseDate) {
-      const d = new Date(rel.releaseDate);
-      const label = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
-      document.getElementById('hero-sub-text').innerHTML =
-        `The new single from WD-HAN. Out <strong>${label}</strong>. Pre-save it now and hear it the second it drops.`;
-      startCountdown(rel.releaseDate + 'T00:00:00');
-    }
-
-    if (rel.title && rel.title !== 'Wild Things') {
-      const words = rel.title.split(' ');
-      const first = words.slice(0, -1).join(' ') || rel.title;
-      const last  = words.length > 1 ? words[words.length - 1] : '';
-      const wm = document.querySelector('.hero-wordmark');
-      if (wm) wm.innerHTML = last ? `${first}<br><em>${last}</em>` : `<em>${first}</em>`;
-    }
-  }
-
-  /* ── Render homepage releases grid ── */
-  function renderReleasesGrid(releases) {
-    const grid = document.getElementById('releases-grid');
-    if (!grid || !releases?.length) return;
-
-    grid.innerHTML = releases.map((rel, i) => {
-      const year       = rel.releaseDate ? new Date(rel.releaseDate).getFullYear() : '';
-      const typeRaw    = rel.releaseType || 'release';
-      const typeLabel  = typeRaw.charAt(0).toUpperCase() + typeRaw.slice(1);
-      const spotifyUrl = rel.streamingLinks?.spotify || '#';
-      const artUrl     = rel.artworkUrl ? sanityImg(rel.artworkUrl, i === 0 ? 800 : 500) : null;
-      const isFeat     = i === 0;
-      const slug       = rel.slug?.current || '';
-
-      // Extract Spotify track ID from URL for embed
-      const spotifyId  = extractSpotifyId(spotifyUrl);
-
-      const badge = isFeat
-        ? `<span class="rel-badge">${rel.featured ? 'Featured' : 'Latest'}</span>`
-        : '';
-
-      const artHtml = artUrl
-        ? `<img src="${artUrl}" alt="${escHtml(rel.title)}" loading="${isFeat ? 'eager' : 'lazy'}">`
-        : `<div class="ph"><span>Cover art<br>${escHtml(rel.title)}</span></div>`;
-
-      return `
-        <div class="${isFeat ? 'rel rel-feat reveal' : 'rel reveal'}">
-          <div class="rel-art">
-            ${badge}
-            ${artHtml}
-          </div>
-          <div class="rel-body">
-            <div>
-              <div class="rel-name">${escHtml(rel.title)}</div>
-              <div class="rel-type">${typeLabel} · ${year}</div>
-            </div>
-            <a class="rel-play"
-               href="${escHtml(spotifyUrl)}"
-               target="_blank" rel="noopener"
-               aria-label="Listen to ${escHtml(rel.title)} on Spotify">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>
-            </a>
-          </div>
-        </div>`;
-    }).join('');
-
-    reObserveReveals();
-  }
-
-  /* ── Platform links update ── */
-  function updatePlatformLinks(links) {
-    if (!links) return;
-
-    const map = [
-      { id: 'plat-spotify',  actionId: 'plat-spotify-action',  url: links.spotify,     label: 'Listen →' },
-      { id: 'plat-apple',    actionId: 'plat-apple-action',    url: links.appleMusic,  label: 'Listen →' },
-      { id: 'plat-youtube',  actionId: 'plat-youtube-action',  url: links.youtube,     label: 'Watch →'  },
-    ];
-
-    map.forEach(({ id, actionId, url, label }) => {
-      if (!url || url === '#') return;
-      const card   = document.getElementById(id);
-      const action = document.getElementById(actionId);
-      if (!card) return;
-      card.href = url;
-      card.removeAttribute('data-presave');
-      card.target = '_blank';
-      card.rel    = 'noopener';
-      if (action) action.textContent = label;
-    });
-
-    // Re-bind presave listeners only to cards that still have data-presave
-    document.querySelectorAll('.plat[data-presave="true"]').forEach(el =>
-      el.addEventListener('click', e => { e.preventDefault(); openPresave(); })
-    );
-  }
-
-  /* ── Static fallback (Sanity unavailable) ── */
-  function renderStaticFallback() {
-    const grid = document.getElementById('releases-grid');
-    if (!grid) return;
-    grid.innerHTML = `
-      <div class="rel rel-feat reveal">
-        <div class="rel-art"><span class="rel-badge">Coming Soon</span><div class="ph"><span>Cover art<br>Wild Things</span></div></div>
-        <div class="rel-body">
-          <div><div class="rel-name">Wild Things</div><div class="rel-type">New Single · 2026</div></div>
-          <button class="rel-play" data-presave="true" aria-label="Pre-save">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg>
-          </button>
-        </div>
-      </div>
-      <div class="rel reveal">
-        <div class="rel-art"><div class="ph"><span>Cover art</span></div></div>
-        <div class="rel-body"><div><div class="rel-name">—</div><div class="rel-type">—</div></div></div>
-      </div>
-      <div class="rel reveal">
-        <div class="rel-art"><div class="ph"><span>Cover art</span></div></div>
-        <div class="rel-body"><div><div class="rel-name">—</div><div class="rel-type">—</div></div></div>
-      </div>`;
-    reObserveReveals();
-    document.querySelectorAll('[data-presave="true"]').forEach(el =>
-      el.addEventListener('click', e => { e.preventDefault(); openPresave(); })
-    );
-  }
-
-  /* ── Helpers ── */
-  function escHtml(str) {
-    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-  function extractSpotifyId(url) {
-    if (!url) return null;
-    const m = url.match(/spotify\.com\/(track|album|playlist)\/([A-Za-z0-9]+)/);
-    return m ? { type: m[1], id: m[2] } : null;
-  }
 </script>
 </body>
 </html>
