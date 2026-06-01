@@ -307,25 +307,130 @@
     }
     .see-all:hover{color:var(--accent);border-color:var(--accent);}
 
-    /* video placeholder */
-    .video-feat{
-      margin-top:18px;border:1px solid var(--card-line);border-radius:18px;overflow:hidden;
-      aspect-ratio:16/7;position:relative;cursor:pointer;background:var(--card);
+    /* ============================================================
+       VIDEO SECTION — homepage
+    ============================================================ */
+    .video-block{margin-top:40px;display:grid;grid-template-columns:1fr;gap:14px;}
+
+    /* Hero video — big feature */
+    .vhero{
+      position:relative;border-radius:18px;overflow:hidden;cursor:pointer;
+      background:var(--bg2);border:1px solid var(--card-line);
+      aspect-ratio:16/8;
     }
-    .video-feat .ph{
-      position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;
-      background:
-        repeating-linear-gradient(45deg,color-mix(in srgb,var(--ink) 6%,transparent) 0 2px,transparent 2px 13px),
-        color-mix(in srgb,var(--ink) 4%,transparent);
+    .vhero-thumb{
+      position:absolute;inset:0;
+      background-size:cover;background-position:center;
+      transition:transform .6s var(--ease),filter .4s;
+      filter:brightness(.75);
     }
-    .playring{
-      width:78px;height:78px;border-radius:50%;border:2px solid var(--ink);
+    .vhero:hover .vhero-thumb{transform:scale(1.03);filter:brightness(.55);}
+    .vhero-grad{
+      position:absolute;inset:0;
+      background:linear-gradient(to top,rgba(8,8,10,.92) 0%,rgba(8,8,10,.3) 40%,transparent 70%);
+    }
+    .vhero-body{
+      position:absolute;bottom:0;left:0;right:0;padding:32px 36px;
+      display:flex;align-items:flex-end;justify-content:space-between;gap:24px;
+    }
+    .vhero-cat{
+      font-family:"Space Mono";font-size:10px;letter-spacing:.28em;text-transform:uppercase;
+      color:var(--accent);margin-bottom:8px;
+    }
+    .vhero-title{
+      font-family:var(--font-display);font-size:clamp(22px,3.5vw,42px);
+      line-height:.95;text-transform:uppercase;
+    }
+    .vhero-desc{
+      margin-top:8px;font-size:14px;color:var(--muted);max-width:46ch;
+      display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+    }
+    .vhero-play{
+      flex-shrink:0;width:64px;height:64px;border-radius:50%;
+      background:var(--accent);color:var(--accent-ink);border:none;
       display:flex;align-items:center;justify-content:center;
-      transition:transform .2s var(--ease),background .2s,color .2s;
+      box-shadow:0 8px 32px rgba(0,0,0,.5);
+      transition:transform .2s var(--ease),box-shadow .2s;cursor:pointer;
     }
-    .video-feat:hover .playring{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);transform:scale(1.06);}
-    .playring svg{width:24px;height:24px;margin-left:4px;}
+    .vhero:hover .vhero-play{transform:scale(1.1);box-shadow:0 14px 44px color-mix(in srgb,var(--accent) 50%,transparent);}
+    .vhero-play svg{width:22px;height:22px;margin-left:3px;}
+
+    /* iframe slot — hidden until clicked */
+    .vhero-iframe{
+      position:absolute;inset:0;z-index:4;
+      display:none;
+    }
+    .vhero-iframe.active{display:block;}
+    .vhero-iframe iframe{width:100%;height:100%;border:none;display:block;}
+
+    /* Two smaller video cards below */
+    .vgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+    .vcard{
+      position:relative;border-radius:14px;overflow:hidden;cursor:pointer;
+      background:var(--bg2);border:1px solid var(--card-line);
+      aspect-ratio:16/9;
+    }
+    .vcard-thumb{
+      position:absolute;inset:0;background-size:cover;background-position:center;
+      transition:transform .5s var(--ease),filter .3s;filter:brightness(.7);
+    }
+    .vcard:hover .vcard-thumb{transform:scale(1.05);filter:brightness(.45);}
+    .vcard-grad{
+      position:absolute;inset:0;
+      background:linear-gradient(to top,rgba(8,8,10,.9) 0%,transparent 55%);
+    }
+    .vcard-body{
+      position:absolute;bottom:0;left:0;right:0;padding:18px 20px;
+      display:flex;align-items:flex-end;justify-content:space-between;gap:12px;
+    }
+    .vcard-cat{
+      font-family:"Space Mono";font-size:9px;letter-spacing:.26em;text-transform:uppercase;
+      color:var(--accent);margin-bottom:5px;
+    }
+    .vcard-title{
+      font-weight:700;font-size:clamp(14px,1.4vw,17px);line-height:1.2;
+    }
+    .vcard-play{
+      flex-shrink:0;width:40px;height:40px;border-radius:50%;
+      background:rgba(255,255,255,.15);backdrop-filter:blur(6px);
+      border:1px solid rgba(255,255,255,.25);color:white;
+      display:flex;align-items:center;justify-content:center;
+      transition:background .2s var(--ease),transform .2s;
+    }
+    .vcard:hover .vcard-play{background:var(--accent);border-color:var(--accent);color:var(--accent-ink);transform:scale(1.08);}
+    .vcard-play svg{width:14px;height:14px;margin-left:2px;}
+    .vcard-iframe{position:absolute;inset:0;z-index:4;display:none;}
+    .vcard-iframe.active{display:block;}
+    .vcard-iframe iframe{width:100%;height:100%;border:none;display:block;}
+
+    /* skeleton for video block */
+    .vsk{border-radius:18px;aspect-ratio:16/8;background:var(--card);animation:shimmer 1.6s ease-in-out infinite;}
+    .vsk-sm{border-radius:14px;aspect-ratio:16/9;background:var(--card);animation:shimmer 1.6s ease-in-out infinite;}
+
     .vlabel{font-family:"Space Mono";font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);}
+
+    /* video lightbox for homepage (mobile-friendly) */
+    .vid-lightbox{
+      position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.92);backdrop-filter:blur(10px);
+      display:flex;align-items:center;justify-content:center;padding:20px;
+      opacity:0;pointer-events:none;transition:opacity .28s var(--ease);
+    }
+    .vid-lightbox.open{opacity:1;pointer-events:auto;}
+    .vid-lightbox-inner{
+      position:relative;width:100%;max-width:900px;
+      transform:scale(.96);transition:transform .3s var(--ease);
+    }
+    .vid-lightbox.open .vid-lightbox-inner{transform:scale(1);}
+    .vid-lightbox-inner iframe{
+      width:100%;aspect-ratio:16/9;border:none;border-radius:14px;display:block;
+    }
+    .vid-lightbox-close{
+      position:absolute;top:-44px;right:0;
+      background:none;border:none;color:white;
+      font-family:"Space Mono";font-size:11px;letter-spacing:.22em;text-transform:uppercase;
+      cursor:pointer;opacity:.7;transition:opacity .2s;
+    }
+    .vid-lightbox-close:hover{opacity:1;}
 
     /* ============================================================
        BAND
@@ -503,7 +608,8 @@
     <a href="#band">Band</a>
     <a href="#tour">Tour</a>
     <a href="https://your-shopify-store.myshopify.com">Merch</a>
-    <a href="music.html">All Music</a>
+    <a href="music.html">Music</a>
+    <a href="videos.html">Videos</a>
   </div>
   <button class="nav-cta" id="nav-presave-btn">Pre-Save</button>
   <button class="nav-burger" id="nav-burger-btn" aria-label="Menu">
@@ -520,7 +626,8 @@
   <a href="#band" class="nav-mobile-link">Band</a>
   <a href="#tour" class="nav-mobile-link">Tour</a>
   <a href="https://your-shopify-store.myshopify.com" class="nav-mobile-link">Merch</a>
-  <a href="music.html" class="nav-mobile-link">All Music</a>
+  <a href="music.html" class="nav-mobile-link">Music</a>
+  <a href="videos.html" class="nav-mobile-link">Videos</a>
 </nav>
 
 <!-- ── Hero ── -->
@@ -589,7 +696,7 @@
   <div class="wrap">
     <div class="section-head reveal">
       <h2 class="section-title">The <span class="accentword">music</span></h2>
-      <span class="section-num">02 — Releases &amp; Video</span>
+      <span class="section-num">02 — Releases</span>
     </div>
 
     <!-- Releases grid — populated by JS -->
@@ -612,15 +719,29 @@
     <div class="music-footer reveal">
       <a href="music.html" class="see-all">View all releases →</a>
     </div>
+  </div>
+</section>
 
-    <!-- Video placeholder -->
-    <div class="video-feat reveal" id="video-feat-btn">
-      <div class="ph">
-        <div class="playring">
-          <svg viewBox="0 0 24 24" fill="currentColor" width="24" height="24"><path d="M6 4.5v15l13-7.5z"/></svg>
-        </div>
-        <div class="vlabel">Wild Things — Official Video · Dropping soon</div>
+<!-- ── Videos ── -->
+<section class="section" id="videos" style="background:var(--bg2);border-top:1px solid var(--line);border-bottom:1px solid var(--line);">
+  <div class="wrap">
+    <div class="section-head reveal">
+      <h2 class="section-title">Watch <span class="accentword">it</span></h2>
+      <span class="section-num">03 — Videos</span>
+    </div>
+
+    <!-- Video block — populated by Sanity JS -->
+    <div id="video-block-wrap">
+      <!-- Skeleton while loading -->
+      <div class="vsk reveal in"></div>
+      <div class="vgrid" style="margin-top:14px">
+        <div class="vsk-sm"></div>
+        <div class="vsk-sm"></div>
       </div>
+    </div>
+
+    <div class="music-footer reveal" style="margin-top:28px;">
+      <a href="videos.html" class="see-all">See all videos →</a>
     </div>
   </div>
 </section>
@@ -651,7 +772,7 @@
   <div class="wrap">
     <div class="section-head reveal">
       <h2 class="section-title">On the <span class="accentword">road</span></h2>
-      <span class="section-num">03 — Live Dates</span>
+      <span class="section-num">04 — Live Dates</span>
     </div>
     <div class="tour-list">
       <div class="tour-row reveal">
@@ -719,6 +840,7 @@
           <a href="#tour">Tour Dates</a>
           <a href="#news">Mailing List</a>
           <a href="music.html">All Music</a>
+          <a href="videos.html">Videos</a>
         </div>
         <div class="foot-col">
           <h5>Contact</h5>
@@ -768,17 +890,11 @@
   </div>
 </div>
 
-<!-- ── Video Modal ── -->
-<div class="modal-scrim" id="video-modal">
-  <div class="modal" style="max-width:560px">
-    <button class="modal-close" id="video-close">
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
-    </button>
-    <h3>Teaser</h3>
-    <p>The "Wild Things" video is coming soon.</p>
-    <div style="aspect-ratio:16/9;border-radius:14px;border:1px solid var(--card-line);display:flex;align-items:center;justify-content:center;background:var(--card);">
-      <span class="vlabel">Video embed slot</span>
-    </div>
+<!-- ── Video Lightbox (homepage) ── -->
+<div class="vid-lightbox" id="vid-lightbox">
+  <div class="vid-lightbox-inner">
+    <button class="vid-lightbox-close" id="vid-lightbox-close">✕ &nbsp;Close</button>
+    <iframe id="vid-lightbox-iframe" src="" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen title="WD-HAN video"></iframe>
   </div>
 </div>
 
@@ -840,13 +956,157 @@
   document.getElementById('presave-close').addEventListener('click', () => closeModal('presave-modal'));
   document.getElementById('presave-modal').addEventListener('click', e => { if (e.target === document.getElementById('presave-modal')) closeModal('presave-modal'); });
 
-  document.getElementById('hero-video-btn').addEventListener('click', () => openModal('video-modal'));
-  document.getElementById('video-feat-btn').addEventListener('click', () => openModal('video-modal'));
-  document.getElementById('video-close').addEventListener('click', () => closeModal('video-modal'));
-  document.getElementById('video-modal').addEventListener('click', e => { if (e.target === document.getElementById('video-modal')) closeModal('video-modal'); });
+  document.getElementById('hero-video-btn').addEventListener('click', () => {
+    // If we have a featured video ID from Sanity, open lightbox; else do nothing gracefully
+    if (window._featuredVideoId) {
+      openVideoLightbox(window._featuredVideoId);
+    }
+  });
 
   document.querySelectorAll('[data-presave="true"]').forEach(el => el.addEventListener('click', e => { e.preventDefault(); openPresave(); }));
-  window.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal('presave-modal'); closeModal('video-modal'); } });
+  window.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      closeModal('presave-modal');
+      closeVideoLightbox();
+    }
+  });
+
+  /* ── Video Lightbox ── */
+  function openVideoLightbox(videoId) {
+    const lb  = document.getElementById('vid-lightbox');
+    const ifr = document.getElementById('vid-lightbox-iframe');
+    ifr.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+    lb.classList.add('open');
+  }
+  function closeVideoLightbox() {
+    const lb  = document.getElementById('vid-lightbox');
+    const ifr = document.getElementById('vid-lightbox-iframe');
+    lb.classList.remove('open');
+    setTimeout(() => { ifr.src = ''; }, 300);
+  }
+  document.getElementById('vid-lightbox-close').addEventListener('click', closeVideoLightbox);
+  document.getElementById('vid-lightbox').addEventListener('click', e => {
+    if (e.target === document.getElementById('vid-lightbox')) closeVideoLightbox();
+  });
+
+  /* ── Sanity: fetch videos for homepage ── */
+  /* YouTube thumbnail helper — maxresdefault → hqdefault fallback */
+  function ytThumb(videoId, quality = 'hqdefault') {
+    return `https://img.youtube.com/vi/${videoId}/${quality}.jpg`;
+  }
+  /* Extract YouTube video ID from a URL */
+  function ytId(url) {
+    if (!url) return null;
+    const m = url.match(/(?:youtu\.be\/|youtube\.com\/(?:watch\?v=|embed\/|shorts\/))([A-Za-z0-9_-]{11})/);
+    return m ? m[1] : null;
+  }
+  /* Category label prettifier */
+  function catLabel(cat) {
+    const map = {
+      'music-video':'Music Video','live':'Live','bts':'Behind the Scenes',
+      'lyric-video':'Lyric Video','interview':'Interview','other':'Other'
+    };
+    return map[cat] || (cat ? cat.charAt(0).toUpperCase() + cat.slice(1).replace(/-/g,' ') : 'Video');
+  }
+
+  (async function fetchVideos() {
+    const query = `*[_type == "video"] | order(releaseDate desc) [0..2] {
+      title,
+      description,
+      youtubeUrl,
+      "embedId": coalesce(embedId, null),
+      category,
+      releaseDate
+    }`;
+
+    let videos;
+    try {
+      const res = await fetch(sanityUrl(query));
+      const { result } = await res.json();
+      videos = result;
+    } catch(err) {
+      console.warn('Sanity video fetch failed', err);
+      renderVideoFallback();
+      return;
+    }
+
+    if (!videos?.length) { renderVideoFallback(); return; }
+
+    // Resolve video IDs — prefer embedId field, fallback parse from youtubeUrl
+    videos = videos.map(v => ({ ...v, _vid: v.embedId || ytId(v.youtubeUrl) })).filter(v => v._vid);
+
+    if (!videos.length) { renderVideoFallback(); return; }
+
+    // Store featured ID for hero button
+    window._featuredVideoId = videos[0]._vid;
+
+    renderHomeVideos(videos);
+  })();
+
+  function renderHomeVideos(videos) {
+    const wrap = document.getElementById('video-block-wrap');
+    if (!wrap) return;
+
+    const [hero, ...rest] = videos;
+    const smallCards = rest.slice(0, 2);
+
+    const heroThumb = ytThumb(hero._vid, 'maxresdefault');
+    const heroCat   = catLabel(hero.category);
+
+    let html = `
+      <div class="vhero reveal" onclick="openVideoLightbox('${hero._vid}')">
+        <div class="vhero-thumb" style="background-image:url('${heroThumb}')"></div>
+        <div class="vhero-grad"></div>
+        <div class="vhero-body">
+          <div>
+            <div class="vhero-cat">${escHtml(heroCat)}</div>
+            <div class="vhero-title">${escHtml(hero.title)}</div>
+            ${hero.description ? `<div class="vhero-desc">${escHtml(hero.description)}</div>` : ''}
+          </div>
+          <button class="vhero-play" aria-label="Play ${escHtml(hero.title)}">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>
+          </button>
+        </div>
+      </div>`;
+
+    if (smallCards.length) {
+      html += `<div class="vgrid" style="margin-top:14px">` +
+        smallCards.map(v => {
+          const thumb = ytThumb(v._vid, 'hqdefault');
+          const cat   = catLabel(v.category);
+          return `
+            <div class="vcard reveal" onclick="openVideoLightbox('${v._vid}')">
+              <div class="vcard-thumb" style="background-image:url('${thumb}')"></div>
+              <div class="vcard-grad"></div>
+              <div class="vcard-body">
+                <div>
+                  <div class="vcard-cat">${escHtml(cat)}</div>
+                  <div class="vcard-title">${escHtml(v.title)}</div>
+                </div>
+                <div class="vcard-play">
+                  <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>
+                </div>
+              </div>
+            </div>`;
+        }).join('') +
+        `</div>`;
+    }
+
+    wrap.innerHTML = html;
+    reObserveReveals();
+  }
+
+  function renderVideoFallback() {
+    const wrap = document.getElementById('video-block-wrap');
+    if (!wrap) return;
+    wrap.innerHTML = `
+      <div class="vhero reveal" style="display:flex;align-items:center;justify-content:center;background:
+        repeating-linear-gradient(45deg,color-mix(in srgb,var(--ink) 6%,transparent) 0 2px,transparent 2px 13px),
+        color-mix(in srgb,var(--ink) 4%,transparent);">
+        <span class="vlabel">Videos coming soon</span>
+      </div>`;
+    reObserveReveals();
+  }
 
   /* ── Newsletter ── */
   document.getElementById('news-form').addEventListener('submit', e => {
