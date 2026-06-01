@@ -34,6 +34,7 @@ export default {
           { title: 'Single', value: 'single' },
           { title: 'EP', value: 'ep' },
           { title: 'Album', value: 'album' },
+          { title: 'Remix', value: 'remix' },
         ],
         layout: 'radio',
       },

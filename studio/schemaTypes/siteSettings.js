@@ -56,6 +56,7 @@ export default {
         { name: 'youtube', title: 'YouTube Channel URL', type: 'url' },
         { name: 'spotify', title: 'Spotify Artist URL', type: 'url' },
         { name: 'appleMusic', title: 'Apple Music URL', type: 'url' },
+        { name: 'youtubeMusic', title: 'YouTube Music URL', type: 'url' },
         { name: 'bandcamp', title: 'Bandcamp URL', type: 'url' },
         { name: 'facebook', title: 'Facebook URL', type: 'url' },
         { name: 'twitter', title: 'Twitter / X URL', type: 'url' },

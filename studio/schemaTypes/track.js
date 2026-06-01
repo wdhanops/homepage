@@ -37,6 +37,21 @@ export default {
       description: 'International Standard Recording Code. Important for sync and royalties.',
     },
     {
+  name: 'streamingLinks',
+  title: 'Streaming Links',
+  type: 'object',
+  fields: [
+    { name: 'spotify',      title: 'Spotify URL',       type: 'url' },
+    { name: 'appleMusic',   title: 'Apple Music URL',   type: 'url' },
+    { name: 'youtube',      title: 'YouTube Music URL', type: 'url' },
+    { name: 'tidal',        title: 'Tidal URL',         type: 'url' },
+    { name: 'amazonMusic',  title: 'Amazon Music URL',  type: 'url' },
+    { name: 'deezer',       title: 'Deezer URL',        type: 'url' },
+    { name: 'soundcloud',   title: 'SoundCloud URL',    type: 'url' },
+    { name: 'bandcamp',     title: 'Bandcamp URL',      type: 'url' },
+  ],
+},
+    {
       name: 'composerCredits',
       title: 'Composer Credits',
       type: 'string',
