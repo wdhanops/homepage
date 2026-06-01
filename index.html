@@ -124,42 +124,50 @@
     ============================================================ */
     .nav{
       flex:0 0 auto;
-      display:flex;align-items:center;justify-content:space-between;
+      display:grid;
+      grid-template-columns:auto 1fr auto;
+      align-items:center;
       padding:22px 36px;
       position:relative;z-index:10;
+      gap:20px;
     }
-    /* Left cluster: nav links */
-    .nav-left{
-      display:flex;align-items:center;gap:28px;
-    }
-    .nav-left a{
-      font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;
-      color:var(--muted);transition:color .2s;
-    }
-    .nav-left a:hover{color:var(--ink);}
 
-    /* Right cluster: nav links */
-    .nav-right{
-      display:flex;align-items:center;gap:28px;
-    }
-    .nav-right a{
-      font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;
-      color:var(--muted);transition:color .2s;
-    }
-    .nav-right a:hover{color:var(--ink);}
-
-    /* Center: logo */
+    /* Left: logo */
     .nav-logo{
-      position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
       display:flex;align-items:center;
     }
     .nav-logo svg{
-      height:38px;width:auto;
+      height:36px;width:auto;
       fill:var(--ink);
       transition:fill .2s;
       filter:drop-shadow(0 2px 12px rgba(0,0,0,.4));
     }
     .nav-logo:hover svg{fill:var(--accent);}
+
+    /* Center: nav links */
+    .nav-center{
+      display:flex;align-items:center;justify-content:center;gap:28px;
+    }
+    .nav-center a{
+      font-size:12px;letter-spacing:.18em;text-transform:uppercase;font-weight:600;
+      color:var(--muted);transition:color .2s;
+    }
+    .nav-center a:hover{color:var(--ink);}
+
+    /* Right: Spotify play CTA */
+    .nav-cta{
+      display:flex;align-items:center;justify-content:center;
+      width:42px;height:42px;border-radius:50%;
+      background:var(--accent);color:var(--accent-ink);
+      border:none;
+      transition:transform .18s var(--ease),box-shadow .2s;
+      flex-shrink:0;
+    }
+    .nav-cta svg{width:16px;height:16px;fill:currentColor;margin-left:2px;}
+    .nav-cta:hover{
+      transform:scale(1.08);
+      box-shadow:0 8px 24px color-mix(in srgb,var(--accent) 50%,transparent);
+    }
 
     /* Mobile burger */
     .nav-burger{
@@ -221,7 +229,7 @@
       background:rgba(8,8,10,.45);backdrop-filter:blur(10px);
       border:1px solid var(--card-line);border-radius:12px;
     }
-    .cd-num{font-family:var(--font-display);font-size:clamp(28px,4vw,46px);line-height:.9;}
+    .cd-num{font-family:"Space Grotesk",system-ui,sans-serif;font-weight:700;font-size:clamp(28px,4vw,46px);line-height:.9;}
     .cd-lbl{font-family:"Space Mono";font-size:9px;letter-spacing:.26em;text-transform:uppercase;color:var(--faint);margin-top:7px;}
 
     /* CTA row */
@@ -246,16 +254,12 @@
     ============================================================ */
     .foot{
       flex:0 0 auto;
-      padding:0 36px 24px;
+      padding:16px 36px 24px;
       position:relative;z-index:10;
     }
 
-    /* Thin rule */
-    .foot-rule{
-      width:100%;height:1px;
-      background:var(--line);
-      margin-bottom:20px;
-    }
+    /* Three-column layout: listen | logo | social */
+    .foot-rule{display:none;}
 
     /* Three-column layout: listen | logo | social */
     .foot-inner{
@@ -299,13 +303,6 @@
       border:1px solid var(--line);border-radius:6px;padding:5px 9px;
       opacity:0;transition:opacity .2s,transform .2s var(--ease);
       pointer-events:none;
-    }
-
-    /* Divider between clusters and logo */
-    .foot-divider{
-      width:1px;height:28px;background:var(--line);
-      display:inline-block;margin:0 4px;
-      opacity:.6;
     }
 
     /* Footer logo */
@@ -481,16 +478,8 @@
 
   <!-- ── Nav ── -->
   <nav class="nav">
-    <!-- Left links -->
-    <div class="nav-left">
-      <a href="about.html">The Band</a>
-      <a href="music.html">Music</a>
-      <a href="videos.html">Videos</a>
-    </div>
-
-    <!-- Centre logo -->
+    <!-- Left: logo -->
     <a href="/" class="nav-logo" aria-label="WD-HAN home">
-      <!-- SVG logo — fill set by CSS -->
       <svg viewBox="0 0 400 370" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
         <g>
           <path d="M175.919,182.501 C184.816,181.582 190.177,176.624 196.674,163.107 L206.221,143.586 C210.982,132.818 214.134,124.234 217.242,113.452 C224.768,86.799 230.381,75.392 246.422,52.998 C253.945,42.311 257.798,31.636 256.973,23.647 C255.38,8.212 243.454,-0.651 226.203,1.129 C215.671,2.216 209.132,13.536 208.627,31.756 C207.413,78.68 187.206,138.942 172.134,140.498 C164.507,141.285 158.385,135.31 156.961,121.509 C155.949,111.703 158.581,99.87 164.282,87.536 C172.439,70.544 178.561,48.073 177.605,38.812 C176.949,32.457 175.354,27.666 169.206,24.997 C163.84,22.798 160.484,24.062 156.532,26.672 C150.007,31.016 145.202,39.587 141.736,52.241 C138.973,62.803 137.592,74.324 136.332,83.447 C130.907,119.794 121.723,139.277 109.557,140.533 C104.472,141.058 101.825,136.743 100.756,126.392 C98.713,106.599 104.028,86.965 117.652,64.27 C124.573,53.095 128.314,41.33 127.471,33.159 C126.065,19.54 115.629,10.89 102.374,12.258 C84.578,14.095 77.41,33.554 81.196,70.235 C82.545,83.309 83.625,97.329 81.725,110.922 L76.74,142.635 C76.132,145.635 76.031,148.214 76.274,150.575 C77.83,165.647 92.31,177.916 106.655,176.436 C110.832,176.005 115.31,173.157 125.255,164.606 C130.29,160.049 133.44,156.787 136.728,156.631 C140.397,156.62 143.859,159.933 148.553,168.074 C154.981,178.789 164.297,183.7 175.919,182.501 z"/>
@@ -504,12 +493,20 @@
       </svg>
     </a>
 
-    <!-- Right links -->
-    <div class="nav-right">
+    <!-- Center: nav links -->
+    <div class="nav-center">
+      <a href="about.html">The Band</a>
+      <a href="music.html">Music</a>
+      <a href="videos.html">Videos</a>
       <a href="shows.html">Tour</a>
       <a href="https://wd-han.myshopify.com" target="_blank" rel="noopener">Merch</a>
       <a href="/sync">Sync</a>
     </div>
+
+    <!-- Right: Spotify CTA -->
+    <a class="nav-cta" href="https://open.spotify.com/artist/2byXGURM0QAhEgdMIWGM5c" target="_blank" rel="noopener" aria-label="Listen on Spotify">
+      <svg viewBox="0 0 24 24"><path d="M6 4.5v15l13-7.5z"/></svg>
+    </a>
 
     <!-- Mobile burger -->
     <button class="nav-burger" id="nav-burger-btn" aria-label="Open menu">
@@ -548,7 +545,6 @@
 
   <!-- ── Footer ── -->
   <footer class="foot">
-    <div class="foot-rule"></div>
     <div class="foot-inner">
 
       <!-- LISTEN icons — right of center -->
@@ -561,7 +557,6 @@
           <svg viewBox="0 0 24 24"><path d="M16.36 12.6c-.02-2.3 1.88-3.4 1.96-3.46-1.07-1.56-2.73-1.78-3.32-1.8-1.41-.14-2.76.83-3.47.83-.72 0-1.82-.81-3-.79-1.54.02-2.96.9-3.75 2.27-1.6 2.78-.41 6.9 1.15 9.16.76 1.1 1.67 2.34 2.86 2.3 1.15-.05 1.58-.74 2.97-.74 1.38 0 1.77.74 2.98.72 1.23-.02 2.01-1.12 2.76-2.23.87-1.28 1.23-2.52 1.25-2.58-.03-.01-2.4-.92-2.42-3.65zM14.13 5.6c.63-.77 1.06-1.83.94-2.9-.91.04-2.02.61-2.67 1.37-.58.68-1.09 1.76-.95 2.8 1.02.08 2.05-.51 2.68-1.27z"/></svg>
           <span class="icon-tooltip">Apple Music</span>
         </a>
-        <span class="foot-divider"></span>
         <a class="icon-btn" href="#" target="_blank" rel="noopener" aria-label="YouTube Music" id="link-ytmusic">
           <svg viewBox="0 0 24 24"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm0 14.5a4.5 4.5 0 1 1 0-9 4.5 4.5 0 0 1 0 9zm0-7a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0-5z"/><path d="M9.5 12l5-3v6z"/></svg>
           <span class="icon-tooltip">YouTube Music</span>
@@ -597,7 +592,6 @@
           <svg viewBox="0 0 24 24"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.2C0 8.08 0 12 0 12s0 3.92.5 5.8a3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14C24 15.92 24 12 24 12s0-3.92-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg>
           <span class="icon-tooltip">YouTube</span>
         </a>
-        <span class="foot-divider"></span>
         <a class="icon-btn" href="https://tiktok.com/@wdhanband" target="_blank" rel="noopener" aria-label="TikTok">
           <svg viewBox="0 0 24 24"><path d="M16.6 5.82A4.28 4.28 0 0 1 15.54 3h-3.1v12.4a2.6 2.6 0 1 1-2.6-2.6c.27 0 .53.04.78.12v-3.16a5.7 5.7 0 1 0 4.92 5.64V8.99a7.34 7.34 0 0 0 4.3 1.38V7.27a4.28 4.28 0 0 1-3.24-1.45z"/></svg>
           <span class="icon-tooltip">TikTok</span>
@@ -672,8 +666,8 @@
   /* ── Background photo slideshow ── */
   (async function initSlideshow() {
     // Fetch all images flagged as homepageBackground: true
-    const q = `*[_type == "image" && homepageBackground == true] {
-      "url": asset->url
+    const q = `*[_type == "galleryImage" && homepageBackground == true] {
+      "url": image.asset->url
     }`;
     let slides = [];
     try {
