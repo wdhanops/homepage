@@ -624,12 +624,12 @@
   function buildCard(v, extraClass) {
     const thumb    = ytThumb(v._vid);
     const fallback = ytThumbFallback(v._vid);
-    const year     = v.releaseDate ? new Date(v.releaseDate).getFullYear() : '';
+    const year     = v.publishDate ? new Date(v.publishDate).getFullYear() : '';
     const cat      = catLabel(v.category);
     const isFeat   = extraClass === 'feat';
 
     return `
-      <div class="vcard ${extraClass} reveal" data-vid='${JSON.stringify({_vid:v._vid,title:v.title,category:v.category,youtubeUrl:v.youtubeUrl}).replace(/'/g,"&#39;")}'>
+      <div class="vcard ${extraClass} reveal" data-vid='${JSON.stringify({_vid:v._vid,title:v.title,category:v.category,youtubeUrl:v.youtubeUrl,relatedRelease:v.relatedRelease||null,relatedTrack:v.relatedTrack||null}).replace(/'/g,"&#39;")}'>
         <div class="vthumb">
           <img
             src="${esc(thumb)}"
@@ -670,13 +670,15 @@
 
   /* ── Main fetch ── */
   (async function() {
-    const query = `*[_type == "video"] | order(releaseDate desc) {
+    const query = `*[_type == "video"] | order(publishDate desc) {
       title,
       description,
       youtubeUrl,
       "embedId": coalesce(embedId, null),
       category,
-      releaseDate
+      publishDate,
+      "relatedRelease": relatedRelease->{ title, "slug": slug.current },
+      "relatedTrack": relatedTrack->{ title, "slug": slug.current }
     }`;
 
     let videos;
