@@ -854,7 +854,6 @@
   function openModal(id) { document.getElementById(id).classList.add("open"); }
   function closeModal(id) { document.getElementById(id).classList.remove("open"); }
 
-  // Pre-save modal
   const presaveModal = document.getElementById("presave-modal");
   function openPresave() { openModal("presave-modal"); }
 
@@ -863,7 +862,6 @@
   document.getElementById("presave-close").addEventListener("click", () => closeModal("presave-modal"));
   presaveModal.addEventListener("click", (e) => { if (e.target === presaveModal) closeModal("presave-modal"); });
 
-  // Video modal
   const videoModal = document.getElementById("video-modal");
   function openVideo() { openModal("video-modal"); }
 
@@ -872,12 +870,10 @@
   document.getElementById("video-close").addEventListener("click", () => closeModal("video-modal"));
   videoModal.addEventListener("click", (e) => { if (e.target === videoModal) closeModal("video-modal"); });
 
-  // data-presave shortcut (platform cards, release buttons, footer links)
   document.querySelectorAll("[data-presave='true']").forEach(el => {
     el.addEventListener("click", (e) => { e.preventDefault(); openPresave(); });
   });
 
-  // Escape key closes any open modal
   window.addEventListener("keydown", (e) => {
     if (e.key === "Escape") {
       closeModal("presave-modal");
@@ -904,6 +900,162 @@
     }, { threshold: 0.12 });
     setTimeout(() => document.querySelectorAll(".reveal").forEach(el => io.observe(el)), 100);
   })();
+
+  /* ── Sanity config ── */
+  const SANITY_PROJECT_ID = 'oz4mxjaz';
+  const SANITY_DATASET    = 'production';
+
+  function sanityUrl(query) {
+    return `https://${SANITY_PROJECT_ID}.apicdn.sanity.io/v2021-10-21/data/query/${SANITY_DATASET}?query=${encodeURIComponent(query)}`;
+  }
+
+  function sanityImg(url, width) {
+    return url ? `${url}?w=${width}&auto=format&fit=crop` : null;
+  }
+
+  /* ── Sanity: fetch releases + update hero ── */
+  (async function () {
+    const query = `*[_type == "release"] | order(releaseDate desc) [0..2] {
+      title,
+      releaseType,
+      releaseDate,
+      "artworkUrl": artwork.asset->url,
+      streamingLinks
+    }`;
+
+    let releases;
+    try {
+      const res = await fetch(sanityUrl(query));
+      const { result } = await res.json();
+      releases = result;
+    } catch (err) {
+      console.warn('Sanity fetch failed — showing static fallback', err);
+      return;
+    }
+
+    if (!releases?.length) return;
+
+    const latest = releases[0];
+
+    /* ── Update hero with latest release ── */
+    updateHero(latest);
+
+    /* ── Render releases grid ── */
+    renderReleases(releases);
+
+    /* ── Update platform streaming links ── */
+    updatePlatformLinks(latest.streamingLinks);
+
+  })();
+
+  function updateHero(rel) {
+    if (!rel) return;
+
+    // Update hero sub-copy with real release date
+    const heroSub = document.querySelector('.hero-sub');
+    if (heroSub && rel.releaseDate) {
+      const d = new Date(rel.releaseDate);
+      const label = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
+      heroSub.innerHTML = `The new single from WD-HAN. Out <strong>${label}</strong>. Pre-save it now and hear it the second it drops.`;
+    }
+
+    // Update countdown target date
+    if (rel.releaseDate) {
+      const RELEASE = new Date(rel.releaseDate + 'T00:00:00').getTime();
+      const els = {
+        days: document.getElementById("cd-days"),
+        hrs:  document.getElementById("cd-hrs"),
+        min:  document.getElementById("cd-min"),
+        sec:  document.getElementById("cd-sec"),
+      };
+      function pad(n) { return String(n).padStart(2, "0"); }
+      // Overwrite the tick interval with the real date
+      clearInterval(window._cdInterval);
+      window._cdInterval = setInterval(() => {
+        const diff = Math.max(0, RELEASE - Date.now());
+        els.days.textContent = Math.floor(diff / 864e5);
+        els.hrs.textContent  = pad(Math.floor((diff % 864e5) / 36e5));
+        els.min.textContent  = pad(Math.floor((diff % 36e5) / 6e4));
+        els.sec.textContent  = pad(Math.floor((diff % 6e4) / 1e3));
+      }, 1000);
+    }
+
+    // Swap hero wordmark text if title differs from "Wild Things"
+    const wordmark = document.querySelector('.hero-wordmark');
+    if (wordmark && rel.title && rel.title !== 'Wild Things') {
+      const words = rel.title.split(' ');
+      const first = words.slice(0, -1).join(' ') || rel.title;
+      const last  = words.length > 1 ? words[words.length - 1] : '';
+      wordmark.innerHTML = last ? `${first}<br><em>${last}</em>` : `<em>${first}</em>`;
+    }
+  }
+
+  function renderReleases(releases) {
+    const grid = document.querySelector('.releases');
+    if (!grid || !releases?.length) return;
+
+    grid.innerHTML = releases.map((rel, i) => {
+      const year = rel.releaseDate ? new Date(rel.releaseDate).getFullYear() : '';
+      const type = rel.releaseType
+        ? rel.releaseType.charAt(0).toUpperCase() + rel.releaseType.slice(1)
+        : 'Release';
+      const spotifyUrl = rel.streamingLinks?.spotify || '#';
+      const artworkUrl = rel.artworkUrl ? sanityImg(rel.artworkUrl, 600) : null;
+      const featClass  = i === 0 ? 'rel rel-feat reveal' : 'rel reveal';
+      const badge      = i === 0 ? `<span class="rel-badge">Latest</span>` : '';
+      const artHtml    = artworkUrl
+        ? `<img src="${artworkUrl}" alt="${rel.title}" loading="${i === 0 ? 'eager' : 'lazy'}" style="width:100%;height:100%;object-fit:cover;">`
+        : `<div class="ph"><span>Cover art<br>${rel.title}</span></div>`;
+
+      return `
+        <div class="${featClass}">
+          <div class="rel-art">
+            ${badge}
+            ${artHtml}
+          </div>
+          <div class="rel-body">
+            <div>
+              <div class="rel-name">${rel.title}</div>
+              <div class="rel-type">${type} · ${year}</div>
+            </div>
+            <a class="rel-play" href="${spotifyUrl}" target="_blank" rel="noopener" aria-label="Listen on Spotify">
+              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>
+            </a>
+          </div>
+        </div>`;
+    }).join('');
+
+    // Re-run scroll reveal on injected cards
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(en => {
+        if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
+      });
+    }, { threshold: 0.12 });
+    grid.querySelectorAll('.reveal').forEach(el => io.observe(el));
+  }
+
+  function updatePlatformLinks(links) {
+    if (!links) return;
+    // The 3 platform cards in the Listen section, in DOM order: Spotify, Apple Music, YouTube
+    const cards = document.querySelectorAll('.plat');
+    const map = [
+      links.spotify,
+      links.appleMusic,
+      links.youtube,
+    ];
+    cards.forEach((card, i) => {
+      if (map[i] && map[i] !== '#') {
+        card.href = map[i];
+        card.removeAttribute('data-presave');
+        card.removeEventListener('click', openPresave);
+        card.target = '_blank';
+        card.rel = 'noopener';
+        // Update action label
+        const action = card.querySelector('.paction');
+        if (action) action.textContent = 'Listen →';
+      }
+    });
+  }
 </script>
 </body>
 </html>
