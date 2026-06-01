@@ -565,7 +565,7 @@
   const SANITY_DATASET    = 'production';
 
   function sanityUrl(q) {
-    return `https://api.sanity.io/v2021-10-21/data/query/${SANITY_DATASET}?projectId=${SANITY_PROJECT_ID}&query=${encodeURIComponent(q)}`;
+    return `https://${SANITY_PROJECT_ID}.api.sanity.io/v2021-10-21/data/query/${SANITY_DATASET}?query=${encodeURIComponent(q)}`;
   }
 
   function esc(s) {
