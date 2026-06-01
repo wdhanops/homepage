@@ -76,7 +76,7 @@
     }
 
     /* ============================================================
-       GLOW FIELD (animated accent blobs, GPU-cheap)
+       GLOW FIELD
     ============================================================ */
     .glow-field{
       position:fixed;inset:0;z-index:0;pointer-events:none;
@@ -121,10 +121,9 @@
       padding:12px 28px;
     }
     .nav-wordmark{
-  font-family:var(--font-display);font-size:22px;letter-spacing:.04em;
+      font-family:var(--font-display);font-size:22px;letter-spacing:.04em;
       color:var(--ink);text-decoration:none;
     }
-    /* fallback text wordmark — replace with <img src="assets/wdhan-logo.png"> once asset exists */
     .nav-logo-img{height:30px;filter:var(--logo-filter);transition:height .35s var(--ease);}
     .nav.scrolled .nav-logo-img{height:24px;}
     .nav-links{display:flex;align-items:center;gap:30px;}
@@ -140,7 +139,6 @@
       transition:transform .18s var(--ease),box-shadow .25s;
     }
     .nav-cta:hover{transform:translateY(-1px);box-shadow:0 8px 24px color-mix(in srgb,var(--accent) 45%,transparent);}
-    /* mobile burger */
     .nav-burger{display:none;background:none;border:none;color:var(--ink);padding:4px;}
     .nav-burger svg{width:22px;height:22px;stroke:currentColor;stroke-width:2;stroke-linecap:round;fill:none;}
     .nav-mobile{
@@ -160,7 +158,6 @@
       text-align:center;padding:120px 24px 60px;
     }
     .hero-inner{position:relative;z-index:3;width:100%;max-width:980px;}
-    /* glow halo behind hero text */
     [data-theme="midnight"] .hero-inner::before{
       content:"";position:absolute;left:50%;top:36%;transform:translate(-50%,-50%);
       width:72%;height:320px;z-index:-1;pointer-events:none;
@@ -176,10 +173,9 @@
     }
     @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.35;transform:scale(.7);}}
 
-    /* Hero wordmark — text fallback until SVG asset is ready */
     .hero-wordmark{
-  font-family:var(--font-display);
-  font-size:clamp(60px,14vw,160px);
+      font-family:var(--font-display);
+      font-size:clamp(60px,14vw,160px);
       line-height:.88;letter-spacing:.02em;text-transform:uppercase;
       color:var(--ink);
       margin:0 auto 6px;
@@ -187,8 +183,6 @@
       display:block;
     }
     .hero-wordmark em{color:var(--accent);font-style:normal;}
-    /* When you have the real wordmark image, swap to: */
-    /* .wordmark-img{width:min(78vw,760px);filter:var(--logo-filter);margin:0 auto 6px;animation:float 7s ease-in-out infinite;} */
     @keyframes float{0%,100%{transform:translateY(0) rotate(-.4deg);}50%{transform:translateY(-12px) rotate(.4deg);}}
 
     .hero-sub{
@@ -196,7 +190,6 @@
       margin:22px auto 0;line-height:1.5;
     }
 
-    /* Countdown */
     .countdown{display:flex;gap:14px;justify-content:center;margin:38px 0 34px;flex-wrap:wrap;}
     .cd-unit{
       min-width:92px;padding:16px 10px 12px;text-align:center;
@@ -205,7 +198,6 @@
     .cd-num{font-family:"Anton";font-size:clamp(34px,5vw,56px);line-height:.9;}
     .cd-lbl{font-family:"Space Mono";font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--faint);margin-top:8px;}
 
-    /* CTA buttons */
     .cta-row{display:flex;gap:14px;justify-content:center;align-items:center;flex-wrap:wrap;}
     .btn{
       display:inline-flex;align-items:center;gap:10px;
@@ -256,15 +248,29 @@
     .plat:hover .arrow-ic{transform:translate(3px,-3px);color:var(--accent);}
 
     /* ============================================================
-       MUSIC / RELEASES
+       MUSIC / RELEASES — Homepage grid
     ============================================================ */
     .releases{display:grid;grid-template-columns:1.4fr 1fr 1fr;gap:18px;}
+
+    /* skeleton loader */
+    .rel-skeleton{
+      border:1px solid var(--card-line);border-radius:18px;overflow:hidden;background:var(--card);
+    }
+    .rel-skeleton .sk-art{aspect-ratio:1;background:var(--card-line);animation:shimmer 1.6s ease-in-out infinite;}
+    .rel-skeleton.feat .sk-art{aspect-ratio:auto;height:240px;}
+    .rel-skeleton .sk-body{padding:18px 20px;display:flex;flex-direction:column;gap:8px;}
+    .rel-skeleton .sk-line{height:14px;border-radius:6px;background:var(--card-line);animation:shimmer 1.6s ease-in-out infinite;}
+    .rel-skeleton .sk-line.short{width:55%;}
+    @keyframes shimmer{0%,100%{opacity:.4;}50%{opacity:.9;}}
+
     .rel{
       border:1px solid var(--card-line);border-radius:18px;overflow:hidden;background:var(--card);
       display:flex;flex-direction:column;transition:transform .25s var(--ease),border-color .25s;
     }
     .rel:hover{transform:translateY(-4px);border-color:var(--accent);}
     .rel-art{aspect-ratio:1;position:relative;overflow:hidden;}
+    .rel-art img{width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease);}
+    .rel:hover .rel-art img{transform:scale(1.04);}
     .rel-art .ph{
       position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;
       background:
@@ -285,10 +291,21 @@
       width:44px;height:44px;border-radius:50%;flex:0 0 auto;
       display:flex;align-items:center;justify-content:center;
       background:var(--accent);color:var(--accent-ink);border:none;
-      transition:transform .18s var(--ease);
+      transition:transform .18s var(--ease);text-decoration:none;
     }
     .rel-play:hover{transform:scale(1.08);}
     .rel-play svg{width:16px;height:16px;}
+
+    /* See all music link */
+    .music-footer{
+      display:flex;align-items:center;justify-content:center;margin-top:32px;
+    }
+    .see-all{
+      font-family:"Space Mono";font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+      color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:2px;
+      transition:color .2s,border-color .2s;
+    }
+    .see-all:hover{color:var(--accent);border-color:var(--accent);}
 
     /* video placeholder */
     .video-feat{
@@ -315,7 +332,6 @@
     ============================================================ */
     .band{display:grid;grid-template-columns:1.25fr .9fr;gap:48px;align-items:center;}
     .band-photo{position:relative;border-radius:18px;overflow:hidden;border:1px solid var(--card-line);}
-    /* placeholder until real photo */
     .band-photo-ph{
       aspect-ratio:4/3;background:var(--card);
       display:flex;align-items:center;justify-content:center;
@@ -481,13 +497,13 @@
 <!-- ── Nav ── -->
 <nav class="nav" id="nav">
   <a href="#top" class="nav-wordmark">WD-HAN</a>
-  <!-- swap above for: <a href="#top"><img class="nav-logo-img" src="assets/wdhan-logo.png" alt="WD-HAN"></a> -->
   <div class="nav-links">
     <a href="#listen">Listen</a>
     <a href="#music">Music</a>
     <a href="#band">Band</a>
     <a href="#tour">Tour</a>
     <a href="https://your-shopify-store.myshopify.com">Merch</a>
+    <a href="music.html">All Music</a>
   </div>
   <button class="nav-cta" id="nav-presave-btn">Pre-Save</button>
   <button class="nav-burger" id="nav-burger-btn" aria-label="Menu">
@@ -504,19 +520,16 @@
   <a href="#band" class="nav-mobile-link">Band</a>
   <a href="#tour" class="nav-mobile-link">Tour</a>
   <a href="https://your-shopify-store.myshopify.com" class="nav-mobile-link">Merch</a>
+  <a href="music.html" class="nav-mobile-link">All Music</a>
 </nav>
 
 <!-- ── Hero ── -->
 <header class="hero" id="top">
   <div class="hero-inner">
     <div class="hero-kicker kicker"><span class="dot"></span> New Single</div>
-
-    <!-- Text wordmark — swap for <img class="wordmark-img" src="assets/wild-things-wordmark.png" alt="Wild Things"> -->
     <span class="hero-wordmark">Wild<br><em>Things</em></span>
+    <p class="hero-sub" id="hero-sub-text">The new single from WD-HAN. Out <strong>June 12</strong>. Pre-save it now and hear it the second it drops.</p>
 
-    <p class="hero-sub">The new single from WD-HAN. Out <strong>June 12</strong>. Pre-save it now and hear it the second it drops.</p>
-
-    <!-- Countdown -->
     <div class="countdown" id="countdown">
       <div class="cd-unit"><div class="cd-num" id="cd-days">—</div><div class="cd-lbl">Days</div></div>
       <div class="cd-unit"><div class="cd-num" id="cd-hrs">—</div><div class="cd-lbl">Hours</div></div>
@@ -526,12 +539,10 @@
 
     <div class="cta-row">
       <button class="btn btn-primary" id="hero-presave-btn">
-        <!-- Spotify icon -->
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.5 17.3a.75.75 0 0 1-1.03.25c-2.82-1.72-6.37-2.11-10.55-1.16a.75.75 0 1 1-.33-1.46c4.58-1.04 8.5-.6 11.66 1.34.36.22.47.69.25 1.03zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.23-1.99-8.16-2.56-11.98-1.4a.94.94 0 1 1-.55-1.8c4.37-1.32 9.8-.68 13.5 1.6.44.27.58.85.32 1.29zm.13-3.4C15.73 8.26 8.5 8.02 4.78 9.15a1.12 1.12 0 1 1-.65-2.15c4.28-1.3 12.26-1.05 16.55 1.5a1.12 1.12 0 1 1-1.15 1.93z"/></svg>
         Pre-Save the Single
       </button>
       <button class="btn btn-ghost" id="hero-video-btn">
-        <!-- Play icon -->
         <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>
         Watch Teaser
       </button>
@@ -548,35 +559,26 @@
       <span class="section-num">01 — Stream &amp; Save</span>
     </div>
     <div class="platforms">
-      <!-- Spotify -->
-      <a class="plat reveal" href="#" data-presave="true">
+      <a class="plat reveal" id="plat-spotify" href="#" data-presave="true">
         <span class="ic">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.5 17.3a.75.75 0 0 1-1.03.25c-2.82-1.72-6.37-2.11-10.55-1.16a.75.75 0 1 1-.33-1.46c4.58-1.04 8.5-.6 11.66 1.34.36.22.47.69.25 1.03zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.23-1.99-8.16-2.56-11.98-1.4a.94.94 0 1 1-.55-1.8c4.37-1.32 9.8-.68 13.5 1.6.44.27.58.85.32 1.29zm.13-3.4C15.73 8.26 8.5 8.02 4.78 9.15a1.12 1.12 0 1 1-.65-2.15c4.28-1.3 12.26-1.05 16.55 1.5a1.12 1.12 0 1 1-1.15 1.93z"/></svg>
         </span>
-        <span class="meta"><span class="pname">Spotify</span><span class="paction">Pre-save →</span></span>
-        <span class="arrow-ic">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M7 17 17 7M9 7h8v8"/></svg>
-        </span>
+        <span class="meta"><span class="pname">Spotify</span><span class="paction" id="plat-spotify-action">Pre-save →</span></span>
+        <span class="arrow-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
       </a>
-      <!-- Apple Music -->
-      <a class="plat reveal" href="#" data-presave="true">
+      <a class="plat reveal" id="plat-apple" href="#" data-presave="true">
         <span class="ic">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.36 12.6c-.02-2.3 1.88-3.4 1.96-3.46-1.07-1.56-2.73-1.78-3.32-1.8-1.41-.14-2.76.83-3.47.83-.72 0-1.82-.81-3-.79-1.54.02-2.96.9-3.75 2.27-1.6 2.78-.41 6.9 1.15 9.16.76 1.1 1.67 2.34 2.86 2.3 1.15-.05 1.58-.74 2.97-.74 1.38 0 1.77.74 2.98.72 1.23-.02 2.01-1.12 2.76-2.23.87-1.28 1.23-2.52 1.25-2.58-.03-.01-2.4-.92-2.42-3.65zM14.13 5.6c.63-.77 1.06-1.83.94-2.9-.91.04-2.02.61-2.67 1.37-.58.68-1.09 1.76-.95 2.8 1.02.08 2.05-.51 2.68-1.27z"/></svg>
         </span>
-        <span class="meta"><span class="pname">Apple Music</span><span class="paction">Pre-add →</span></span>
-        <span class="arrow-ic">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M7 17 17 7M9 7h8v8"/></svg>
-        </span>
+        <span class="meta"><span class="pname">Apple Music</span><span class="paction" id="plat-apple-action">Pre-add →</span></span>
+        <span class="arrow-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
       </a>
-      <!-- YouTube -->
-      <a class="plat reveal" href="#" target="_blank" rel="noopener">
+      <a class="plat reveal" id="plat-youtube" href="#" target="_blank" rel="noopener">
         <span class="ic">
           <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.2C0 8.08 0 12 0 12s0 3.92.5 5.8a3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14C24 15.92 24 12 24 12s0-3.92-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg>
         </span>
-        <span class="meta"><span class="pname">YouTube</span><span class="paction">Subscribe →</span></span>
-        <span class="arrow-ic">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M7 17 17 7M9 7h8v8"/></svg>
-        </span>
+        <span class="meta"><span class="pname">YouTube</span><span class="paction" id="plat-youtube-action">Subscribe →</span></span>
+        <span class="arrow-ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" width="18" height="18"><path d="M7 17 17 7M9 7h8v8"/></svg></span>
       </a>
     </div>
   </div>
@@ -589,53 +591,29 @@
       <h2 class="section-title">The <span class="accentword">music</span></h2>
       <span class="section-num">02 — Releases &amp; Video</span>
     </div>
-    <div class="releases">
-      <!-- Featured: Wild Things -->
-      <div class="rel rel-feat reveal">
-        <div class="rel-art">
-          <span class="rel-badge">Coming Soon</span>
-          <div class="ph"><span>Cover art<br>Wild Things</span></div>
-          <!-- swap ph div for: <img src="assets/wild-things-cover.jpg" alt="Wild Things"> -->
-        </div>
-        <div class="rel-body">
-          <div>
-            <div class="rel-name">Wild Things</div>
-            <div class="rel-type">New Single · 2026</div>
-          </div>
-          <button class="rel-play" data-presave="true" aria-label="Pre-save">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg>
-          </button>
-        </div>
+
+    <!-- Releases grid — populated by JS -->
+    <div class="releases" id="releases-grid">
+      <!-- Skeletons shown while loading -->
+      <div class="rel-skeleton feat">
+        <div class="sk-art"></div>
+        <div class="sk-body"><div class="sk-line"></div><div class="sk-line short"></div></div>
       </div>
-      <!-- Static Bloom -->
-      <div class="rel reveal">
-        <div class="rel-art"><div class="ph"><span>Cover art<br>Static Bloom</span></div></div>
-        <div class="rel-body">
-          <div>
-            <div class="rel-name">Static Bloom</div>
-            <div class="rel-type">Single · 2025</div>
-          </div>
-          <button class="rel-play" aria-label="Play">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>
-          </button>
-        </div>
+      <div class="rel-skeleton">
+        <div class="sk-art"></div>
+        <div class="sk-body"><div class="sk-line"></div><div class="sk-line short"></div></div>
       </div>
-      <!-- Paper Crowns -->
-      <div class="rel reveal">
-        <div class="rel-art"><div class="ph"><span>Cover art<br>Paper Crowns</span></div></div>
-        <div class="rel-body">
-          <div>
-            <div class="rel-name">Paper Crowns</div>
-            <div class="rel-type">EP · 2024</div>
-          </div>
-          <button class="rel-play" aria-label="Play">
-            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>
-          </button>
-        </div>
+      <div class="rel-skeleton">
+        <div class="sk-art"></div>
+        <div class="sk-body"><div class="sk-line"></div><div class="sk-line short"></div></div>
       </div>
     </div>
 
-    <!-- Video placeholder — replace div.ph with <iframe> when video is live -->
+    <div class="music-footer reveal">
+      <a href="music.html" class="see-all">View all releases →</a>
+    </div>
+
+    <!-- Video placeholder -->
     <div class="video-feat reveal" id="video-feat-btn">
       <div class="ph">
         <div class="playring">
@@ -652,7 +630,6 @@
   <div class="wrap">
     <div class="band">
       <div class="band-photo reveal">
-        <!-- swap div for: <img src="assets/band-collage-web.jpeg" alt="WD-HAN" loading="lazy"> -->
         <div class="band-photo-ph"><span>Band photo</span></div>
       </div>
       <div class="band-copy reveal">
@@ -727,7 +704,6 @@
     <div class="foot-top">
       <div>
         <span class="foot-wordmark">WD-HAN</span>
-        <!-- swap span for: <img class="foot-logo" src="assets/wdhan-logo.png" alt="WD-HAN"> -->
         <p class="foot-tag">New single "Wild Things" out June 2026. Stay loud.</p>
       </div>
       <div class="foot-cols">
@@ -742,6 +718,7 @@
           <a href="https://your-shopify-store.myshopify.com">Merch Store</a>
           <a href="#tour">Tour Dates</a>
           <a href="#news">Mailing List</a>
+          <a href="music.html">All Music</a>
         </div>
         <div class="foot-col">
           <h5>Contact</h5>
@@ -754,18 +731,10 @@
     <div class="foot-bottom">
       <span class="mono">© 2026 WD-HAN · All rights reserved</span>
       <div class="foot-socials">
-        <a href="#" aria-label="Instagram">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5.2"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg>
-        </a>
-        <a href="#" aria-label="TikTok">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82A4.28 4.28 0 0 1 15.54 3h-3.1v12.4a2.6 2.6 0 1 1-2.6-2.6c.27 0 .53.04.78.12v-3.16a5.7 5.7 0 1 0 4.92 5.64V8.99a7.34 7.34 0 0 0 4.3 1.38V7.27a4.28 4.28 0 0 1-3.24-1.45z"/></svg>
-        </a>
-        <a href="#" aria-label="YouTube">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.2C0 8.08 0 12 0 12s0 3.92.5 5.8a3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14C24 15.92 24 12 24 12s0-3.92-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg>
-        </a>
-        <a href="#" aria-label="Spotify">
-          <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.5 17.3a.75.75 0 0 1-1.03.25c-2.82-1.72-6.37-2.11-10.55-1.16a.75.75 0 1 1-.33-1.46c4.58-1.04 8.5-.6 11.66 1.34.36.22.47.69.25 1.03zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.23-1.99-8.16-2.56-11.98-1.4a.94.94 0 1 1-.55-1.8c4.37-1.32 9.8-.68 13.5 1.6.44.27.58.85.32 1.29zm.13-3.4C15.73 8.26 8.5 8.02 4.78 9.15a1.12 1.12 0 1 1-.65-2.15c4.28-1.3 12.26-1.05 16.55 1.5a1.12 1.12 0 1 1-1.15 1.93z"/></svg>
-        </a>
+        <a href="#" aria-label="Instagram"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5.2"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.6" cy="6.4" r="1.2" fill="currentColor" stroke="none"/></svg></a>
+        <a href="#" aria-label="TikTok"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.6 5.82A4.28 4.28 0 0 1 15.54 3h-3.1v12.4a2.6 2.6 0 1 1-2.6-2.6c.27 0 .53.04.78.12v-3.16a5.7 5.7 0 1 0 4.92 5.64V8.99a7.34 7.34 0 0 0 4.3 1.38V7.27a4.28 4.28 0 0 1-3.24-1.45z"/></svg></a>
+        <a href="#" aria-label="YouTube"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.2C0 8.08 0 12 0 12s0 3.92.5 5.8a3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14C24 15.92 24 12 24 12s0-3.92-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg></a>
+        <a href="#" aria-label="Spotify"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.5 17.3a.75.75 0 0 1-1.03.25c-2.82-1.72-6.37-2.11-10.55-1.16a.75.75 0 1 1-.33-1.46c4.58-1.04 8.5-.6 11.66 1.34.36.22.47.69.25 1.03zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.23-1.99-8.16-2.56-11.98-1.4a.94.94 0 1 1-.55-1.8c4.37-1.32 9.8-.68 13.5 1.6.44.27.58.85.32 1.29zm.13-3.4C15.73 8.26 8.5 8.02 4.78 9.15a1.12 1.12 0 1 1-.65-2.15c4.28-1.3 12.26-1.05 16.55 1.5a1.12 1.12 0 1 1-1.15 1.93z"/></svg></a>
       </div>
     </div>
   </div>
@@ -806,8 +775,7 @@
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>
     </button>
     <h3>Teaser</h3>
-    <p>The "Wild Things" video is coming soon. Drop your YouTube embed here when it's live.</p>
-    <!-- Replace the div below with: <iframe width="100%" height="100%" src="https://www.youtube.com/embed/VIDEO_ID" frameborder="0" allowfullscreen></iframe> -->
+    <p>The "Wild Things" video is coming soon.</p>
     <div style="aspect-ratio:16/9;border-radius:14px;border:1px solid var(--card-line);display:flex;align-items:center;justify-content:center;background:var(--card);">
       <span class="vlabel">Video embed slot</span>
     </div>
@@ -815,99 +783,6 @@
 </div>
 
 <script>
-  /* ── Countdown ── */
-  (function() {
-    const RELEASE = new Date("2026-06-12T00:00:00").getTime();
-    const els = {
-      days: document.getElementById("cd-days"),
-      hrs:  document.getElementById("cd-hrs"),
-      min:  document.getElementById("cd-min"),
-      sec:  document.getElementById("cd-sec"),
-    };
-    function pad(n) { return String(n).padStart(2, "0"); }
-    function tick() {
-      const diff = Math.max(0, RELEASE - Date.now());
-      const days = Math.floor(diff / 864e5);
-      const hrs  = Math.floor((diff % 864e5) / 36e5);
-      const min  = Math.floor((diff % 36e5) / 6e4);
-      const sec  = Math.floor((diff % 6e4) / 1e3);
-      els.days.textContent = days;
-      els.hrs.textContent  = pad(hrs);
-      els.min.textContent  = pad(min);
-      els.sec.textContent  = pad(sec);
-    }
-    tick();
-    setInterval(tick, 1000);
-  })();
-
-  /* ── Nav scroll effect ── */
-  (function() {
-    const nav = document.getElementById("nav");
-    window.addEventListener("scroll", () => {
-      nav.classList.toggle("scrolled", window.scrollY > 40);
-    }, { passive: true });
-  })();
-
-  /* ── Mobile nav ── */
-  (function() {
-    const btn   = document.getElementById("nav-burger-btn");
-    const panel = document.getElementById("nav-mobile");
-    const links = panel.querySelectorAll(".nav-mobile-link");
-    btn.addEventListener("click", () => panel.classList.toggle("open"));
-    links.forEach(l => l.addEventListener("click", () => panel.classList.remove("open")));
-  })();
-
-  /* ── Modal helpers ── */
-  function openModal(id) { document.getElementById(id).classList.add("open"); }
-  function closeModal(id) { document.getElementById(id).classList.remove("open"); }
-
-  const presaveModal = document.getElementById("presave-modal");
-  function openPresave() { openModal("presave-modal"); }
-
-  document.getElementById("nav-presave-btn").addEventListener("click", openPresave);
-  document.getElementById("hero-presave-btn").addEventListener("click", openPresave);
-  document.getElementById("presave-close").addEventListener("click", () => closeModal("presave-modal"));
-  presaveModal.addEventListener("click", (e) => { if (e.target === presaveModal) closeModal("presave-modal"); });
-
-  const videoModal = document.getElementById("video-modal");
-  function openVideo() { openModal("video-modal"); }
-
-  document.getElementById("hero-video-btn").addEventListener("click", openVideo);
-  document.getElementById("video-feat-btn").addEventListener("click", openVideo);
-  document.getElementById("video-close").addEventListener("click", () => closeModal("video-modal"));
-  videoModal.addEventListener("click", (e) => { if (e.target === videoModal) closeModal("video-modal"); });
-
-  document.querySelectorAll("[data-presave='true']").forEach(el => {
-    el.addEventListener("click", (e) => { e.preventDefault(); openPresave(); });
-  });
-
-  window.addEventListener("keydown", (e) => {
-    if (e.key === "Escape") {
-      closeModal("presave-modal");
-      closeModal("video-modal");
-    }
-  });
-
-  /* ── Newsletter form ── */
-  document.getElementById("news-form").addEventListener("submit", (e) => {
-    e.preventDefault();
-    const input = e.target.querySelector("input[type='email']");
-    if (input.value.includes("@")) {
-      e.target.style.display = "none";
-      document.getElementById("news-ok").style.display = "block";
-    }
-  });
-
-  /* ── Scroll reveal ── */
-  (function() {
-    const io = new IntersectionObserver((entries) => {
-      entries.forEach(en => {
-        if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
-      });
-    }, { threshold: 0.12 });
-    setTimeout(() => document.querySelectorAll(".reveal").forEach(el => io.observe(el)), 100);
-  })();
-
   /* ── Sanity config ── */
   const SANITY_PROJECT_ID = 'oz4mxjaz';
   const SANITY_DATASET    = 'production';
@@ -915,19 +790,105 @@
   function sanityUrl(query) {
     return `https://${SANITY_PROJECT_ID}.apicdn.sanity.io/v2021-10-21/data/query/${SANITY_DATASET}?query=${encodeURIComponent(query)}`;
   }
-
   function sanityImg(url, width) {
     return url ? `${url}?w=${width}&auto=format&fit=crop` : null;
   }
 
-  /* ── Sanity: fetch releases + update hero ── */
+  /* ── Countdown (static fallback, overridden by Sanity) ── */
+  let _cdInterval;
+  function startCountdown(target) {
+    const RELEASE = new Date(target).getTime();
+    const els = {
+      days: document.getElementById('cd-days'),
+      hrs:  document.getElementById('cd-hrs'),
+      min:  document.getElementById('cd-min'),
+      sec:  document.getElementById('cd-sec'),
+    };
+    function pad(n) { return String(n).padStart(2, '0'); }
+    clearInterval(_cdInterval);
+    _cdInterval = setInterval(() => {
+      const diff = Math.max(0, RELEASE - Date.now());
+      els.days.textContent = Math.floor(diff / 864e5);
+      els.hrs.textContent  = pad(Math.floor((diff % 864e5) / 36e5));
+      els.min.textContent  = pad(Math.floor((diff % 36e5) / 6e4));
+      els.sec.textContent  = pad(Math.floor((diff % 6e4) / 1e3));
+    }, 1000);
+  }
+  startCountdown('2026-06-12T00:00:00');
+
+  /* ── Nav scroll ── */
+  (function() {
+    const nav = document.getElementById('nav');
+    window.addEventListener('scroll', () => nav.classList.toggle('scrolled', window.scrollY > 40), { passive: true });
+  })();
+
+  /* ── Mobile nav ── */
+  (function() {
+    const btn   = document.getElementById('nav-burger-btn');
+    const panel = document.getElementById('nav-mobile');
+    btn.addEventListener('click', () => panel.classList.toggle('open'));
+    panel.querySelectorAll('.nav-mobile-link').forEach(l => l.addEventListener('click', () => panel.classList.remove('open')));
+  })();
+
+  /* ── Modal helpers ── */
+  function openModal(id) { document.getElementById(id).classList.add('open'); }
+  function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+  function openPresave() { openModal('presave-modal'); }
+
+  document.getElementById('nav-presave-btn').addEventListener('click', openPresave);
+  document.getElementById('hero-presave-btn').addEventListener('click', openPresave);
+  document.getElementById('presave-close').addEventListener('click', () => closeModal('presave-modal'));
+  document.getElementById('presave-modal').addEventListener('click', e => { if (e.target === document.getElementById('presave-modal')) closeModal('presave-modal'); });
+
+  document.getElementById('hero-video-btn').addEventListener('click', () => openModal('video-modal'));
+  document.getElementById('video-feat-btn').addEventListener('click', () => openModal('video-modal'));
+  document.getElementById('video-close').addEventListener('click', () => closeModal('video-modal'));
+  document.getElementById('video-modal').addEventListener('click', e => { if (e.target === document.getElementById('video-modal')) closeModal('video-modal'); });
+
+  document.querySelectorAll('[data-presave="true"]').forEach(el => el.addEventListener('click', e => { e.preventDefault(); openPresave(); }));
+  window.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal('presave-modal'); closeModal('video-modal'); } });
+
+  /* ── Newsletter ── */
+  document.getElementById('news-form').addEventListener('submit', e => {
+    e.preventDefault();
+    if (e.target.querySelector('input[type="email"]').value.includes('@')) {
+      e.target.style.display = 'none';
+      document.getElementById('news-ok').style.display = 'block';
+    }
+  });
+
+  /* ── Scroll reveal ── */
+  (function() {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { threshold: 0.12 });
+    setTimeout(() => document.querySelectorAll('.reveal').forEach(el => io.observe(el)), 100);
+  })();
+
+  function reObserveReveals() {
+    const io = new IntersectionObserver(entries => {
+      entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); } });
+    }, { threshold: 0.12 });
+    document.querySelectorAll('.reveal:not(.in)').forEach(el => io.observe(el));
+  }
+
+  /* ── Sanity: homepage music grid ── */
   (async function () {
-    const query = `*[_type == "release"] | order(releaseDate desc) [0..2] {
+    /*
+      Priority order for the homepage grid:
+        1. featured releases (featured: true), newest first
+        2. remaining releases, newest first
+      We fetch more than 3 so we can fill the 3 slots correctly.
+    */
+    const query = `*[_type == "release"] | order(featured desc, releaseDate desc) [0..5] {
       title,
+      slug,
       releaseType,
       releaseDate,
+      featured,
       "artworkUrl": artwork.asset->url,
-      streamingLinks
+      streamingLinks,
+      "spotifyId": streamingLinks.spotify
     }`;
 
     let releases;
@@ -937,131 +898,159 @@
       releases = result;
     } catch (err) {
       console.warn('Sanity fetch failed — showing static fallback', err);
+      renderStaticFallback();
       return;
     }
 
-    if (!releases?.length) return;
+    if (!releases?.length) { renderStaticFallback(); return; }
 
-    const latest = releases[0];
+    // Sort: featured first, then by date
+    releases.sort((a, b) => {
+      if (a.featured && !b.featured) return -1;
+      if (!a.featured && b.featured) return 1;
+      return new Date(b.releaseDate) - new Date(a.releaseDate);
+    });
 
-    /* ── Update hero with latest release ── */
-    updateHero(latest);
-
-    /* ── Render releases grid ── */
-    renderReleases(releases);
-
-    /* ── Update platform streaming links ── */
-    updatePlatformLinks(latest.streamingLinks);
-
+    const top3 = releases.slice(0, 3);
+    renderReleasesGrid(top3);
+    updateHeroFromSanity(releases[0]);
+    updatePlatformLinks(releases[0].streamingLinks);
   })();
 
-  function updateHero(rel) {
+  /* ── Hero update ── */
+  function updateHeroFromSanity(rel) {
     if (!rel) return;
 
-    // Update hero sub-copy with real release date
-    const heroSub = document.querySelector('.hero-sub');
-    if (heroSub && rel.releaseDate) {
+    if (rel.releaseDate) {
       const d = new Date(rel.releaseDate);
       const label = d.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
-      heroSub.innerHTML = `The new single from WD-HAN. Out <strong>${label}</strong>. Pre-save it now and hear it the second it drops.`;
+      document.getElementById('hero-sub-text').innerHTML =
+        `The new single from WD-HAN. Out <strong>${label}</strong>. Pre-save it now and hear it the second it drops.`;
+      startCountdown(rel.releaseDate + 'T00:00:00');
     }
 
-    // Update countdown target date
-    if (rel.releaseDate) {
-      const RELEASE = new Date(rel.releaseDate + 'T00:00:00').getTime();
-      const els = {
-        days: document.getElementById("cd-days"),
-        hrs:  document.getElementById("cd-hrs"),
-        min:  document.getElementById("cd-min"),
-        sec:  document.getElementById("cd-sec"),
-      };
-      function pad(n) { return String(n).padStart(2, "0"); }
-      // Overwrite the tick interval with the real date
-      clearInterval(window._cdInterval);
-      window._cdInterval = setInterval(() => {
-        const diff = Math.max(0, RELEASE - Date.now());
-        els.days.textContent = Math.floor(diff / 864e5);
-        els.hrs.textContent  = pad(Math.floor((diff % 864e5) / 36e5));
-        els.min.textContent  = pad(Math.floor((diff % 36e5) / 6e4));
-        els.sec.textContent  = pad(Math.floor((diff % 6e4) / 1e3));
-      }, 1000);
-    }
-
-    // Swap hero wordmark text if title differs from "Wild Things"
-    const wordmark = document.querySelector('.hero-wordmark');
-    if (wordmark && rel.title && rel.title !== 'Wild Things') {
+    if (rel.title && rel.title !== 'Wild Things') {
       const words = rel.title.split(' ');
       const first = words.slice(0, -1).join(' ') || rel.title;
       const last  = words.length > 1 ? words[words.length - 1] : '';
-      wordmark.innerHTML = last ? `${first}<br><em>${last}</em>` : `<em>${first}</em>`;
+      const wm = document.querySelector('.hero-wordmark');
+      if (wm) wm.innerHTML = last ? `${first}<br><em>${last}</em>` : `<em>${first}</em>`;
     }
   }
 
-  function renderReleases(releases) {
-    const grid = document.querySelector('.releases');
+  /* ── Render homepage releases grid ── */
+  function renderReleasesGrid(releases) {
+    const grid = document.getElementById('releases-grid');
     if (!grid || !releases?.length) return;
 
     grid.innerHTML = releases.map((rel, i) => {
-      const year = rel.releaseDate ? new Date(rel.releaseDate).getFullYear() : '';
-      const type = rel.releaseType
-        ? rel.releaseType.charAt(0).toUpperCase() + rel.releaseType.slice(1)
-        : 'Release';
+      const year       = rel.releaseDate ? new Date(rel.releaseDate).getFullYear() : '';
+      const typeRaw    = rel.releaseType || 'release';
+      const typeLabel  = typeRaw.charAt(0).toUpperCase() + typeRaw.slice(1);
       const spotifyUrl = rel.streamingLinks?.spotify || '#';
-      const artworkUrl = rel.artworkUrl ? sanityImg(rel.artworkUrl, 600) : null;
-      const featClass  = i === 0 ? 'rel rel-feat reveal' : 'rel reveal';
-      const badge      = i === 0 ? `<span class="rel-badge">Latest</span>` : '';
-      const artHtml    = artworkUrl
-        ? `<img src="${artworkUrl}" alt="${rel.title}" loading="${i === 0 ? 'eager' : 'lazy'}" style="width:100%;height:100%;object-fit:cover;">`
-        : `<div class="ph"><span>Cover art<br>${rel.title}</span></div>`;
+      const artUrl     = rel.artworkUrl ? sanityImg(rel.artworkUrl, i === 0 ? 800 : 500) : null;
+      const isFeat     = i === 0;
+      const slug       = rel.slug?.current || '';
+
+      // Extract Spotify track ID from URL for embed
+      const spotifyId  = extractSpotifyId(spotifyUrl);
+
+      const badge = isFeat
+        ? `<span class="rel-badge">${rel.featured ? 'Featured' : 'Latest'}</span>`
+        : '';
+
+      const artHtml = artUrl
+        ? `<img src="${artUrl}" alt="${escHtml(rel.title)}" loading="${isFeat ? 'eager' : 'lazy'}">`
+        : `<div class="ph"><span>Cover art<br>${escHtml(rel.title)}</span></div>`;
 
       return `
-        <div class="${featClass}">
+        <div class="${isFeat ? 'rel rel-feat reveal' : 'rel reveal'}">
           <div class="rel-art">
             ${badge}
             ${artHtml}
           </div>
           <div class="rel-body">
             <div>
-              <div class="rel-name">${rel.title}</div>
-              <div class="rel-type">${type} · ${year}</div>
+              <div class="rel-name">${escHtml(rel.title)}</div>
+              <div class="rel-type">${typeLabel} · ${year}</div>
             </div>
-            <a class="rel-play" href="${spotifyUrl}" target="_blank" rel="noopener" aria-label="Listen on Spotify">
+            <a class="rel-play"
+               href="${escHtml(spotifyUrl)}"
+               target="_blank" rel="noopener"
+               aria-label="Listen to ${escHtml(rel.title)} on Spotify">
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>
             </a>
           </div>
         </div>`;
     }).join('');
 
-    // Re-run scroll reveal on injected cards
-    const io = new IntersectionObserver(entries => {
-      entries.forEach(en => {
-        if (en.isIntersecting) { en.target.classList.add('in'); io.unobserve(en.target); }
-      });
-    }, { threshold: 0.12 });
-    grid.querySelectorAll('.reveal').forEach(el => io.observe(el));
+    reObserveReveals();
   }
 
+  /* ── Platform links update ── */
   function updatePlatformLinks(links) {
     if (!links) return;
-    // The 3 platform cards in the Listen section, in DOM order: Spotify, Apple Music, YouTube
-    const cards = document.querySelectorAll('.plat');
+
     const map = [
-      links.spotify,
-      links.appleMusic,
-      links.youtube,
+      { id: 'plat-spotify',  actionId: 'plat-spotify-action',  url: links.spotify,     label: 'Listen →' },
+      { id: 'plat-apple',    actionId: 'plat-apple-action',    url: links.appleMusic,  label: 'Listen →' },
+      { id: 'plat-youtube',  actionId: 'plat-youtube-action',  url: links.youtube,     label: 'Watch →'  },
     ];
-    cards.forEach((card, i) => {
-      if (map[i] && map[i] !== '#') {
-        card.href = map[i];
-        card.removeAttribute('data-presave');
-        card.removeEventListener('click', openPresave);
-        card.target = '_blank';
-        card.rel = 'noopener';
-        // Update action label
-        const action = card.querySelector('.paction');
-        if (action) action.textContent = 'Listen →';
-      }
+
+    map.forEach(({ id, actionId, url, label }) => {
+      if (!url || url === '#') return;
+      const card   = document.getElementById(id);
+      const action = document.getElementById(actionId);
+      if (!card) return;
+      card.href = url;
+      card.removeAttribute('data-presave');
+      card.target = '_blank';
+      card.rel    = 'noopener';
+      if (action) action.textContent = label;
     });
+
+    // Re-bind presave listeners only to cards that still have data-presave
+    document.querySelectorAll('.plat[data-presave="true"]').forEach(el =>
+      el.addEventListener('click', e => { e.preventDefault(); openPresave(); })
+    );
+  }
+
+  /* ── Static fallback (Sanity unavailable) ── */
+  function renderStaticFallback() {
+    const grid = document.getElementById('releases-grid');
+    if (!grid) return;
+    grid.innerHTML = `
+      <div class="rel rel-feat reveal">
+        <div class="rel-art"><span class="rel-badge">Coming Soon</span><div class="ph"><span>Cover art<br>Wild Things</span></div></div>
+        <div class="rel-body">
+          <div><div class="rel-name">Wild Things</div><div class="rel-type">New Single · 2026</div></div>
+          <button class="rel-play" data-presave="true" aria-label="Pre-save">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="rel reveal">
+        <div class="rel-art"><div class="ph"><span>Cover art</span></div></div>
+        <div class="rel-body"><div><div class="rel-name">—</div><div class="rel-type">—</div></div></div>
+      </div>
+      <div class="rel reveal">
+        <div class="rel-art"><div class="ph"><span>Cover art</span></div></div>
+        <div class="rel-body"><div><div class="rel-name">—</div><div class="rel-type">—</div></div></div>
+      </div>`;
+    reObserveReveals();
+    document.querySelectorAll('[data-presave="true"]').forEach(el =>
+      el.addEventListener('click', e => { e.preventDefault(); openPresave(); })
+    );
+  }
+
+  /* ── Helpers ── */
+  function escHtml(str) {
+    return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+  function extractSpotifyId(url) {
+    if (!url) return null;
+    const m = url.match(/spotify\.com\/(track|album|playlist)\/([A-Za-z0-9]+)/);
+    return m ? { type: m[1], id: m[2] } : null;
   }
 </script>
 </body>
