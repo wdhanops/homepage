@@ -629,8 +629,8 @@
       // Parallel fetch: siteSettings + members + release count
       const [settingsRes, membersRes, releasesRes] = await Promise.all([
         fetch(sanityUrl(`*[_type == "siteSettings"][0]{
-          bandBio,
-          bandBioRaw,
+          bio,
+          bioLong,
           "galleryBg": *[_type == "galleryImage" && homepageBackground == true][0]{ "url": image.asset->url, "ref": image.asset._ref },
           socials
         }`)),
@@ -680,12 +680,12 @@
   function renderBio(settings) {
     const el = document.getElementById('band-bio');
     let html = '';
-    if (settings?.bandBioRaw && Array.isArray(settings.bandBioRaw)) {
-      html = renderBlocks(settings.bandBioRaw);
-    } else if (settings?.bandBio) {
-      html = settings.bandBio.split(/\n\n+/).map(p => `<p>${esc(p)}</p>`).join('');
+    if (settings?.bioLong && Array.isArray(settings.bioLong)) {
+      html = renderBlocks(settings.bioLong);
+    } else if (settings?.bio) {
+      html = settings.bio.split(/\n\n+/).map(p => `<p>${esc(p)}</p>`).join('');
     }
-    el.innerHTML = html || `<p style="color:var(--faint);font-style:italic">Add your band bio in Sanity Studio → Site Settings → Band Bio.</p>`;
+    el.innerHTML = html || `<p style="color:var(--faint);font-style:italic">Add your band bio in Sanity Studio → Site Settings → Band Bio (Full).</p>`;
   }
   function renderBioFallback() {
     document.getElementById('band-bio').innerHTML = `<p style="color:var(--faint);font-style:italic">Band bio coming soon.</p>`;
