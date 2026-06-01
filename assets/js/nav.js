@@ -62,7 +62,7 @@
     { label: 'Music',    href: `${root}music.html` },
     { label: 'Videos',  href: `${root}videos.html` },
     { label: 'Tour',    href: `${root}shows.html`, id: 'nav-tour-link', hidden: true },
-    { label: 'Merch',   href: 'https://wd-han.myshopify.com'},
+    { label: 'Merch',   href: 'https://wd-han.myshopify.com' },
   ];
 
   /* ── Inject nav HTML ── */
@@ -197,9 +197,19 @@
     });
   }
 
+  /* ── Scroll background ── */
+  function initScrollBg() {
+    const nav = document.getElementById("nav-bar");
+    if (!nav) return;
+    const toggle = () => nav.classList.toggle("scrolled", window.scrollY > 30);
+    window.addEventListener("scroll", toggle, { passive: true });
+    toggle(); // run once on load in case page is already scrolled
+  }
+
   /* ── Init ── */
   function init() {
     buildNav();
+    initScrollBg();
     initMobileNav();
     initSiteSettings();
     initTourNav();
