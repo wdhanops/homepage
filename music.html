@@ -9,32 +9,32 @@
   <link rel="stylesheet" href="/assets/css/nav.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
 
   <style>
     @font-face {
       font-family: 'Splatink';
-      src: url('assets/fonts/Splatink.otf') format('opentype');
+      src: url('/assets/fonts/Splatink.otf') format('opentype');
       font-display: swap;
     }
 
     /* ── Tokens ── */
     :root {
-      --accent: #ff3b2e;
-      --accent-ink: #0a0a0a;
-      --maxw: 1240px;
-      --ease: cubic-bezier(.22,.61,.36,1);
-      --font-display: 'Splatink', "Anton", sans-serif;
-      --bg: #08080a; --bg2: #101014;
-      --ink: #f5f1e6;
-      --muted: rgba(245,241,230,.55);
-      --faint: rgba(245,241,230,.32);
-      --line: rgba(245,241,230,.14);
-      --card: rgba(245,241,230,.045);
-      --card-line: rgba(245,241,230,.10);
-      --logo-filter: invert(1);
-      --blob-blend: screen;
-      --blob-op: .38;
+      --accent:      #ff3b2e;
+      --accent-ink:  #0a0a0a;
+      --maxw:        1240px;
+      --ease:        cubic-bezier(.22,.61,.36,1);
+      --font-display:'Splatink', "Anton", sans-serif;
+      --bg:          #08080a;
+      --bg2:         #101014;
+      --ink:         #f5f1e6;
+      --muted:       rgba(245,241,230,.55);
+      --faint:       rgba(245,241,230,.32);
+      --line:        rgba(245,241,230,.14);
+      --card:        rgba(245,241,230,.045);
+      --card-line:   rgba(245,241,230,.10);
+      --blob-blend:  screen;
+      --blob-op:     .38;
     }
 
     /* ── Reset ── */
@@ -67,31 +67,6 @@
     .b2{animation:drift2 22s ease-in-out infinite;width:360px;height:360px;top:50%;left:72%;}
     @media(prefers-reduced-motion:reduce){.glow{animation:none!important;}}
 
-    /* ── Nav ── */
-    .nav{
-      position:fixed;top:0;left:0;right:0;z-index:50;
-      display:flex;align-items:center;justify-content:space-between;
-      padding:18px 28px;
-      background:color-mix(in srgb,var(--bg) 82%,transparent);
-      backdrop-filter:blur(8px);
-      border-bottom:1px solid var(--line);
-    }
-    .nav-wordmark{font-family:var(--font-display);font-size:22px;letter-spacing:.04em;color:var(--ink);}
-    .nav-links{display:flex;align-items:center;gap:28px;}
-    .nav-links a{
-      font-size:13px;letter-spacing:.14em;text-transform:uppercase;font-weight:600;
-      color:var(--muted);transition:color .2s;
-    }
-    .nav-links a:hover,.nav-links a.active{color:var(--ink);}
-    .nav-burger{display:none;background:none;border:none;color:var(--ink);padding:4px;}
-    .nav-burger svg{width:22px;height:22px;stroke:currentColor;stroke-width:2;stroke-linecap:round;fill:none;}
-    .nav-mobile{
-      display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:49;
-      background:var(--bg);padding:90px 28px 40px;flex-direction:column;gap:32px;
-    }
-    .nav-mobile.open{display:flex;}
-    .nav-mobile a{font-family:"Anton";font-size:clamp(34px,9vw,56px);text-transform:uppercase;color:var(--ink);}
-
     /* ── Page hero ── */
     .page-hero{
       position:relative;z-index:2;
@@ -114,9 +89,7 @@
     /* ── Section chrome ── */
     .music-section{position:relative;z-index:2;padding:72px 0;}
     .music-section + .music-section{border-top:1px solid var(--line);}
-    .section-label{
-      display:flex;align-items:baseline;gap:18px;margin-bottom:48px;
-    }
+    .section-label{display:flex;align-items:baseline;gap:18px;margin-bottom:48px;}
     .section-label h2{
       font-family:var(--font-display);
       font-size:clamp(36px,5vw,72px);
@@ -131,114 +104,72 @@
     @keyframes shimmer{0%,100%{opacity:.3;}50%{opacity:.7;}}
     .sk{background:var(--card-line);border-radius:8px;animation:shimmer 1.6s ease-in-out infinite;}
 
-    /* ═══════════════════════════════════════════════
-       SINGLES — horizontal track rows
-    ═══════════════════════════════════════════════ */
+    /* ═══ SINGLES — horizontal track rows ═══ */
     .singles-list{display:flex;flex-direction:column;gap:0;}
-
     .single-row{
       display:grid;
-      grid-template-columns: 68px 1fr auto;
-      gap:0 20px;
-      align-items:center;
-      padding:14px 12px;
-      border-radius:12px;
+      grid-template-columns:68px 1fr auto;
+      gap:0 20px;align-items:center;
+      padding:14px 12px;border-radius:12px;
       transition:background .18s var(--ease);
-      position:relative;
     }
     .single-row:hover{background:var(--card);}
     .single-row + .single-row{border-top:1px solid var(--line);}
 
-    /* artwork thumb */
     .single-art{
       width:68px;height:68px;border-radius:8px;overflow:hidden;flex-shrink:0;
-      position:relative;background:var(--card);
+      position:relative;background:var(--card);display:block;
     }
     .single-art img{width:100%;height:100%;object-fit:cover;transition:opacity .2s;}
     .single-art .play-overlay{
       position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-      background:rgba(0,0,0,.5);opacity:0;transition:opacity .18s;
-      border-radius:8px;
+      background:rgba(0,0,0,.5);opacity:0;transition:opacity .18s;border-radius:8px;
     }
     .single-row:hover .play-overlay{opacity:1;}
     .play-overlay svg{width:22px;height:22px;fill:white;}
 
-    /* track info */
     .single-info{min-width:0;padding:2px 0;}
     .single-title{
       font-weight:700;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-      color:var(--ink);transition:color .18s;
+      color:var(--ink);transition:color .18s;display:block;
     }
     .single-title:hover{color:var(--accent);}
-    .single-meta{
-      display:flex;align-items:center;gap:10px;margin-top:4px;flex-wrap:wrap;
-    }
-    .single-year{
-      font-family:"Space Mono";font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);
-    }
-    .single-duration{
-      font-family:"Space Mono";font-size:11px;color:var(--faint);
-    }
+    .single-meta{display:flex;align-items:center;gap:10px;margin-top:4px;flex-wrap:wrap;}
+    .single-year{font-family:"Space Mono";font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);}
+    .single-duration{font-family:"Space Mono";font-size:11px;color:var(--faint);}
 
-    /* streaming links */
     .single-links{display:flex;align-items:center;gap:8px;flex-shrink:0;}
     .slink{
       display:flex;align-items:center;gap:6px;
       padding:7px 13px;border-radius:100px;
       border:1px solid var(--card-line);
       font-family:"Space Mono";font-size:10px;letter-spacing:.12em;text-transform:uppercase;
-      color:var(--muted);
-      transition:all .18s var(--ease);
-      white-space:nowrap;
+      color:var(--muted);transition:all .18s var(--ease);white-space:nowrap;
     }
     .slink svg{width:14px;height:14px;flex-shrink:0;}
     .slink:hover{border-color:var(--accent);color:var(--accent);}
-    .slink.primary{
-      background:var(--accent);color:var(--accent-ink);border-color:var(--accent);
-    }
+    .slink.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
     .slink.primary:hover{background:color-mix(in srgb,var(--accent) 85%,white);transform:scale(1.03);}
 
-    /* Spotify embed — hidden until activated */
-    .single-embed-wrap{
-      grid-column:1/-1;
-      overflow:hidden;
-      max-height:0;
-      transition:max-height .4s var(--ease);
-    }
-    .single-embed-wrap.open{max-height:100px;}
-    .single-embed-wrap iframe{
-      width:100%;height:80px;border:none;border-radius:10px;margin-top:10px;
-      display:block;
-    }
-
-    /* ═══════════════════════════════════════════════
-       ALBUMS & EPs — card grid
-    ═══════════════════════════════════════════════ */
+    /* ═══ ALBUMS & EPs — card grid ═══ */
     .albums-grid{
       display:grid;
-      grid-template-columns:repeat(auto-fill, minmax(280px, 1fr));
+      grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
       gap:24px;
     }
     .album-card{
       border:1px solid var(--card-line);border-radius:18px;overflow:hidden;
-      background:var(--card);
-      display:flex;flex-direction:column;
+      background:var(--card);display:flex;flex-direction:column;
       transition:transform .25s var(--ease),border-color .25s,box-shadow .25s;
     }
     .album-card:hover{
-      transform:translateY(-5px);
-      border-color:var(--accent);
+      transform:translateY(-5px);border-color:var(--accent);
       box-shadow:0 20px 50px rgba(0,0,0,.4);
     }
-
-    /* artwork */
-    .album-art{
-      position:relative;aspect-ratio:1;overflow:hidden;display:block;
-    }
+    .album-art{position:relative;aspect-ratio:1;overflow:hidden;display:block;}
     .album-art img{
       width:100%;height:100%;object-fit:cover;
-      transition:transform .5s var(--ease);
-      display:block;
+      transition:transform .5s var(--ease);display:block;
     }
     .album-card:hover .album-art img{transform:scale(1.04);}
     .album-art-ph{
@@ -256,11 +187,8 @@
       position:absolute;top:12px;left:12px;
       font-family:"Space Mono";font-size:9px;letter-spacing:.2em;text-transform:uppercase;
       background:rgba(8,8,10,.75);backdrop-filter:blur(6px);
-      color:var(--ink);padding:5px 10px;border-radius:100px;
-      border:1px solid var(--line);
+      color:var(--ink);padding:5px 10px;border-radius:100px;border:1px solid var(--line);
     }
-
-    /* Spotify embed toggle button */
     .album-play-btn{
       position:absolute;bottom:12px;right:12px;
       width:46px;height:46px;border-radius:50%;
@@ -268,44 +196,33 @@
       display:flex;align-items:center;justify-content:center;
       box-shadow:0 4px 16px rgba(0,0,0,.4);
       opacity:0;transform:translateY(6px);
-      transition:opacity .2s var(--ease),transform .2s var(--ease);
-      cursor:pointer;
+      transition:opacity .2s var(--ease),transform .2s var(--ease);cursor:pointer;
     }
     .album-card:hover .album-play-btn{opacity:1;transform:none;}
     .album-play-btn.active{opacity:1;transform:none;background:white;color:#000;}
     .album-play-btn svg{width:18px;height:18px;}
-
-    /* body */
     .album-body{padding:20px 22px;}
-    .album-title{font-weight:700;font-size:19px;line-height:1.2;margin-bottom:4px;color:var(--ink);transition:color .18s;}
+    .album-title{
+      font-weight:700;font-size:19px;line-height:1.2;margin-bottom:4px;
+      color:var(--ink);transition:color .18s;display:block;
+    }
     .album-title:hover{color:var(--accent);}
     .album-sub{
       font-family:"Space Mono";font-size:11px;letter-spacing:.12em;text-transform:uppercase;
       color:var(--faint);margin-bottom:16px;
     }
-
-    /* Spotify embed inside card */
     .album-embed{
-      overflow:hidden;max-height:0;
-      transition:max-height .45s var(--ease);
-      margin:0 22px;
+      overflow:hidden;max-height:0;transition:max-height .45s var(--ease);margin:0 22px;
     }
     .album-embed.open{max-height:160px;}
     .album-embed iframe{
-      width:100%;height:152px;border:none;border-radius:10px;
-      margin-bottom:14px;display:block;
+      width:100%;height:152px;border:none;border-radius:10px;margin-bottom:14px;display:block;
     }
-
-    /* streaming row */
-    .album-links{
-      display:flex;gap:8px;flex-wrap:wrap;
-      padding:0 22px 20px;
-    }
+    .album-links{display:flex;gap:8px;flex-wrap:wrap;padding:0 22px 20px;}
 
     /* ── Skeleton rows/cards ── */
     .sk-single-row{
-      display:grid;grid-template-columns:68px 1fr 140px;gap:20px;align-items:center;
-      padding:14px 12px;
+      display:grid;grid-template-columns:68px 1fr 140px;gap:20px;align-items:center;padding:14px 12px;
     }
     .sk-single-row + .sk-single-row{border-top:1px solid var(--line);}
     .sk-thumb{width:68px;height:68px;border-radius:8px;}
@@ -330,10 +247,8 @@
       position:relative;z-index:2;padding:60px 0 36px;
       border-top:1px solid var(--line);margin-top:48px;
     }
-    .foot-inner{
-      display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;
-    }
-    .foot-wordmark{font-family:"Anton";font-size:22px;letter-spacing:.04em;}
+    .foot-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;}
+    .foot-wordmark{font-family:var(--font-display);font-size:22px;letter-spacing:.04em;}
     .foot-copy{font-family:"Space Mono";font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);}
     .foot-back{
       font-family:"Space Mono";font-size:11px;letter-spacing:.18em;text-transform:uppercase;
@@ -344,8 +259,6 @@
 
     /* ── Responsive ── */
     @media(max-width:900px){
-      .nav-links{display:none;}
-      .nav-burger{display:block;}
       .page-hero-meta{text-align:left;}
       .single-links .slink:not(.primary){display:none;}
     }
@@ -366,41 +279,20 @@
   </style>
 </head>
 <body>
+
+<!-- nav.js injects the nav here -->
 <div id="nav-mount"></div>
+
 <div class="glow-field" aria-hidden="true">
   <div class="glow b1"></div>
   <div class="glow b2"></div>
 </div>
 
-<!-- ── Nav ── -->
-<nav class="nav" id="nav">
-  <a href="index.html" class="nav-wordmark">WD-HAN</a>
-  <div class="nav-links">
-    <a href="index.html#listen">Listen</a>
-    <a href="music.html" class="active">Music</a>
-    <a href="index.html#band">Band</a>
-    <a href="index.html#tour">Tour</a>
-    <a href="https://your-shopify-store.myshopify.com">Merch</a>
-  </div>
-  <button class="nav-burger" id="nav-burger-btn" aria-label="Menu">
-    <svg viewBox="0 0 22 22"><line x1="2" y1="5" x2="20" y2="5"/><line x1="2" y1="11" x2="20" y2="11"/><line x1="2" y1="17" x2="20" y2="17"/></svg>
-  </button>
-</nav>
-<nav class="nav-mobile" id="nav-mobile">
-  <a href="index.html" class="nav-mobile-link">Home</a>
-  <a href="index.html#listen" class="nav-mobile-link">Listen</a>
-  <a href="index.html#band" class="nav-mobile-link">Band</a>
-  <a href="index.html#tour" class="nav-mobile-link">Tour</a>
-  <a href="https://your-shopify-store.myshopify.com" class="nav-mobile-link">Merch</a>
-</nav>
-
 <!-- ── Page hero ── -->
 <div class="page-hero">
   <div class="wrap">
     <h1>All the<br><em>music</em></h1>
-    <p class="page-hero-meta" id="hero-meta">
-      Loading catalogue…
-    </p>
+    <p class="page-hero-meta" id="hero-meta">Loading catalogue…</p>
   </div>
 </div>
 
@@ -412,7 +304,6 @@
       <span class="count" id="singles-count"></span>
     </div>
     <div id="singles-list">
-      <!-- skeletons -->
       <div class="sk-single-row">
         <div class="sk sk-thumb"></div>
         <div class="sk-lines"><div class="sk sk-line w80"></div><div class="sk sk-line w50"></div></div>
@@ -440,7 +331,6 @@
       <span class="count" id="albums-count"></span>
     </div>
     <div class="albums-grid" id="albums-grid">
-      <!-- skeletons -->
       <div class="sk-album-card"><div class="sk sk-album-art"></div><div class="sk-album-body"><div class="sk sk-line w80"></div><div class="sk sk-line w50"></div></div></div>
       <div class="sk-album-card"><div class="sk sk-album-art"></div><div class="sk-album-body"><div class="sk sk-line w80"></div><div class="sk sk-line w50"></div></div></div>
       <div class="sk-album-card"><div class="sk sk-album-art"></div><div class="sk-album-body"><div class="sk sk-line w80"></div><div class="sk sk-line w50"></div></div></div>
@@ -456,7 +346,7 @@
         <div class="foot-wordmark">WD-HAN</div>
         <div class="foot-copy" style="margin-top:6px;">© 2026 · All rights reserved</div>
       </div>
-      <a href="index.html" class="foot-back">← Back to home</a>
+      <a href="/" class="foot-back">← Back to home</a>
     </div>
   </div>
 </footer>
@@ -476,35 +366,15 @@
     return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
-  /* Extract Spotify ID from a spotify.com URL */
   function spotifyEmbed(url) {
     if (!url) return null;
     const m = url.match(/spotify\.com\/(track|album|playlist)\/([A-Za-z0-9]+)/);
-    if (!m) return null;
-    return { type: m[1], id: m[2] };
+    return m ? { type: m[1], id: m[2] } : null;
   }
-
-  /* Build the Spotify embed iframe src */
-  function embedSrc(url, theme = 'dark') {
+  function embedSrc(url) {
     const s = spotifyEmbed(url);
-    if (!s) return null;
-    return `https://open.spotify.com/embed/${s.type}/${s.id}?utm_source=generator&theme=${theme === 'dark' ? 0 : 1}`;
+    return s ? `https://open.spotify.com/embed/${s.type}/${s.id}?utm_source=generator&theme=0` : null;
   }
-
-  /* Format ms duration → m:ss */
-  function fmtDuration(ms) {
-    if (!ms) return '';
-    const s = Math.round(ms / 1000);
-    return `${Math.floor(s/60)}:${String(s % 60).padStart(2,'0')}`;
-  }
-
-  /* ── Nav ── */
-  document.getElementById('nav-burger-btn').addEventListener('click', () =>
-    document.getElementById('nav-mobile').classList.toggle('open')
-  );
-  document.querySelectorAll('.nav-mobile-link').forEach(l =>
-    l.addEventListener('click', () => document.getElementById('nav-mobile').classList.remove('open'))
-  );
 
   /* ── Scroll reveal ── */
   const revealIO = new IntersectionObserver(entries => {
@@ -515,18 +385,18 @@
 
   /* ── Streaming link icons ── */
   const ICONS = {
-    spotify:      `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.5 17.3a.75.75 0 0 1-1.03.25c-2.82-1.72-6.37-2.11-10.55-1.16a.75.75 0 1 1-.33-1.46c4.58-1.04 8.5-.6 11.66 1.34.36.22.47.69.25 1.03zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.23-1.99-8.16-2.56-11.98-1.4a.94.94 0 1 1-.55-1.8c4.37-1.32 9.8-.68 13.5 1.6.44.27.58.85.32 1.29zm.13-3.4C15.73 8.26 8.5 8.02 4.78 9.15a1.12 1.12 0 1 1-.65-2.15c4.28-1.3 12.26-1.05 16.55 1.5a1.12 1.12 0 1 1-1.15 1.93z"/></svg>`,
-    appleMusic:   `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.36 12.6c-.02-2.3 1.88-3.4 1.96-3.46-1.07-1.56-2.73-1.78-3.32-1.8-1.41-.14-2.76.83-3.47.83-.72 0-1.82-.81-3-.79-1.54.02-2.96.9-3.75 2.27-1.6 2.78-.41 6.9 1.15 9.16.76 1.1 1.67 2.34 2.86 2.3 1.15-.05 1.58-.74 2.97-.74 1.38 0 1.77.74 2.98.72 1.23-.02 2.01-1.12 2.76-2.23.87-1.28 1.23-2.52 1.25-2.58-.03-.01-2.4-.92-2.42-3.65zM14.13 5.6c.63-.77 1.06-1.83.94-2.9-.91.04-2.02.61-2.67 1.37-.58.68-1.09 1.76-.95 2.8 1.02.08 2.05-.51 2.68-1.27z"/></svg>`,
-    youtube:      `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.2C0 8.08 0 12 0 12s0 3.92.5 5.8a3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14C24 15.92 24 12 24 12s0-3.92-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg>`,
-    tidal:        `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5L12 9.5L16 5.5L20 9.5L16 13.5L12 9.5L8 13.5L4 9.5L8 5.5ZM12 11.5L8 15.5L12 19.5L16 15.5L12 11.5Z"/></svg>`,
-    amazonMusic:  `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.958 10.09c0 1.232.029 2.256-.591 3.351-.502.891-1.301 1.438-2.186 1.438-1.214 0-1.922-.924-1.922-2.292 0-2.692 2.415-3.182 4.7-3.182v.685zm3.186 7.705c-.209.189-.512.201-.749.075-1.052-.873-1.24-1.279-1.814-2.112-1.732 1.767-2.961 2.295-5.209 2.295-2.66 0-4.731-1.641-4.731-4.925 0-2.565 1.391-4.309 3.37-5.164 1.716-.75 4.112-.884 5.942-1.087v-.405c0-.748.058-1.631-.381-2.278-.381-.579-1.11-.819-1.75-.819-1.19 0-2.251.609-2.511 1.871-.053.282-.261.561-.543.575l-3.045-.328c-.256-.058-.539-.266-.466-.66.701-3.698 4.042-4.812 7.031-4.812 1.529 0 3.527.407 4.733 1.568 1.529 1.43 1.383 3.34 1.383 5.42v4.909c0 1.476.612 2.125 1.189 2.922.202.284.247.623-.01.835l-2.44 2.1zm3.021 2.551C17.968 22.15 14.928 23 12.32 23 8.712 23 5.462 21.696 3 19.44c-.222-.193-.024-.462.246-.31 2.692 1.568 6.012 2.51 9.45 2.51 2.317 0 4.864-.48 7.208-1.476.354-.151.65.233.261.542zm.757-2.074c-.304-.39-2.011-.185-2.779-.093-.234.028-.269-.175-.059-.322 1.361-.957 3.591-.681 3.851-.361.261.322-.068 2.554-1.344 3.619-.196.164-.383.077-.296-.137.287-.718.928-2.327.627-2.706z"/></svg>`,
-    soundcloud:   `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M1.175 12.225c-.015.108-.023.215-.023.33 0 .118.008.226.023.332l-.003-.014c0 .114.005.224.015.332-.01.108-.015.218-.015.332 0 .114.005.226.015.33-.01.108-.015.224-.015.338 0 1.118.906 2.024 2.024 2.024.118 0 .234-.01.347-.03l-.012.002h11.39c.906 0 1.639-.733 1.639-1.638V9.748c0-.906-.733-1.639-1.639-1.639-.234 0-.454.05-.656.14l.01-.004c-.434-2.38-2.507-4.181-5.009-4.181-1.657 0-3.138.796-4.075 2.028l-.009.012c-.07-.01-.14-.016-.213-.016-.906 0-1.639.733-1.639 1.639 0 .046.002.091.005.136l-.001-.006c-.474.14-.88.426-1.174.806l-.004.005z"/></svg>`,
-    bandcamp:     `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 18.75l7.437-13.5H24l-7.438 13.5z"/></svg>`,
+    spotify:     `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.5 17.3a.75.75 0 0 1-1.03.25c-2.82-1.72-6.37-2.11-10.55-1.16a.75.75 0 1 1-.33-1.46c4.58-1.04 8.5-.6 11.66 1.34.36.22.47.69.25 1.03zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.23-1.99-8.16-2.56-11.98-1.4a.94.94 0 1 1-.55-1.8c4.37-1.32 9.8-.68 13.5 1.6.44.27.58.85.32 1.29zm.13-3.4C15.73 8.26 8.5 8.02 4.78 9.15a1.12 1.12 0 1 1-.65-2.15c4.28-1.3 12.26-1.05 16.55 1.5a1.12 1.12 0 1 1-1.15 1.93z"/></svg>`,
+    appleMusic:  `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.36 12.6c-.02-2.3 1.88-3.4 1.96-3.46-1.07-1.56-2.73-1.78-3.32-1.8-1.41-.14-2.76.83-3.47.83-.72 0-1.82-.81-3-.79-1.54.02-2.96.9-3.75 2.27-1.6 2.78-.41 6.9 1.15 9.16.76 1.1 1.67 2.34 2.86 2.3 1.15-.05 1.58-.74 2.97-.74 1.38 0 1.77.74 2.98.72 1.23-.02 2.01-1.12 2.76-2.23.87-1.28 1.23-2.52 1.25-2.58-.03-.01-2.4-.92-2.42-3.65zM14.13 5.6c.63-.77 1.06-1.83.94-2.9-.91.04-2.02.61-2.67 1.37-.58.68-1.09 1.76-.95 2.8 1.02.08 2.05-.51 2.68-1.27z"/></svg>`,
+    youtube:     `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.2C0 8.08 0 12 0 12s0 3.92.5 5.8a3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14C24 15.92 24 12 24 12s0-3.92-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg>`,
+    tidal:       `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5L12 9.5L16 5.5L20 9.5L16 13.5L12 9.5L8 13.5L4 9.5L8 5.5ZM12 11.5L8 15.5L12 19.5L16 15.5L12 11.5Z"/></svg>`,
+    amazonMusic: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.958 10.09c0 1.232.029 2.256-.591 3.351-.502.891-1.301 1.438-2.186 1.438-1.214 0-1.922-.924-1.922-2.292 0-2.692 2.415-3.182 4.7-3.182v.685zm3.186 7.705c-.209.189-.512.201-.749.075-1.052-.873-1.24-1.279-1.814-2.112-1.732 1.767-2.961 2.295-5.209 2.295-2.66 0-4.731-1.641-4.731-4.925 0-2.565 1.391-4.309 3.37-5.164 1.716-.75 4.112-.884 5.942-1.087v-.405c0-.748.058-1.631-.381-2.278-.381-.579-1.11-.819-1.75-.819-1.19 0-2.251.609-2.511 1.871-.053.282-.261.561-.543.575l-3.045-.328c-.256-.058-.539-.266-.466-.66.701-3.698 4.042-4.812 7.031-4.812 1.529 0 3.527.407 4.733 1.568 1.529 1.43 1.383 3.34 1.383 5.42v4.909c0 1.476.612 2.125 1.189 2.922.202.284.247.623-.01.835l-2.44 2.1zm3.021 2.551C17.968 22.15 14.928 23 12.32 23 8.712 23 5.462 21.696 3 19.44c-.222-.193-.024-.462.246-.31 2.692 1.568 6.012 2.51 9.45 2.51 2.317 0 4.864-.48 7.208-1.476.354-.151.65.233.261.542zm.757-2.074c-.304-.39-2.011-.185-2.779-.093-.234.028-.269-.175-.059-.322 1.361-.957 3.591-.681 3.851-.361.261.322-.068 2.554-1.344 3.619-.196.164-.383.077-.296-.137.287-.718.928-2.327.627-2.706z"/></svg>`,
+    soundcloud:  `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M1.175 12.225c-.015.108-.023.215-.023.33 0 .118.008.226.023.332l-.003-.014c0 .114.005.224.015.332-.01.108-.015.218-.015.332 0 .114.005.226.015.33-.01.108-.015.224-.015.338 0 1.118.906 2.024 2.024 2.024.118 0 .234-.01.347-.03l-.012.002h11.39c.906 0 1.639-.733 1.639-1.638V9.748c0-.906-.733-1.639-1.639-1.639-.234 0-.454.05-.656.14l.01-.004c-.434-2.38-2.507-4.181-5.009-4.181-1.657 0-3.138.796-4.075 2.028l-.009.012c-.07-.01-.14-.016-.213-.016-.906 0-1.639.733-1.639 1.639 0 .046.002.091.005.136l-.001-.006c-.474.14-.88.426-1.174.806l-.004.005z"/></svg>`,
+    bandcamp:    `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 18.75l7.437-13.5H24l-7.438 13.5z"/></svg>`,
   };
 
   function streamingLinks(links, style = 'single') {
     if (!links) return '';
-    const order = ['spotify','appleMusic','youtube','tidal','amazonMusic','soundcloud','bandcamp'];
+    const order  = ['spotify','appleMusic','youtube','tidal','amazonMusic','soundcloud','bandcamp'];
     const labels = { spotify:'Spotify', appleMusic:'Apple', youtube:'YouTube', tidal:'Tidal', amazonMusic:'Amazon', soundcloud:'SoundCloud', bandcamp:'Bandcamp' };
     return order
       .filter(k => links[k])
@@ -541,20 +411,11 @@
   /* ── Main Sanity fetch ── */
   (async function() {
     const query = `*[_type == "release"] | order(releaseDate desc) {
-      title,
-      slug,
-      releaseType,
-      releaseDate,
-      featured,
+      title, slug, releaseType, releaseDate, featured,
       "artworkUrl": artwork.asset->url,
       streamingLinks,
       "trackCount": count(tracks),
-      "tracks": tracks[]->{
-        title,
-        duration,
-        trackNumber,
-        streamingLinks
-      }
+      "tracks": tracks[]->{title, duration, trackNumber, streamingLinks}
     }`;
 
     let releases;
@@ -575,46 +436,36 @@
       return;
     }
 
-    // Split by type
     const singles = releases.filter(r => r.releaseType === 'single');
-    const albums  = releases.filter(r => r.releaseType !== 'single'); // album, ep, etc.
+    const albums  = releases.filter(r => r.releaseType !== 'single');
 
-    // Update page meta
     const totalTracks = releases.reduce((acc, r) => acc + (r.trackCount || 0), 0);
     document.getElementById('hero-meta').innerHTML =
       `<strong style="color:var(--muted)">${releases.length} releases</strong> &nbsp;·&nbsp; ${totalTracks} tracks`;
 
-    // Render
     renderSingles(singles);
     renderAlbums(albums);
     observe();
   })();
 
-  /* ═══════════ SINGLES RENDERER ═══════════ */
+  /* ═══ SINGLES RENDERER ═══ */
   function renderSingles(singles) {
     const container = document.getElementById('singles-list');
     const countEl   = document.getElementById('singles-count');
-
-    if (!singles.length) {
-      container.innerHTML = '<div class="empty">No singles yet.</div>';
-      return;
-    }
-
+    if (!singles.length) { container.innerHTML = '<div class="empty">No singles yet.</div>'; return; }
     countEl.textContent = `${singles.length} tracks`;
-
-    container.innerHTML = singles.map((rel) => {
+    container.innerHTML = singles.map(rel => {
       const year   = rel.releaseDate ? new Date(rel.releaseDate).getFullYear() : '';
       const artUrl = rel.artworkUrl  ? sanityImg(rel.artworkUrl, 200) : null;
-      // duration is a string like "3:42" directly from schema
       const dur    = rel.tracks?.[0]?.duration || '';
       const slug   = rel.slug?.current || '';
-
       return `
         <div class="single-row reveal">
           <a class="single-art" href="/release/?slug=${esc(slug)}" aria-label="View ${esc(rel.title)}">
             ${artUrl
               ? `<img src="${esc(artUrl)}" alt="${esc(rel.title)}" loading="lazy">`
               : `<div style="width:100%;height:100%;background:var(--card-line);border-radius:8px;"></div>`}
+            <div class="play-overlay"><svg viewBox="0 0 24 24"><path d="M6 4.5v15l13-7.5z"/></svg></div>
           </a>
           <div class="single-info">
             <a class="single-title" href="/release/?slug=${esc(slug)}">${esc(rel.title)}</a>
@@ -623,37 +474,25 @@
               ${dur ? `<span class="single-duration">${esc(dur)}</span>` : ''}
             </div>
           </div>
-          <div class="single-links">
-            ${streamingLinks(rel.streamingLinks, 'album')}
-          </div>
+          <div class="single-links">${streamingLinks(rel.streamingLinks, 'album')}</div>
         </div>`;
     }).join('');
   }
 
-  /* ═══════════ ALBUMS RENDERER ═══════════ */
+  /* ═══ ALBUMS RENDERER ═══ */
   function renderAlbums(albums) {
     const grid    = document.getElementById('albums-grid');
     const countEl = document.getElementById('albums-count');
-
-    if (!albums.length) {
-      grid.innerHTML = '<div class="empty" style="grid-column:1/-1;">No albums or EPs yet.</div>';
-      return;
-    }
-
+    if (!albums.length) { grid.innerHTML = '<div class="empty" style="grid-column:1/-1;">No albums or EPs yet.</div>'; return; }
     countEl.textContent = `${albums.length} releases`;
-
     grid.innerHTML = albums.map((rel, idx) => {
-      const year     = rel.releaseDate ? new Date(rel.releaseDate).getFullYear() : '';
-      const typeRaw  = rel.releaseType || 'release';
-      const typeLabel = typeRaw.toUpperCase();
-      const artUrl   = rel.artworkUrl ? sanityImg(rel.artworkUrl, 600) : null;
-      const spUrl    = rel.streamingLinks?.spotify || '';
-      const src      = embedSrc(spUrl);
-      const hasEmbed = !!src;
+      const year       = rel.releaseDate ? new Date(rel.releaseDate).getFullYear() : '';
+      const typeLabel  = (rel.releaseType || 'release').toUpperCase();
+      const artUrl     = rel.artworkUrl ? sanityImg(rel.artworkUrl, 600) : null;
+      const src        = embedSrc(rel.streamingLinks?.spotify);
       const trackCount = rel.trackCount || 0;
-      const slug     = rel.slug?.current || '';
-      const relUrl   = `/release/?slug=${esc(slug)}`;
-
+      const slug       = rel.slug?.current || '';
+      const relUrl     = `/release/?slug=${esc(slug)}`;
       return `
         <div class="album-card reveal">
           <a class="album-art" href="${relUrl}" aria-label="View ${esc(rel.title)}">
@@ -661,74 +500,56 @@
               ? `<img src="${esc(artUrl)}" alt="${esc(rel.title)}" loading="lazy">`
               : `<div class="album-art-ph"><span>${esc(rel.title)}</span></div>`}
             <span class="album-type-badge">${typeLabel}</span>
-            ${hasEmbed ? `
-            <button class="album-play-btn" id="album-play-${idx}" onclick="event.preventDefault();toggleAlbumEmbed(${idx})" aria-label="Play ${esc(rel.title)} on Spotify">
+            ${src ? `
+            <button class="album-play-btn" id="album-play-${idx}"
+              onclick="event.preventDefault();toggleAlbumEmbed(${idx})"
+              aria-label="Play ${esc(rel.title)} on Spotify">
               <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>
             </button>` : ''}
           </a>
-
-          ${hasEmbed ? `<div class="album-embed" id="album-embed-${idx}">
-            <iframe
-              src=""
-              data-src="${esc(src)}"
+          ${src ? `<div class="album-embed" id="album-embed-${idx}">
+            <iframe src="" data-src="${esc(src)}"
               allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-              loading="lazy"
-              title="Spotify player for ${esc(rel.title)}">
-            </iframe>
+              loading="lazy" title="Spotify player for ${esc(rel.title)}"></iframe>
           </div>` : ''}
-
           <div class="album-body">
             <a class="album-title" href="${relUrl}">${esc(rel.title)}</a>
             <div class="album-sub">${year}${trackCount ? ` · ${trackCount} track${trackCount !== 1 ? 's' : ''}` : ''}</div>
           </div>
-
-          <div class="album-links">
-            ${streamingLinks(rel.streamingLinks, 'album')}
-          </div>
+          <div class="album-links">${streamingLinks(rel.streamingLinks, 'album')}</div>
         </div>`;
     }).join('');
   }
 
-  /* Toggle album embed */
+  /* ── Toggle album Spotify embed ── */
   let openAlbum = null;
   function toggleAlbumEmbed(idx) {
     const wrap = document.getElementById(`album-embed-${idx}`);
     const btn  = document.getElementById(`album-play-${idx}`);
     if (!wrap) return;
-
     const isOpen = wrap.classList.contains('open');
-
+    // Close previously open
     if (openAlbum !== null && openAlbum !== idx) {
       const prev    = document.getElementById(`album-embed-${openAlbum}`);
       const prevBtn = document.getElementById(`album-play-${openAlbum}`);
       if (prev) prev.classList.remove('open');
-      if (prevBtn) {
-        prevBtn.classList.remove('active');
-        prevBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>`;
-      }
+      if (prevBtn) { prevBtn.classList.remove('active'); prevBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>`; }
     }
-
     if (isOpen) {
       wrap.classList.remove('open');
-      if (btn) {
-        btn.classList.remove('active');
-        btn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>`;
-      }
+      if (btn) { btn.classList.remove('active'); btn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>`; }
       openAlbum = null;
     } else {
       const iframe = wrap.querySelector('iframe');
-      if (iframe && !iframe.src) { iframe.src = iframe.dataset.src; }
+      if (iframe && !iframe.src) iframe.src = iframe.dataset.src;
       wrap.classList.add('open');
-      if (btn) {
-        btn.classList.add('active');
-        // Pause icon
-        btn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`;
-      }
+      if (btn) { btn.classList.add('active'); btn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`; }
       openAlbum = idx;
     }
   }
   window.toggleAlbumEmbed = toggleAlbumEmbed;
 </script>
+
 <script src="/assets/js/nav.js"></script>
 </body>
 </html>
