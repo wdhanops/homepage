@@ -904,7 +904,7 @@
   const SANITY_DATASET    = 'production';
 
   function sanityUrl(query) {
-    return `https://${SANITY_PROJECT_ID}.apicdn.sanity.io/v2021-10-21/data/query/${SANITY_DATASET}?query=${encodeURIComponent(query)}`;
+    return `https://${SANITY_PROJECT_ID}.api.sanity.io/v2021-10-21/data/query/${SANITY_DATASET}?query=${encodeURIComponent(query)}`;
   }
   function sanityImg(url, width) {
     return url ? `${url}?w=${width}&auto=format&fit=crop` : null;
