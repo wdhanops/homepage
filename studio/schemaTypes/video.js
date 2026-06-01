@@ -66,6 +66,13 @@ export default {
       to: [{ type: 'release' }],
       description: 'Link this video to a release (optional).',
     },
+        {
+      name: 'relatedTrack',
+      title: 'Related Track',
+      type: 'reference',
+      to: [{ type: 'track' }],
+      description: 'Link this video to a track (optional).',
+    },
     {
       name: 'featured',
       title: 'Featured',

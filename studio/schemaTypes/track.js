@@ -43,7 +43,8 @@ export default {
   fields: [
     { name: 'spotify',      title: 'Spotify URL',       type: 'url' },
     { name: 'appleMusic',   title: 'Apple Music URL',   type: 'url' },
-    { name: 'youtube',      title: 'YouTube Music URL', type: 'url' },
+    { name: 'youtube',      title: 'YouTube URL',       type: 'url' },
+    { name: 'youtubeMusic', title: 'YouTube Music URL', type: 'url' },
     { name: 'tidal',        title: 'Tidal URL',         type: 'url' },
     { name: 'amazonMusic',  title: 'Amazon Music URL',  type: 'url' },
     { name: 'deezer',       title: 'Deezer URL',        type: 'url' },
