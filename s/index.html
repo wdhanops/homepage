@@ -446,7 +446,7 @@ async function init() {
     fetch(sanityUrl(`*[_type == "shortLink" && slug.current == "${slug}"][0]{
       title, active, showVideo, showSubscribe, showStreaming,
       accentColor,
-      "videoEmbedId": video->embedId,
+      "videoEmbedId": video->youtubeId,
       "videoTitle": video->title,
       streamingLinks,
       "releaseId": release._ref,
@@ -477,7 +477,7 @@ async function init() {
   console.log('[wdhan] releaseId resolved to:', releaseId);
   if (releaseId) {
     try {
-      const videoQuery = `*[_type == "video" && relatedRelease._ref == "${releaseId}"] | order(publishDate desc)[0]{ title, embedId, category }`;
+      const videoQuery = `*[_type == "video" && relatedRelease._ref == "${releaseId}"] | order(publishDate desc)[0]{ title, youtubeId, category }`;
       console.log('[wdhan] video query:', videoQuery);
       const vRes = await fetch(sanityUrl(videoQuery)).then(r => r.json());
       console.log('[wdhan] video result:', vRes.result);
@@ -499,7 +499,7 @@ async function init() {
       showVideo:      slDoc.showVideo !== false,
       showSubscribe:  slDoc.showSubscribe !== false,
       showStreaming:  slDoc.showStreaming !== false,
-      videoEmbedId:   slDoc.videoEmbedId || releaseVideo?.embedId,
+      videoEmbedId:   slDoc.videoEmbedId || releaseVideo?.youtubeId,
       videoTitle:     slDoc.videoTitle   || releaseVideo?.title,
       accentColor:    slDoc.accentColor  || null,
       releaseSlug:    slDoc.release?.slug,
@@ -514,7 +514,7 @@ async function init() {
       showVideo:      true,
       showSubscribe:  true,
       showStreaming:  true,
-      videoEmbedId:   releaseVideo?.embedId,
+      videoEmbedId:   releaseVideo?.youtubeId,
       videoTitle:     releaseVideo?.title,
       releaseSlug:    relDoc.slug,
     };
