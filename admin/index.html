@@ -502,6 +502,22 @@
         <div class="field-hint">Use the release name, lowercase, hyphens instead of spaces.</div>
       </div>
 
+      <!-- Accent color -->
+      <div class="field">
+        <label>Accent Colour</label>
+        <div style="display:flex;gap:10px;align-items:center">
+          <input type="color" id="ed-accent-color" value="#ff3b2e"
+            style="width:44px;height:44px;padding:2px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer" />
+          <input type="text" id="ed-accent-color-hex" value="#ff3b2e" placeholder="#ff3b2e"
+            style="width:110px;padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-body);font-size:0.9rem;outline:none" />
+          <button onclick="document.getElementById('ed-accent-color').value='#ff3b2e';document.getElementById('ed-accent-color-hex').value='#ff3b2e';"
+            style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:var(--font-body);font-size:0.78rem;cursor:pointer">
+            Reset
+          </button>
+        </div>
+        <div class="field-hint">Default is the site red (#ff3b2e). Pick a custom colour per release — e.g. pull from the artwork.</div>
+      </div>
+
       <!-- Active toggle -->
       <div class="card" style="margin-bottom:16px;">
         <div class="card-title">Page Status</div>
@@ -577,7 +593,7 @@ const SANITY_DATASET = 'production';
 // This is used for both the login screen AND as the auth token sent to the Worker.
 // The Worker validates it against its own ADMIN_PASSWORD_HASH env var (set in Cloudflare).
 // Nothing secret is hardcoded here — safe for a public repo.
-const ADMIN_HASH = 'V0RIQE5hZG0hbg=='; // base64("wdhan-admin-2026") — CHANGE THIS
+const ADMIN_HASH = 'd2RoYW4tYWRtaW4tMjAyNg=='; // base64("wdhan-admin-2026") — CHANGE THIS
 
 // Worker proxy URL — Sanity token lives here, never in this file
 const WORKER_URL = 'https://admin-api.wdhan.com/mutate';
@@ -865,6 +881,10 @@ async function loadExistingShortLink(slug) {
     setToggle('ed-show-video',     sl.showVideo      !== false);
     setToggle('ed-show-streaming', sl.showStreaming   !== false);
     setToggle('ed-show-subscribe', sl.showSubscribe   !== false);
+    if (sl.accentColor) {
+      document.getElementById('ed-accent-color').value = sl.accentColor;
+      document.getElementById('ed-accent-color-hex').value = sl.accentColor;
+    }
     if (sl.videoUrl) document.getElementById('ed-video-url').value = sl.videoUrl;
     if (sl.streamingLinks) {
       PLATFORMS.forEach(p => {
@@ -899,6 +919,7 @@ document.getElementById('ed-save-btn').addEventListener('click', async () => {
     if (el?.value.trim()) streamingOverrides[p.key] = el.value.trim();
   });
 
+  const accentColor = document.getElementById('ed-accent-color-hex')?.value.trim() || '#ff3b2e';
   const doc = {
     _id: `shortLink-${selectedRelease._id}`,
     _type: 'shortLink',
@@ -907,6 +928,7 @@ document.getElementById('ed-save-btn').addEventListener('click', async () => {
     showVideo:      document.getElementById('ed-show-video').checked,
     showStreaming:  document.getElementById('ed-show-streaming').checked,
     showSubscribe:  document.getElementById('ed-show-subscribe').checked,
+    accentColor:    /^#[0-9a-fA-F]{6}$/.test(accentColor) ? accentColor : '#ff3b2e',
     release: { _type: 'reference', _ref: selectedRelease._id },
     ...(videoUrl ? { videoUrl } : {}),
     ...(Object.keys(streamingOverrides).length ? { streamingLinks: streamingOverrides } : {}),
@@ -922,6 +944,18 @@ document.getElementById('ed-save-btn').addEventListener('click', async () => {
     }
   } catch (e) {
     status.textContent = 'Error: ' + e.message; status.className = 'save-status err';
+  }
+});
+
+// ── COLOR PICKER SYNC ───────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  const colorPicker = document.getElementById('ed-accent-color');
+  const colorHex    = document.getElementById('ed-accent-color-hex');
+  if (colorPicker && colorHex) {
+    colorPicker.addEventListener('input', () => { colorHex.value = colorPicker.value; });
+    colorHex.addEventListener('input', () => {
+      if (/^#[0-9a-fA-F]{6}$/.test(colorHex.value)) colorPicker.value = colorHex.value;
+    });
   }
 });
 
