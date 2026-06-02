@@ -387,14 +387,13 @@ function esc(s) {
 }
 
 const PLATFORM_INFO = {
-  spotify:      { label: 'Spotify',       icon: 'spotify',    featured: true },
-  appleMusic:   { label: 'Apple Music',   icon: 'appleMusic' },
-  youtubeMusic: { label: 'YouTube Music', icon: 'youtube' },
-  tidal:        { label: 'Tidal',         icon: 'tidal' },
-  amazonMusic:  { label: 'Amazon Music',  icon: 'music' },
-  deezer:       { label: 'Deezer',        icon: 'music' },
-  soundcloud:   { label: 'SoundCloud',    icon: 'music' },
-  bandcamp:     { label: 'Bandcamp',      icon: 'bandcamp' },
+  spotify:     { label: 'Spotify',       icon: 'spotify',    featured: true },
+  appleMusic:  { label: 'Apple Music',   icon: 'appleMusic' },
+  youtube:     { label: 'YouTube Music', icon: 'youtube' },
+  tidal:       { label: 'Tidal',         icon: 'tidal' },
+  amazonMusic: { label: 'Amazon Music',  icon: 'music' },
+  soundcloud:  { label: 'SoundCloud',    icon: 'music' },
+  bandcamp:    { label: 'Bandcamp',      icon: 'bandcamp' },
 };
 
 const ICONS = {
@@ -436,7 +435,8 @@ function makeLabel(text) {
 }
 
 async function init() {
-  const slug = new URLSearchParams(location.search).get('slug') ||
+  const slug = window.__WDHAN_SLUG__ ||
+               new URLSearchParams(location.search).get('slug') ||
                location.pathname.replace(/^\/s\/?/, '').replace(/\/$/, '') || null;
 
   if (!slug) { show404('No release specified.'); return; }
@@ -445,10 +445,9 @@ async function init() {
   const [slRes, relRes, settingsRes] = await Promise.allSettled([
     fetch(sanityUrl(`*[_type == "shortLink" && slug.current == "${slug}"][0]{
       title, active, showVideo, showSubscribe, showStreaming,
-      accentColor,
+      accentColor, hiddenPlatforms,
       "videoEmbedId": video->youtubeId,
       "videoTitle": video->title,
-      streamingLinks,
       "releaseId": release._ref,
       "release": release->{
         _id, title, releaseType, releaseDate,
@@ -491,32 +490,34 @@ async function init() {
   let data;
   if (slDoc && slDoc.active !== false) {
     data = {
-      title:          slDoc.title || slDoc.release?.title,
-      releaseType:    slDoc.release?.releaseType,
-      releaseDate:    slDoc.release?.releaseDate,
-      artUrl:         slDoc.release?.artUrl,
-      streamingLinks: slDoc.streamingLinks || slDoc.release?.streamingLinks,
-      showVideo:      slDoc.showVideo !== false,
-      showSubscribe:  slDoc.showSubscribe !== false,
-      showStreaming:  slDoc.showStreaming !== false,
-      videoEmbedId:   slDoc.videoEmbedId || releaseVideo?.youtubeId,
-      videoTitle:     slDoc.videoTitle   || releaseVideo?.title,
-      accentColor:    slDoc.accentColor  || null,
-      releaseSlug:    slDoc.release?.slug,
+      title:           slDoc.title || slDoc.release?.title,
+      releaseType:     slDoc.release?.releaseType,
+      releaseDate:     slDoc.release?.releaseDate,
+      artUrl:          slDoc.release?.artUrl,
+      streamingLinks:  slDoc.release?.streamingLinks,
+      showVideo:       slDoc.showVideo !== false,
+      showSubscribe:   slDoc.showSubscribe !== false,
+      showStreaming:   slDoc.showStreaming !== false,
+      hiddenPlatforms: slDoc.hiddenPlatforms || [],
+      videoEmbedId:    slDoc.videoEmbedId || releaseVideo?.youtubeId,
+      videoTitle:      slDoc.videoTitle   || releaseVideo?.title,
+      accentColor:     slDoc.accentColor  || null,
+      releaseSlug:     slDoc.release?.slug,
     };
   } else if (relDoc) {
     data = {
-      title:          relDoc.title,
-      releaseType:    relDoc.releaseType,
-      releaseDate:    relDoc.releaseDate,
-      artUrl:         relDoc.artUrl,
-      streamingLinks: relDoc.streamingLinks,
-      showVideo:      true,
-      showSubscribe:  true,
-      showStreaming:  true,
-      videoEmbedId:   releaseVideo?.youtubeId,
-      videoTitle:     releaseVideo?.title,
-      releaseSlug:    relDoc.slug,
+      title:           relDoc.title,
+      releaseType:     relDoc.releaseType,
+      releaseDate:     relDoc.releaseDate,
+      artUrl:          relDoc.artUrl,
+      streamingLinks:  relDoc.streamingLinks,
+      showVideo:       true,
+      showSubscribe:   true,
+      showStreaming:   true,
+      hiddenPlatforms: [],
+      videoEmbedId:    releaseVideo?.youtubeId,
+      videoTitle:      releaseVideo?.title,
+      releaseSlug:     relDoc.slug,
     };
   } else {
     show404('Release not found.'); return;
@@ -591,10 +592,12 @@ function render(data, socials) {
   // ── STREAMING ──
   if (data.showStreaming && data.streamingLinks) {
     addEl(makeLabel('STREAM'));
-    const links = data.streamingLinks;
+    const links  = data.streamingLinks;
+    const hidden = data.hiddenPlatforms || [];
     Object.entries(PLATFORM_INFO).forEach(([key, info]) => {
       const url = links[key];
       if (!url) return;
+      if (hidden.includes(key)) return;
       addEl(makeLink({
         href: url,
         label: info.label,
