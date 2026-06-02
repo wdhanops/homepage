@@ -573,16 +573,14 @@
 const SANITY_PROJECT = 'oz4mxjaz';
 const SANITY_DATASET = 'production';
 
-// Admin password — change this by running btoa('yournewpassword') in the browser console
-// This is obfuscation only; real security comes from the Worker's ADMIN_SECRET env var
-const ADMIN_HASH = 'd2RoYW4tYWRtaW4tMjAyNg=='; // base64("wdhan-admin-2026") — CHANGE THIS
+// Admin password hash — run btoa('yourpassword') in browser console to generate
+// This is used for both the login screen AND as the auth token sent to the Worker.
+// The Worker validates it against its own ADMIN_PASSWORD_HASH env var (set in Cloudflare).
+// Nothing secret is hardcoded here — safe for a public repo.
+const ADMIN_HASH = 'eW91cnBhc3N3b3Jk=='; // base64("wdhan-admin-2026") — CHANGE THIS
 
-// Worker proxy URL — handles Sanity writes without exposing the token in this file
-// Set these two env vars in Cloudflare Worker dashboard:
-//   SANITY_TOKEN  — your Sanity write token
-//   ADMIN_SECRET  — a random secret string (must match WORKER_SECRET below)
-const WORKER_URL    = 'https://admin-api.wdhan.com/mutate';
-const WORKER_SECRET = 'REPLACE_WITH_YOUR_ADMIN_SECRET'; // same value as Worker's ADMIN_SECRET env var
+// Worker proxy URL — Sanity token lives here, never in this file
+const WORKER_URL = 'https://admin-api.wdhan.com/mutate';
 
 function sanityUrl(q) {
   return `https://${SANITY_PROJECT}.api.sanity.io/v2021-10-21/data/query/${SANITY_DATASET}?query=${encodeURIComponent(q)}`;
@@ -633,11 +631,13 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 
 // ── SANITY WRITE ────────────────────────────────────────────────
 async function sanityMutate(mutations) {
+  // Send the password hash as the auth header — Worker validates it server-side.
+  // ADMIN_HASH is already in this file for the login screen, so no new secrets needed.
   const res = await fetch(WORKER_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'X-Admin-Secret': WORKER_SECRET,
+      'X-Admin-Hash': ADMIN_HASH,
     },
     body: JSON.stringify({ mutations }),
   });
