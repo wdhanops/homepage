@@ -86,6 +86,16 @@
       gap: 18px; margin-bottom: 32px;
       animation: fadeUp 0.6s ease both;
     }
+    .release-band-name {
+      font-family: var(--font-display);
+      font-size: 0.75rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      color: var(--accent);
+      opacity: 0.85;
+      margin-bottom: 4px;
+    }
+
     .release-art {
       width: 160px; height: 160px;
       border-radius: 12px;
@@ -320,6 +330,7 @@
 
 <div class="page" id="page">
   <div class="release-header" id="release-header">
+    <div class="release-band-name">WD-HAN</div>
     <div class="release-art-placeholder" id="art-wrap">
       <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(245,241,230,0.2)" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
     </div>
@@ -422,17 +433,26 @@ async function init() {
       }
     }`)).then(r => r.json()),
     fetch(sanityUrl(`*[_type == "release" && slug.current == "${slug}"][0]{
-      title, releaseType, releaseDate,
+      _id, title, releaseType, releaseDate,
       "artUrl": artwork.asset->url,
-      streamingLinks, "slug": slug.current,
-      "video": *[_type == "video" && (
-        relatedRelease._ref == ^._id
-      )] | order(publishDate desc)[0]{ title, embedId, category }
+      streamingLinks, "slug": slug.current
     }`)).then(r => r.json()),
   ]);
 
   const slDoc   = slRes.value?.result || null;
   const relDoc  = relRes.value?.result || null;
+
+  // Fetch video separately using release _id (avoids GROQ self-reference issues)
+  let releaseVideo = null;
+  const releaseId = slDoc?.release?._ref || relDoc?._id;
+  if (releaseId) {
+    try {
+      const vRes = await fetch(sanityUrl(
+        `*[_type == "video" && relatedRelease._ref == "${releaseId}"] | order(publishDate desc)[0]{ title, embedId, category }`
+      )).then(r => r.json());
+      releaseVideo = vRes.result || null;
+    } catch {}
+  }
 
   // Use shortLink doc if it exists and is active; otherwise fall back to release
   let data;
@@ -446,8 +466,8 @@ async function init() {
       showVideo:      slDoc.showVideo !== false,
       showSubscribe:  slDoc.showSubscribe !== false,
       showStreaming:  slDoc.showStreaming !== false,
-      videoEmbedId:   slDoc.videoEmbedId || slDoc.release?.video?.embedId,
-      videoTitle:     slDoc.videoTitle   || slDoc.release?.video?.title,
+      videoEmbedId:   slDoc.videoEmbedId || releaseVideo?.embedId,
+      videoTitle:     slDoc.videoTitle   || releaseVideo?.title,
       accentColor:    slDoc.accentColor  || null,
       releaseSlug:    slDoc.release?.slug,
     };
@@ -461,8 +481,8 @@ async function init() {
       showVideo:      true,
       showSubscribe:  true,
       showStreaming:  true,
-      videoEmbedId:   relDoc.video?.embedId,
-      videoTitle:     relDoc.video?.title,
+      videoEmbedId:   releaseVideo?.embedId,
+      videoTitle:     releaseVideo?.title,
       releaseSlug:    relDoc.slug,
     };
   } else {
