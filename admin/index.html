@@ -563,16 +563,17 @@
         <div class="field-hint">Leave blank to use the video already linked to this release in Sanity Studio.</div>
       </div>
 
-      <!-- Streaming links override -->
+      <!-- Streaming links — live sync with Sanity release record -->
       <div class="card" style="margin-bottom:16px;">
-        <div class="card-title">Streaming Links (optional override)</div>
+        <div class="card-title">Streaming Links</div>
         <p style="font-size:0.75rem;color:var(--muted);margin-bottom:14px;line-height:1.5">
-          Leave blank to use the links from the main release record.
-          Use these if you want campaign-specific or UTM-tracked links.
+          Links pulled from Sanity. Edit here to update the release record directly.
+          Toggle each platform to show or hide it on the shortlink page.
         </p>
         <div class="platform-grid" id="streaming-overrides">
           <!-- built by JS -->
         </div>
+        <div class="save-status" id="links-status"></div>
       </div>
 
       <div class="btn-row">
@@ -677,10 +678,10 @@ const ICONS = {
 const PLATFORMS = [
   { key: 'spotify',      label: 'Spotify',       icon: 'spotify' },
   { key: 'appleMusic',   label: 'Apple Music',   icon: 'appleMusic' },
-  { key: 'youtubeMusic', label: 'YouTube Music', icon: 'youtube' },
+  { key: 'youtube',      label: 'YouTube Music', icon: 'youtube' },
   { key: 'tidal',        label: 'Tidal',         icon: 'tidal' },
   { key: 'amazonMusic',  label: 'Amazon Music',  icon: 'music' },
-  { key: 'deezer',       label: 'Deezer',        icon: 'music' },
+  { key: 'soundcloud',   label: 'SoundCloud',    icon: 'music' },
   { key: 'bandcamp',     label: 'Bandcamp',      icon: 'bandcamp' },
 ];
 
@@ -790,7 +791,7 @@ async function loadReleases() {
   try {
     const res = await fetch(sanityUrl(`*[_type == "release"] | order(releaseDate desc){
       _id, title, releaseType, releaseDate, "slug": slug.current,
-      "artUrl": artwork.asset->url
+      "artUrl": artwork.asset->url, streamingLinks
     }`)).then(r => r.json());
     releases = res.result || [];
     renderReleaseList();
@@ -861,18 +862,17 @@ function openEditor(rel) {
   setToggle('ed-show-streaming', true);
   setToggle('ed-show-subscribe', true);
 
-  // Clear overrides
-  document.getElementById('ed-video-url').value = '';
-  document.querySelectorAll('.platform-override').forEach(i => { i.value = ''; });
-
-  // Load existing shortLink doc if it exists
-  loadExistingShortLink(rel.slug);
+  // Load existing shortLink doc and release streaming links
+  loadExistingShortLink(rel.slug, rel.streamingLinks || {});
 
   document.getElementById('editor-panel').classList.add('open');
   document.getElementById('editor-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
-async function loadExistingShortLink(slug) {
+async function loadExistingShortLink(slug, releaseLinks = {}) {
+  // Build grid immediately with release links
+  buildPlatformGrid(releaseLinks, []);
+
   try {
     const res = await fetch(sanityUrl(`*[_type == "shortLink" && slug.current == "${slug}"][0]`)).then(r => r.json());
     const sl = res.result;
@@ -886,12 +886,10 @@ async function loadExistingShortLink(slug) {
       document.getElementById('ed-accent-color-hex').value = sl.accentColor;
     }
     if (sl.videoUrl) document.getElementById('ed-video-url').value = sl.videoUrl;
-    if (sl.streamingLinks) {
-      PLATFORMS.forEach(p => {
-        const el = document.querySelector(`.platform-override[data-key="${p.key}"]`);
-        if (el && sl.streamingLinks[p.key]) el.value = sl.streamingLinks[p.key];
-      });
-    }
+    // Rebuild grid with any URL overrides from shortLink doc + hidden platforms
+    const mergedLinks = { ...releaseLinks, ...(sl.streamingLinks || {}) };
+    const hidden = sl.hiddenPlatforms || [];
+    buildPlatformGrid(mergedLinks, hidden);
   } catch {}
 }
 
@@ -919,25 +917,41 @@ document.getElementById('ed-save-btn').addEventListener('click', async () => {
     if (el?.value.trim()) streamingOverrides[p.key] = el.value.trim();
   });
 
-  const accentColor = document.getElementById('ed-accent-color-hex')?.value.trim() || '#ff3b2e';
-  const doc = {
-    _id: `shortLink-${selectedRelease._id}`,
-    _type: 'shortLink',
-    slug: { _type: 'slug', current: slug },
-    active:         document.getElementById('ed-active').checked,
-    showVideo:      document.getElementById('ed-show-video').checked,
-    showStreaming:  document.getElementById('ed-show-streaming').checked,
-    showSubscribe:  document.getElementById('ed-show-subscribe').checked,
-    accentColor:    /^#[0-9a-fA-F]{6}$/.test(accentColor) ? accentColor : '#ff3b2e',
-    release: { _type: 'reference', _ref: selectedRelease._id },
-    ...(videoUrl ? { videoUrl } : {}),
-    ...(Object.keys(streamingOverrides).length ? { streamingLinks: streamingOverrides } : {}),
-  };
+  const accentColor  = document.getElementById('ed-accent-color-hex')?.value.trim() || '#ff3b2e';
+  const streamingLinks  = getStreamingLinks();
+  const hiddenPlatforms = getHiddenPlatforms();
+
+  // Two mutations: update release streamingLinks + create/replace shortLink doc
+  const mutations = [
+    {
+      patch: {
+        id: selectedRelease._id,
+        set: { streamingLinks },
+      }
+    },
+    {
+      createOrReplace: {
+        _id: `shortLink-${selectedRelease._id}`,
+        _type: 'shortLink',
+        slug: { _type: 'slug', current: slug },
+        active:          document.getElementById('ed-active').checked,
+        showVideo:       document.getElementById('ed-show-video').checked,
+        showStreaming:   document.getElementById('ed-show-streaming').checked,
+        showSubscribe:   document.getElementById('ed-show-subscribe').checked,
+        accentColor:     /^#[0-9a-fA-F]{6}$/.test(accentColor) ? accentColor : '#ff3b2e',
+        hiddenPlatforms,
+        release: { _type: 'reference', _ref: selectedRelease._id },
+        ...(videoUrl ? { videoUrl } : {}),
+      }
+    }
+  ];
 
   try {
-    const result = await sanityMutate([{ createOrReplace: doc }]);
+    const result = await sanityMutate(mutations);
     if (result?.results?.length) {
-      status.textContent = 'Saved! Page is live.'; status.className = 'save-status ok';
+      status.textContent = 'Saved! Changes are live.'; status.className = 'save-status ok';
+      // Update local cache so reopening the editor shows fresh data
+      selectedRelease.streamingLinks = streamingLinks;
       loadShortLinkStatuses();
     } else {
       status.textContent = result?.error?.description || 'Save failed — check your token.'; status.className = 'save-status err';
@@ -960,18 +974,51 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // ── PLATFORM GRID ────────────────────────────────────────────────
-function buildPlatformGrid() {
+function buildPlatformGrid(existingLinks = {}, hiddenPlatforms = []) {
   const grid = document.getElementById('streaming-overrides');
   grid.innerHTML = '';
   PLATFORMS.forEach(p => {
+    const isHidden = hiddenPlatforms.includes(p.key);
     const row = document.createElement('div');
     row.className = 'platform-row';
+    row.style.cssText = 'display:flex;align-items:center;gap:10px;margin-bottom:8px;';
     row.innerHTML = `
       <div class="platform-icon">${ICONS[p.icon] || ICONS.music}</div>
-      <div class="platform-label">${p.label}</div>
-      <input type="url" class="platform-override" data-key="${p.key}" placeholder="Paste URL or leave blank" />`;
+      <div class="platform-label" style="width:110px;font-size:0.8rem;font-weight:500;flex-shrink:0">${p.label}</div>
+      <input type="url" class="platform-override" data-key="${p.key}"
+        placeholder="No link" value="${esc(existingLinks[p.key] || '')}"
+        style="flex:1;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--font-body);font-size:0.78rem;outline:none;opacity:${isHidden ? '0.4' : '1'}" />
+      <label class="toggle" title="Show on page">
+        <input type="checkbox" class="platform-toggle" data-key="${p.key}" ${isHidden ? '' : 'checked'} />
+        <span class="toggle-slider"></span>
+      </label>`;
     grid.appendChild(row);
+
+    // Dim input when toggled off
+    const toggle = row.querySelector('.platform-toggle');
+    const input  = row.querySelector('.platform-override');
+    toggle.addEventListener('change', () => {
+      input.style.opacity = toggle.checked ? '1' : '0.4';
+    });
   });
+}
+
+function getHiddenPlatforms() {
+  return PLATFORMS
+    .filter(p => {
+      const el = document.querySelector(`.platform-toggle[data-key="${p.key}"]`);
+      return el && !el.checked;
+    })
+    .map(p => p.key);
+}
+
+function getStreamingLinks() {
+  const links = {};
+  PLATFORMS.forEach(p => {
+    const el = document.querySelector(`.platform-override[data-key="${p.key}"]`);
+    if (el?.value.trim()) links[p.key] = el.value.trim();
+  });
+  return links;
 }
 </script>
 </body>
