@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WD-HAN</title>
+  <meta name="description" content="WD-HAN — music, merch, shows, and more." />
+  <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg" />
+  <link rel="apple-touch-icon" href="/assets/img/favicon.svg" />
+
+  <style>
+    /* ── TOKENS ─────────────────────────────────────────────── */
+    :root {
+      --bg:        #08080a;
+      --surface:   rgba(255,255,255,0.06);
+      --surface-h: rgba(255,255,255,0.11);
+      --border:    rgba(245,241,230,0.10);
+      --text:      #f5f1e6;
+      --muted:     rgba(245,241,230,0.45);
+      --accent:    #e8c84a;
+      --accent-d:  #c9aa2e;
+      --font-display: 'Splatink', 'Anton', sans-serif;
+      --font-body:    'DM Sans', system-ui, sans-serif;
+      --radius:    14px;
+      --link-h:    64px;
+    }
+
+    /* ── RESET ──────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { height: 100%; }
+    body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── FONTS ──────────────────────────────────────────────── */
+    @font-face {
+      font-family: 'Splatink';
+      src: url('/assets/fonts/Splatink.otf') format('opentype');
+      font-display: swap;
+    }
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap');
+
+    /* ── BACKGROUND ─────────────────────────────────────────── */
+    .bg-wrap {
+      position: fixed; inset: 0; z-index: 0;
+      background: var(--bg);
+    }
+    .bg-img {
+      position: absolute; inset: 0;
+      background-size: cover;
+      background-position: center top;
+      opacity: 0;
+      transition: opacity 1.2s ease;
+    }
+    .bg-img.active { opacity: 1; }
+    .bg-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(8,8,10,0.55) 0%,
+        rgba(8,8,10,0.35) 30%,
+        rgba(8,8,10,0.70) 70%,
+        rgba(8,8,10,0.92) 100%
+      );
+    }
+    .bg-grain {
+      position: absolute; inset: 0;
+      opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+    }
+
+    /* ── LAYOUT ─────────────────────────────────────────────── */
+    .page {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 48px 20px 60px;
+    }
+
+    /* ── HEADER / AVATAR ────────────────────────────────────── */
+    .hub-header {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 14px;
+      margin-bottom: 32px;
+      animation: fadeUp 0.6s ease both;
+    }
+    .hub-avatar {
+      width: 88px; height: 88px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 2px solid var(--border);
+      background: var(--surface);
+    }
+    .hub-avatar-placeholder {
+      width: 88px; height: 88px; border-radius: 50%;
+      background: var(--surface);
+      border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .hub-name {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 8vw, 3rem);
+      letter-spacing: 0.04em;
+      line-height: 1;
+      text-align: center;
+    }
+    .hub-tagline {
+      font-size: 0.85rem;
+      color: var(--muted);
+      text-align: center;
+      max-width: 280px;
+      line-height: 1.5;
+    }
+
+    /* ── LINK STACK ─────────────────────────────────────────── */
+    .link-stack {
+      display: flex; flex-direction: column; gap: 10px;
+      width: 100%; max-width: 420px;
+    }
+
+    /* ── SECTION LABEL ──────────────────────────────────────── */
+    .section-label {
+      font-size: 0.68rem;
+      font-weight: 600;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--muted);
+      padding: 6px 4px 2px;
+      margin-top: 6px;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    /* ── LINK ITEM ──────────────────────────────────────────── */
+    .link-item {
+      display: flex; align-items: center;
+      min-height: var(--link-h);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0 20px;
+      text-decoration: none;
+      color: var(--text);
+      cursor: pointer;
+      transition: background 0.18s, border-color 0.18s, transform 0.18s;
+      animation: fadeUp 0.6s ease both;
+      position: relative;
+      overflow: hidden;
+    }
+    .link-item::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .link-item:hover, .link-item:focus-visible {
+      background: var(--surface-h);
+      border-color: rgba(245,241,230,0.2);
+      transform: translateY(-1px);
+    }
+    .link-item:active { transform: translateY(0); }
+
+    /* accent / featured variant */
+    .link-item.featured {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #08080a;
+    }
+    .link-item.featured::before {
+      background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+    }
+    .link-item.featured:hover {
+      background: var(--accent-d);
+      border-color: var(--accent-d);
+    }
+    .link-item.featured .link-icon svg { color: #08080a; }
+    .link-item.featured .link-label { color: #08080a; }
+    .link-item.featured .link-sub { color: rgba(8,8,10,0.6); }
+    .link-item.featured .link-arrow { color: rgba(8,8,10,0.5); }
+
+    .link-icon {
+      width: 36px; height: 36px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      margin-right: 14px;
+    }
+    .link-icon svg { width: 22px; height: 22px; color: var(--text); }
+
+    .link-text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .link-label { font-size: 0.95rem; font-weight: 500; line-height: 1.2; }
+    .link-sub { font-size: 0.75rem; color: var(--muted); line-height: 1.2; }
+
+    .link-arrow {
+      margin-left: 12px; color: var(--muted);
+      flex-shrink: 0;
+    }
+    .link-arrow svg { width: 16px; height: 16px; }
+
+    /* video thumbnail variant */
+    .link-item.has-thumb {
+      padding: 0;
+      overflow: hidden;
+    }
+    .link-thumb {
+      width: 100px; height: 64px;
+      object-fit: cover; flex-shrink: 0;
+      border-radius: var(--radius) 0 0 var(--radius);
+    }
+    .link-thumb-placeholder {
+      width: 100px; height: 64px; flex-shrink: 0;
+      background: var(--surface);
+      display: flex; align-items: center; justify-content: center;
+      border-radius: var(--radius) 0 0 var(--radius);
+    }
+    .link-item.has-thumb .link-text { padding: 0 4px; }
+    .link-item.has-thumb .link-arrow { padding-right: 16px; }
+
+    /* social row */
+    .social-row {
+      display: flex; gap: 10px; justify-content: center;
+      flex-wrap: wrap;
+      width: 100%; max-width: 420px;
+      animation: fadeUp 0.6s ease both;
+    }
+    .social-btn {
+      width: 48px; height: 48px;
+      border-radius: 50%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none; color: var(--text);
+      transition: background 0.18s, border-color 0.18s, transform 0.18s;
+    }
+    .social-btn svg { width: 20px; height: 20px; }
+    .social-btn:hover {
+      background: var(--surface-h);
+      border-color: rgba(245,241,230,0.2);
+      transform: scale(1.08);
+    }
+
+    /* ── FOOTER ─────────────────────────────────────────────── */
+    .hub-footer {
+      margin-top: 40px;
+      font-size: 0.72rem;
+      color: rgba(245,241,230,0.2);
+      letter-spacing: 0.06em;
+      animation: fadeUp 0.6s ease both;
+    }
+
+    /* ── SKELETON ───────────────────────────────────────────── */
+    .skeleton {
+      width: 100%; height: var(--link-h);
+      border-radius: var(--radius);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      animation: shimmer 1.4s ease infinite;
+    }
+    @keyframes shimmer {
+      0%,100% { opacity: 0.4; }
+      50% { opacity: 0.8; }
+    }
+
+    /* ── ANIMATION ──────────────────────────────────────────── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── NEWSLETTER MODAL ───────────────────────────────────── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(8,8,10,0.85);
+      backdrop-filter: blur(8px);
+      display: flex; align-items: flex-end; justify-content: center;
+      padding: 20px;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: #17171a;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 32px 28px 28px;
+      width: 100%; max-width: 420px;
+      transform: translateY(20px);
+      transition: transform 0.25s;
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal h3 {
+      font-family: var(--font-display);
+      font-size: 1.6rem; letter-spacing: 0.03em;
+      margin-bottom: 6px;
+    }
+    .modal p { font-size: 0.85rem; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
+    .modal input[type="email"] {
+      width: 100%; padding: 14px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      margin-bottom: 10px;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .modal input:focus { border-color: var(--accent); }
+    .modal-submit {
+      width: 100%; padding: 15px;
+      background: var(--accent);
+      color: #08080a;
+      border: none; border-radius: 10px;
+      font-family: var(--font-body);
+      font-size: 0.95rem; font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+    .modal-submit:hover { background: var(--accent-d); }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: none; border: none;
+      color: var(--muted); cursor: pointer; padding: 4px;
+    }
+    .modal-close svg { width: 20px; height: 20px; }
+    .modal-msg { font-size: 0.82rem; text-align: center; margin-top: 10px; min-height: 20px; }
+    .modal-msg.ok { color: #6dd67a; }
+    .modal-msg.err { color: #e07070; }
+  </style>
+</head>
+<body>
+
+<!-- Background -->
+<div class="bg-wrap">
+  <div class="bg-img" id="bg-img-a"></div>
+  <div class="bg-img" id="bg-img-b"></div>
+  <div class="bg-overlay"></div>
+  <div class="bg-grain"></div>
+</div>
+
+<!-- Newsletter modal -->
+<div class="modal-overlay" id="sub-modal">
+  <div class="modal" style="position:relative">
+    <button class="modal-close" id="modal-close-btn" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3>Stay in the loop</h3>
+    <p>New music, shows, and stuff — straight to your inbox. No spam, ever.</p>
+    <input type="email" id="sub-email" placeholder="your@email.com" autocomplete="email" />
+    <button class="modal-submit" id="sub-submit">Subscribe</button>
+    <div class="modal-msg" id="sub-msg"></div>
+  </div>
+</div>
+
+<!-- Page -->
+<div class="page" id="page">
+
+  <!-- Header -->
+  <div class="hub-header" id="hub-header">
+    <div class="hub-avatar-placeholder" id="avatar-wrap">
+      <!-- avatar loaded by JS -->
+      <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(245,241,230,0.2)" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+    </div>
+    <div class="hub-name" id="hub-name">WD-HAN</div>
+    <div class="hub-tagline" id="hub-tagline"></div>
+  </div>
+
+  <!-- Link stack -->
+  <div class="link-stack" id="link-stack">
+    <!-- Skeletons while loading -->
+    <div class="skeleton"></div>
+    <div class="skeleton" style="height:48px;opacity:0.6"></div>
+    <div class="skeleton" style="opacity:0.7"></div>
+    <div class="skeleton" style="opacity:0.5"></div>
+    <div class="skeleton" style="opacity:0.4"></div>
+  </div>
+
+  <div class="hub-footer">wdhan.com</div>
+</div>
+
+<script>
+// ── CONFIG ─────────────────────────────────────────────────────
+const SANITY_PROJECT = 'oz4mxjaz';
+const SANITY_DATASET = 'production';
+
+function sanityUrl(query) {
+  return `https://${SANITY_PROJECT}.api.sanity.io/v2021-10-21/data/query/${SANITY_DATASET}?query=${encodeURIComponent(query)}`;
+}
+
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ── SVG ICONS ──────────────────────────────────────────────────
+const ICONS = {
+  spotify: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.622.622 0 01-.857.207c-2.348-1.435-5.304-1.76-8.785-.964a.622.622 0 01-.277-1.215c3.809-.87 7.077-.496 9.712 1.115a.623.623 0 01.207.857zm1.223-2.722a.78.78 0 01-1.072.257C13.956 12.4 10.5 11.9 7.554 12.762a.78.78 0 01-.45-1.492c3.332-.997 7.273-.494 10.037 1.16a.782.782 0 01.668 1.272zm.105-2.835c-3.223-1.914-8.54-2.09-11.618-1.156a.935.935 0 11-.542-1.79c3.533-1.072 9.404-.865 13.115 1.338a.935.935 0 01-.955 1.608z"/></svg>`,
+  appleMusic: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.994 6.124a9.23 9.23 0 00-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 00-1.877-.726 10.496 10.496 0 00-1.564-.15c-.04-.003-.083-.01-.124-.013H5.986c-.152.01-.303.017-.455.026C4.786.07 4.043.15 3.34.428 2.067.93 1.148 1.824.635 3.083a4.9 4.9 0 00-.346 1.766c-.02.483-.024.967-.04 1.451V18.7c.02.5.09.975.215 1.444.37 1.377 1.22 2.362 2.552 2.914.765.313 1.57.395 2.405.406.077.002.154.008.23.008h13.005c.553-.015 1.098-.082 1.63-.24 1.307-.43 2.18-1.29 2.635-2.58.196-.57.276-1.165.29-1.76.02-.44.013-.883.013-1.325V7.178c-.004-.354-.01-.706-.03-1.054zm-4.94 4.7a.87.87 0 01-.496-.127L10.04 6.73a.44.44 0 01-.204-.373c0-.202.105-.383.266-.49l.06-.036 9.1-3.4a.454.454 0 01.595.43v7.532a.447.447 0 01-.358.43h-.446zm-5.16 5.696c0 1.32-1.055 2.39-2.354 2.39-1.3 0-2.354-1.07-2.354-2.39 0-1.32 1.054-2.39 2.354-2.39 1.3 0 2.354 1.07 2.354 2.39z"/></svg>`,
+  youtube: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`,
+  instagram: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>`,
+  tiktok: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.95a8.28 8.28 0 004.84 1.55V7.07a4.85 4.85 0 01-1.07-.38z"/></svg>`,
+  facebook: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`,
+  twitter: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.631L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>`,
+  bandcamp: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 18.75l7.437-13.5H24l-7.438 13.5z"/></svg>`,
+  link: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>`,
+  music: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+  ticket: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 000 6v2a2 2 0 002 2h16a2 2 0 002-2v-2a3 3 0 000-6V7a2 2 0 00-2-2H4a2 2 0 00-2 2v2z"/></svg>`,
+  shirt: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.38 3.46 16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.57a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.57a2 2 0 00-1.34-2.23z"/></svg>`,
+  mail: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7"/></svg>`,
+  play: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>`,
+  arrow: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`,
+};
+
+function icon(name) {
+  return `<div class="link-icon">${ICONS[name] || ICONS.link}</div>`;
+}
+function arrowIcon() {
+  return `<div class="link-arrow">${ICONS.arrow}</div>`;
+}
+
+// ── BACKGROUND ─────────────────────────────────────────────────
+let bgImgs = [], bgIdx = 0, bgA = document.getElementById('bg-img-a'), bgB = document.getElementById('bg-img-b');
+let activeBg = bgA;
+
+function setBg(url) {
+  activeBg.style.backgroundImage = `url(${url})`;
+  activeBg.classList.add('active');
+}
+
+function cycleBg() {
+  if (bgImgs.length < 2) return;
+  bgIdx = (bgIdx + 1) % bgImgs.length;
+  const next = activeBg === bgA ? bgB : bgA;
+  next.style.backgroundImage = `url(${bgImgs[bgIdx]})`;
+  next.classList.add('active');
+  setTimeout(() => { activeBg.classList.remove('active'); activeBg = next; }, 1200);
+}
+
+// ── RENDER ─────────────────────────────────────────────────────
+function makeLink({ href, label, sub, iconName, featured, thumb, onClick }) {
+  const el = document.createElement('a');
+  el.className = 'link-item' + (featured ? ' featured' : '') + (thumb ? ' has-thumb' : '');
+  if (href) { el.href = href; el.target = '_blank'; el.rel = 'noopener'; }
+  if (onClick) el.addEventListener('click', (e) => { e.preventDefault(); onClick(); });
+
+  let inner = '';
+  if (thumb) {
+    inner += `<img class="link-thumb" src="${esc(thumb)}" alt="" loading="lazy" onerror="this.style.display='none'">`;
+    inner += `<div class="link-text"><div class="link-label">${esc(label)}</div>${sub ? `<div class="link-sub">${esc(sub)}</div>` : ''}</div>`;
+  } else {
+    inner += icon(iconName || 'link');
+    inner += `<div class="link-text"><div class="link-label">${esc(label)}</div>${sub ? `<div class="link-sub">${esc(sub)}</div>` : ''}</div>`;
+  }
+  inner += arrowIcon();
+  el.innerHTML = inner;
+  return el;
+}
+
+function makeLabel(text) {
+  const el = document.createElement('div');
+  el.className = 'section-label';
+  el.textContent = text;
+  return el;
+}
+
+function makeSocialRow(socials) {
+  const row = document.createElement('div');
+  row.className = 'social-row';
+  const platforms = [
+    { key: 'instagram', icon: 'instagram' },
+    { key: 'tiktok', icon: 'tiktok' },
+    { key: 'youtube', icon: 'youtube' },
+    { key: 'facebook', icon: 'facebook' },
+    { key: 'twitter', icon: 'twitter' },
+  ];
+  platforms.forEach(({ key, icon: iKey }) => {
+    const url = socials?.[key];
+    if (!url) return;
+    const a = document.createElement('a');
+    a.className = 'social-btn';
+    a.href = url; a.target = '_blank'; a.rel = 'noopener';
+    a.setAttribute('aria-label', key);
+    a.innerHTML = ICONS[iKey];
+    row.appendChild(a);
+  });
+  return row;
+}
+
+// ── MAIN ───────────────────────────────────────────────────────
+async function init() {
+  // Fetch everything in parallel
+  const [settingsRes, releasesRes, videosRes, showsRes] = await Promise.allSettled([
+    fetch(sanityUrl(`*[_type == "siteSettings"][0]{
+      bandName, tagline, bio,
+      "avatarUrl": bandLogo.asset->url,
+      socials,
+      "bgImages": *[_type == "galleryImage" && homepageBackground == true]{
+        "url": image.asset->url
+      }
+    }`)).then(r => r.json()),
+    fetch(sanityUrl(`*[_type == "release" && featured == true] | order(releaseDate desc)[0]{
+      title, "slug": slug.current, releaseType, streamingLinks
+    }`)).then(r => r.json()),
+    fetch(sanityUrl(`*[_type == "video"] | order(publishDate desc)[0]{
+      title, embedId, category
+    }`)).then(r => r.json()),
+    fetch('https://rest.bandsintown.com/artists/wd-han/events?app_id=wdhan-website')
+      .then(r => r.json()).catch(() => [])
+  ]);
+
+  const settings = settingsRes.value?.result || {};
+  const release  = releasesRes.value?.result || null;
+  const video    = videosRes.value?.result || null;
+  const shows    = Array.isArray(showsRes.value) ? showsRes.value : [];
+
+  // ── Background ──
+  const bgs = settings.bgImages || [];
+  if (bgs.length) {
+    bgImgs = bgs.map(b => b.url).filter(Boolean);
+    if (bgImgs.length) {
+      setBg(bgImgs[0]);
+      if (bgImgs.length > 1) setInterval(cycleBg, 10000);
+    }
+  }
+
+  // ── Header ──
+  document.getElementById('hub-name').textContent = settings.bandName || 'WD-HAN';
+  if (settings.tagline || settings.bio) {
+    document.getElementById('hub-tagline').textContent = settings.tagline || settings.bio || '';
+  }
+  if (settings.avatarUrl) {
+    const wrap = document.getElementById('avatar-wrap');
+    wrap.innerHTML = `<img class="hub-avatar" src="${esc(settings.avatarUrl)}" alt="WD-HAN" />`;
+    wrap.className = '';
+  }
+
+  // ── Build stack ──
+  const stack = document.getElementById('link-stack');
+  stack.innerHTML = '';
+  let delay = 0;
+
+  function addEl(el) {
+    el.style.animationDelay = `${delay}s`;
+    delay += 0.05;
+    stack.appendChild(el);
+  }
+
+  // Featured release (Pre-Save / Listen Now)
+  if (release?.streamingLinks?.spotify || release) {
+    const isUpcoming = release?.releaseType === 'single' && !release?.streamingLinks?.spotify;
+    addEl(makeLink({
+      href: release?.streamingLinks?.spotify || '#',
+      label: isUpcoming ? `Pre-Save — ${release.title}` : `Listen — ${release.title}`,
+      sub: isUpcoming ? 'Save it on Spotify before release' : 'Stream now on Spotify',
+      iconName: 'spotify',
+      featured: true,
+    }));
+  } else {
+    addEl(makeLink({ href: 'https://open.spotify.com/artist/2byXGURM0QAhEgdMIWGM5c', label: 'Listen on Spotify', iconName: 'spotify', featured: true }));
+  }
+
+  // Music
+  addEl(makeLink({ href: '/music.html', label: 'All Music', sub: 'Discography & streaming links', iconName: 'music' }));
+
+  // Shows
+  if (shows.length > 0) {
+    addEl(makeLabel('SHOWS'));
+    const next = shows[0];
+    const dateStr = next.datetime ? new Date(next.datetime).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+    const venue = next.venue?.name || '';
+    addEl(makeLink({
+      href: next.url || '/shows.html',
+      label: `${dateStr}${venue ? ' — ' + venue : ''}`,
+      sub: next.venue?.city ? `${next.venue.city}, ${next.venue.country || ''}`.trim().replace(/,$/, '') : 'Get tickets',
+      iconName: 'ticket',
+    }));
+    if (shows.length > 1) {
+      addEl(makeLink({ href: '/shows.html', label: `View all ${shows.length} shows`, iconName: 'ticket' }));
+    }
+  }
+
+  // Latest video
+  if (video?.embedId) {
+    addEl(makeLabel('LATEST VIDEO'));
+    addEl(makeLink({
+      href: `https://www.youtube.com/watch?v=${video.embedId}`,
+      label: video.title || 'Watch on YouTube',
+      sub: video.category || 'YouTube',
+      thumb: `https://img.youtube.com/vi/${video.embedId}/mqdefault.jpg`,
+    }));
+  }
+
+  // Merch
+  addEl(makeLabel('MERCH & MORE'));
+  addEl(makeLink({ href: 'https://wd-han.myshopify.com', label: 'Merch Store', sub: 'Tees, vinyl & more', iconName: 'shirt' }));
+
+  // Newsletter
+  addEl(makeLink({ label: 'Join the Mailing List', sub: 'New music & exclusive updates', iconName: 'mail', onClick: openModal }));
+
+  // Socials
+  if (settings.socials && Object.values(settings.socials).some(Boolean)) {
+    addEl(makeLabel('FOLLOW'));
+    addEl(makeSocialRow(settings.socials));
+  }
+}
+
+// ── MODAL ──────────────────────────────────────────────────────
+function openModal() {
+  document.getElementById('sub-modal').classList.add('open');
+}
+document.getElementById('modal-close-btn').addEventListener('click', () => {
+  document.getElementById('sub-modal').classList.remove('open');
+});
+document.getElementById('sub-modal').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
+});
+document.getElementById('sub-submit').addEventListener('click', async () => {
+  const email = document.getElementById('sub-email').value.trim();
+  const msg   = document.getElementById('sub-msg');
+  if (!email || !email.includes('@')) { msg.textContent = 'Please enter a valid email.'; msg.className = 'modal-msg err'; return; }
+  msg.textContent = 'Subscribing...'; msg.className = 'modal-msg';
+  try {
+    const fd = new FormData();
+    fd.append('contact[email]', email);
+    fd.append('contact[tags]', 'newsletter');
+    await fetch('https://wd-han.myshopify.com/contact', { method: 'POST', body: fd, mode: 'no-cors' });
+    msg.textContent = "You're in! 🎉"; msg.className = 'modal-msg ok';
+    document.getElementById('sub-email').value = '';
+    setTimeout(() => document.getElementById('sub-modal').classList.remove('open'), 2000);
+  } catch {
+    msg.textContent = 'Something went wrong — try again.'; msg.className = 'modal-msg err';
+  }
+});
+
+init().catch(console.error);
+</script>
+</body>
+</html>
