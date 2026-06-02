@@ -1,14 +1,2 @@
-# WD-HAN — Clean URL redirects
-# These redirect wdhan.com/[slug] → wdhan.com/s/?slug=[slug]
-#
-# Add a new line for each release shortlink page you create.
-# Format: /slug  /s/?slug=slug  302
-#
-# 302 = temporary redirect (use 301 once a URL is permanent and you won't change it)
-
-/humanrace      /s/?slug=humanrace      302
-/wildthings     /s/?slug=wild-things    302
-/liftoff        /s/?slug=liftoff        302
-/shiver         /s/?slug=shiver         302
-/lemonade       /s/?slug=lemonade       302
-/links          /links/index.html       200
+/s/*    /s/index.html    200
+/:slug    /s/?slug=:slug    302
