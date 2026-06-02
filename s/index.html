@@ -23,8 +23,8 @@
       --border:    rgba(245,241,230,0.10);
       --text:      #f5f1e6;
       --muted:     rgba(245,241,230,0.45);
-      --accent:    #e8c84a;
-      --accent-d:  #c9aa2e;
+      --accent:    #ff3b2e;
+      --accent-d:  #d42e1f;
       --art-color: #e8c84a; /* overridden per release by JS if desired */
       --font-display: 'Splatink', 'Anton', sans-serif;
       --font-body:    'DM Sans', system-ui, sans-serif;
@@ -153,7 +153,7 @@
     }
     .link-item:active { transform: translateY(0); }
     .link-item.featured {
-      background: var(--accent); border-color: var(--accent); color: #08080a;
+      background: var(--accent); border-color: var(--accent); color: #fff;
     }
     .link-item.featured::before {
       background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
@@ -161,8 +161,8 @@
     .link-item.featured:hover { background: var(--accent-d); border-color: var(--accent-d); }
     .link-item.featured .link-icon svg,
     .link-item.featured .link-label,
-    .link-item.featured .link-arrow { color: #08080a; }
-    .link-item.featured .link-sub { color: rgba(8,8,10,0.6); }
+    .link-item.featured .link-arrow { color: #fff; }
+    .link-item.featured .link-sub { color: rgba(255,255,255,0.7); }
 
     .link-icon {
       width: 36px; height: 36px; flex-shrink: 0;
@@ -407,14 +407,18 @@ async function init() {
   const [slRes, relRes] = await Promise.allSettled([
     fetch(sanityUrl(`*[_type == "shortLink" && slug.current == "${slug}"][0]{
       title, active, showVideo, showSubscribe, showStreaming,
-      "videoEmbedId": video.embedId,
-      "videoTitle": video.title,
+      accentColor,
+      "videoEmbedId": video->embedId,
+      "videoTitle": video->title,
       streamingLinks,
       "release": release->{
         title, releaseType, releaseDate,
         "artUrl": artwork.asset->url,
         streamingLinks,
-        "slug": slug.current
+        "slug": slug.current,
+        "video": *[_type == "video" && relatedRelease._ref == ^._id] | order(publishDate desc)[0]{
+          embedId, title
+        }
       }
     }`)).then(r => r.json()),
     fetch(sanityUrl(`*[_type == "release" && slug.current == "${slug}"][0]{
@@ -442,8 +446,9 @@ async function init() {
       showVideo:      slDoc.showVideo !== false,
       showSubscribe:  slDoc.showSubscribe !== false,
       showStreaming:  slDoc.showStreaming !== false,
-      videoEmbedId:   slDoc.videoEmbedId,
-      videoTitle:     slDoc.videoTitle,
+      videoEmbedId:   slDoc.videoEmbedId || slDoc.release?.video?.embedId,
+      videoTitle:     slDoc.videoTitle   || slDoc.release?.video?.title,
+      accentColor:    slDoc.accentColor  || null,
       releaseSlug:    slDoc.release?.slug,
     };
   } else if (relDoc) {
@@ -468,6 +473,13 @@ async function init() {
 }
 
 function render(data) {
+  // Apply custom accent color if set
+  if (data.accentColor) {
+    document.documentElement.style.setProperty('--accent', data.accentColor);
+    // Darken by ~15% for hover state
+    document.documentElement.style.setProperty('--accent-d', data.accentColor);
+  }
+
   // Artwork background
   if (data.artUrl) {
     const bg = document.getElementById('bg-art');
