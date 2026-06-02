@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WD-HAN Admin</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg" />
+  <style>
+    @font-face {
+      font-family: 'Splatink';
+      src: url('/assets/fonts/Splatink.otf') format('opentype');
+      font-display: swap;
+    }
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap');
+
+    :root {
+      --bg:       #08080a;
+      --surface:  #111114;
+      --surface2: #18181c;
+      --border:   rgba(245,241,230,0.09);
+      --border2:  rgba(245,241,230,0.15);
+      --text:     #f5f1e6;
+      --muted:    rgba(245,241,230,0.45);
+      --faint:    rgba(245,241,230,0.2);
+      --accent:   #e8c84a;
+      --accent-d: #c9aa2e;
+      --green:    #4caf72;
+      --red:      #e07070;
+      --font-display: 'Splatink', 'Anton', sans-serif;
+      --font-body: 'DM Sans', system-ui, sans-serif;
+      --radius: 10px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      background: var(--bg); color: var(--text);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── AUTH SCREEN ── */
+    #auth-screen {
+      min-height: 100vh;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      padding: 20px;
+      background: radial-gradient(ellipse at 50% 40%, rgba(232,200,74,0.06) 0%, transparent 70%);
+    }
+    .auth-logo {
+      font-family: var(--font-display);
+      font-size: 2.4rem; letter-spacing: 0.04em;
+      margin-bottom: 6px;
+    }
+    .auth-sub {
+      font-size: 0.78rem; color: var(--muted);
+      letter-spacing: 0.1em; text-transform: uppercase;
+      margin-bottom: 40px;
+    }
+    .auth-box {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 16px; padding: 32px 28px;
+      width: 100%; max-width: 360px;
+    }
+    .auth-box label {
+      display: block; font-size: 0.78rem; font-weight: 600;
+      letter-spacing: 0.1em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 8px;
+    }
+    .auth-box input[type="password"] {
+      width: 100%; padding: 13px 16px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text);
+      font-family: var(--font-body); font-size: 1rem;
+      outline: none; margin-bottom: 12px;
+      transition: border-color 0.15s;
+    }
+    .auth-box input:focus { border-color: var(--accent); }
+    .auth-btn {
+      width: 100%; padding: 13px;
+      background: var(--accent); color: #08080a;
+      border: none; border-radius: 8px;
+      font-family: var(--font-body); font-size: 0.95rem; font-weight: 600;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .auth-btn:hover { background: var(--accent-d); }
+    .auth-err {
+      font-size: 0.8rem; color: var(--red);
+      text-align: center; margin-top: 10px; min-height: 18px;
+    }
+
+    /* ── MAIN APP ── */
+    #app { display: none; min-height: 100vh; flex-direction: column; }
+    #app.visible { display: flex; }
+
+    /* ── TOP BAR ── */
+    .topbar {
+      height: 56px; display: flex; align-items: center;
+      padding: 0 24px; gap: 20px;
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      position: sticky; top: 0; z-index: 10;
+    }
+    .topbar-logo {
+      font-family: var(--font-display);
+      font-size: 1.3rem; letter-spacing: 0.04em;
+    }
+    .topbar-badge {
+      font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 4px; padding: 2px 7px;
+    }
+    .topbar-actions { margin-left: auto; display: flex; gap: 10px; }
+    .topbar-link {
+      font-size: 0.82rem; color: var(--muted);
+      text-decoration: none; transition: color 0.15s;
+    }
+    .topbar-link:hover { color: var(--text); }
+    .topbar-logout {
+      font-size: 0.82rem; color: var(--muted);
+      background: none; border: none; cursor: pointer;
+      transition: color 0.15s;
+    }
+    .topbar-logout:hover { color: var(--red); }
+
+    /* ── TABS ── */
+    .tabs {
+      display: flex; gap: 0;
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      padding: 0 24px;
+    }
+    .tab-btn {
+      padding: 14px 20px; font-size: 0.85rem; font-weight: 500;
+      background: none; border: none; color: var(--muted);
+      cursor: pointer; border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      letter-spacing: 0.02em;
+    }
+    .tab-btn:hover { color: var(--text); }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    /* ── MAIN CONTENT ── */
+    .tab-panel { display: none; padding: 32px 24px; max-width: 860px; }
+    .tab-panel.active { display: block; }
+
+    /* ── SECTION HEADING ── */
+    .panel-head {
+      display: flex; align-items: baseline; gap: 12px;
+      margin-bottom: 24px;
+    }
+    .panel-title {
+      font-family: var(--font-display);
+      font-size: 1.5rem; letter-spacing: 0.03em;
+    }
+    .panel-sub { font-size: 0.8rem; color: var(--muted); }
+
+    /* ── CARD ── */
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px;
+      margin-bottom: 16px;
+    }
+    .card-title {
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.12em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 16px;
+    }
+
+    /* ── FORM ELEMENTS ── */
+    .field { margin-bottom: 16px; }
+    .field label {
+      display: block; font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.08em; text-transform: uppercase;
+      color: var(--muted); margin-bottom: 6px;
+    }
+    .field input[type="text"],
+    .field input[type="url"],
+    .field input[type="password"],
+    .field textarea,
+    .field select {
+      width: 100%; padding: 11px 14px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; color: var(--text);
+      font-family: var(--font-body); font-size: 0.9rem;
+      outline: none; transition: border-color 0.15s;
+      -webkit-appearance: none;
+    }
+    .field textarea { resize: vertical; min-height: 80px; }
+    .field input:focus, .field textarea:focus, .field select:focus {
+      border-color: var(--accent);
+    }
+    .field-hint { font-size: 0.72rem; color: var(--faint); margin-top: 4px; }
+
+    /* ── TOGGLE ── */
+    .toggle-row {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 12px 0; border-bottom: 1px solid var(--border);
+    }
+    .toggle-row:last-child { border-bottom: none; }
+    .toggle-info .tl { font-size: 0.9rem; font-weight: 500; }
+    .toggle-info .ts { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+    .toggle {
+      position: relative; width: 44px; height: 24px;
+      flex-shrink: 0;
+    }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0;
+      background: var(--surface2); border: 1px solid var(--border2);
+      border-radius: 12px; cursor: pointer;
+      transition: background 0.2s;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute;
+      width: 18px; height: 18px; border-radius: 50%;
+      background: var(--muted); top: 2px; left: 2px;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .toggle input:checked + .toggle-slider { background: var(--accent); border-color: var(--accent); }
+    .toggle input:checked + .toggle-slider::before {
+      transform: translateX(20px); background: #08080a;
+    }
+
+    /* ── BUTTONS ── */
+    .btn-row { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+    .btn {
+      padding: 11px 20px; border-radius: 8px;
+      font-family: var(--font-body); font-size: 0.88rem; font-weight: 600;
+      cursor: pointer; border: none; transition: background 0.15s, opacity 0.15s;
+    }
+    .btn-primary { background: var(--accent); color: #08080a; }
+    .btn-primary:hover { background: var(--accent-d); }
+    .btn-ghost {
+      background: var(--surface2); color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-ghost:hover { border-color: var(--border2); }
+    .btn-danger { background: var(--red); color: #fff; }
+    .btn-danger:hover { opacity: 0.85; }
+    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    /* ── STATUS / TOAST ── */
+    .save-status {
+      font-size: 0.8rem; margin-top: 10px; min-height: 18px;
+    }
+    .save-status.ok { color: var(--green); }
+    .save-status.err { color: var(--red); }
+    .save-status.loading { color: var(--muted); }
+
+    /* ── RELEASE LIST ── */
+    .release-list { display: flex; flex-direction: column; gap: 10px; }
+    .release-row {
+      display: flex; align-items: center; gap: 14px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 14px 16px;
+      cursor: pointer; transition: border-color 0.15s;
+    }
+    .release-row:hover { border-color: var(--border2); }
+    .release-row.selected { border-color: var(--accent); }
+    .rel-art {
+      width: 44px; height: 44px; border-radius: 6px;
+      object-fit: cover; background: var(--surface2); flex-shrink: 0;
+    }
+    .rel-info { flex: 1; min-width: 0; }
+    .rel-title { font-size: 0.9rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .rel-meta { font-size: 0.72rem; color: var(--muted); margin-top: 2px; }
+    .rel-status {
+      font-size: 0.65rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 3px 8px; border-radius: 4px;
+      flex-shrink: 0;
+    }
+    .rel-status.live { background: rgba(76,175,114,0.15); color: var(--green); }
+    .rel-status.draft { background: var(--surface2); color: var(--muted); }
+
+    /* ── EDITOR PANEL ── */
+    .editor-panel {
+      display: none; margin-top: 20px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 24px;
+    }
+    .editor-panel.open { display: block; }
+    .editor-head {
+      display: flex; align-items: center; gap: 12px;
+      margin-bottom: 20px; padding-bottom: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    .editor-head img {
+      width: 48px; height: 48px; border-radius: 6px; object-fit: cover;
+    }
+    .editor-head-title { font-family: var(--font-display); font-size: 1.1rem; }
+    .editor-head-meta { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+    .editor-head-close {
+      margin-left: auto; background: none; border: none;
+      color: var(--muted); cursor: pointer; padding: 4px;
+    }
+    .editor-head-close:hover { color: var(--text); }
+    .editor-head-close svg { width: 18px; height: 18px; }
+
+    /* ── PLATFORM LINKS GRID ── */
+    .platform-grid { display: flex; flex-direction: column; gap: 10px; }
+    .platform-row {
+      display: flex; align-items: center; gap: 12px;
+    }
+    .platform-icon {
+      width: 32px; height: 32px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 6px;
+    }
+    .platform-icon svg { width: 16px; height: 16px; color: var(--text); }
+    .platform-label {
+      width: 110px; font-size: 0.8rem; font-weight: 500; flex-shrink: 0;
+    }
+    .platform-row input {
+      flex: 1; padding: 9px 12px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 6px; color: var(--text);
+      font-family: var(--font-body); font-size: 0.8rem;
+      outline: none; transition: border-color 0.15s;
+    }
+    .platform-row input:focus { border-color: var(--accent); }
+
+    /* ── SLUG FIELD ── */
+    .slug-preview {
+      font-size: 0.75rem; color: var(--muted); margin-top: 4px;
+    }
+    .slug-preview span { color: var(--accent); }
+
+    /* ── LINK LIST (band hub) ── */
+    .custom-links { display: flex; flex-direction: column; gap: 8px; }
+    .cl-row {
+      display: flex; gap: 8px; align-items: center;
+    }
+    .cl-row input { flex: 1; }
+    .cl-rm {
+      padding: 9px 12px; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 6px;
+      color: var(--muted); cursor: pointer; font-size: 0.8rem;
+      flex-shrink: 0; transition: color 0.15s, border-color 0.15s;
+    }
+    .cl-rm:hover { color: var(--red); border-color: var(--red); }
+    .add-link-btn {
+      margin-top: 8px; font-size: 0.82rem;
+      color: var(--accent); background: none; border: none;
+      cursor: pointer; padding: 0; text-align: left;
+    }
+    .add-link-btn:hover { opacity: 0.8; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      .topbar { padding: 0 16px; }
+      .tabs { padding: 0 16px; overflow-x: auto; }
+      .tab-panel { padding: 20px 16px; }
+      .card { padding: 16px; }
+      .platform-label { width: 80px; font-size: 0.72rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── AUTH ──────────────────────────────────────────── -->
+<div id="auth-screen">
+  <div class="auth-logo">WD-HAN</div>
+  <div class="auth-sub">Admin Panel</div>
+  <div class="auth-box">
+    <label for="pw-input">Password</label>
+    <input type="password" id="pw-input" placeholder="Enter password" autocomplete="current-password" />
+    <button class="auth-btn" id="pw-btn">Sign In</button>
+    <div class="auth-err" id="auth-err"></div>
+  </div>
+</div>
+
+<!-- ── APP ───────────────────────────────────────────── -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-logo">WD-HAN</div>
+    <div class="topbar-badge">Admin</div>
+    <div class="topbar-actions">
+      <a class="topbar-link" href="/links" target="_blank">Band Hub ↗</a>
+      <a class="topbar-link" href="/" target="_blank">Site ↗</a>
+      <button class="topbar-logout" id="logout-btn">Sign Out</button>
+    </div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab-btn active" data-tab="hub">Band Hub</button>
+    <button class="tab-btn" data-tab="releases">Release Pages</button>
+  </div>
+
+  <!-- ── BAND HUB TAB ── -->
+  <div class="tab-panel active" id="tab-hub">
+    <div class="panel-head">
+      <div class="panel-title">Band Hub</div>
+      <div class="panel-sub">wdhan.com/links</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Page Sections</div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="tl">Featured Release</div>
+          <div class="ts">Shows Pre-Save or Listen Now button at the top</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="hub-show-release" checked /><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="tl">All Music link</div>
+          <div class="ts">Link to /music.html</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="hub-show-music" checked /><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="tl">Shows / Tour</div>
+          <div class="ts">Pulls live from Bandsintown — auto-hides when no shows</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="hub-show-shows" checked /><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="tl">Latest Video</div>
+          <div class="ts">Pulls most recent video from Sanity</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="hub-show-video" checked /><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="tl">Merch Store</div>
+          <div class="ts">Links to Shopify store</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="hub-show-merch" checked /><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="tl">Newsletter Signup</div>
+          <div class="ts">Email subscribe via Shopify</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="hub-show-subscribe" checked /><span class="toggle-slider"></span></label>
+      </div>
+      <div class="toggle-row">
+        <div class="toggle-info">
+          <div class="tl">Social Links</div>
+          <div class="ts">Pulls from Sanity Site Settings</div>
+        </div>
+        <label class="toggle"><input type="checkbox" id="hub-show-socials" checked /><span class="toggle-slider"></span></label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">Custom Links</div>
+      <div class="custom-links" id="custom-links-list">
+        <!-- dynamic -->
+      </div>
+      <button class="add-link-btn" id="add-link-btn">+ Add custom link</button>
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-primary" id="hub-save-btn">Save Changes</button>
+      <a class="btn btn-ghost" href="/links" target="_blank">Preview</a>
+    </div>
+    <div class="save-status" id="hub-status"></div>
+    <p style="font-size:0.75rem;color:var(--muted);margin-top:16px;line-height:1.5">
+      Note: Toggle states are saved to Sanity's <code style="font-size:0.7rem;background:var(--surface2);padding:1px 5px;border-radius:4px">bandHubSettings</code> document.
+      Changes go live instantly — no redeploy needed.
+    </p>
+  </div>
+
+  <!-- ── RELEASES TAB ── -->
+  <div class="tab-panel" id="tab-releases">
+    <div class="panel-head">
+      <div class="panel-title">Release Pages</div>
+      <div class="panel-sub">wdhan.com/s/?slug=…</div>
+    </div>
+
+    <p style="font-size:0.85rem;color:var(--muted);margin-bottom:20px;line-height:1.6">
+      Each release can have a short link page for ads and campaigns. Select a release below to create or edit its page.
+      The URL will be <code style="font-size:0.78rem;background:var(--surface2);padding:1px 6px;border-radius:4px;color:var(--accent)">wdhan.com/s/?slug=[slug]</code>.
+    </p>
+
+    <div class="release-list" id="release-list">
+      <div style="color:var(--muted);font-size:0.85rem">Loading releases…</div>
+    </div>
+
+    <div class="editor-panel" id="editor-panel">
+      <div class="editor-head">
+        <img id="editor-art" src="" alt="" />
+        <div>
+          <div class="editor-head-title" id="editor-title">—</div>
+          <div class="editor-head-meta" id="editor-meta">—</div>
+        </div>
+        <button class="editor-head-close" id="editor-close">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <!-- Slug / URL -->
+      <div class="field">
+        <label>Page URL slug</label>
+        <input type="text" id="ed-slug" placeholder="e.g. wild-things" />
+        <div class="slug-preview">wdhan.com/s/?slug=<span id="slug-preview-val">…</span></div>
+        <div class="field-hint">Use the release name, lowercase, hyphens instead of spaces.</div>
+      </div>
+
+      <!-- Active toggle -->
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">Page Status</div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="tl">Page Active</div>
+            <div class="ts">Disable to take the page offline without deleting it</div>
+          </div>
+          <label class="toggle"><input type="checkbox" id="ed-active" checked /><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+
+      <!-- Section toggles -->
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">Sections</div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="tl">Video</div>
+            <div class="ts">Music video / teaser at the top</div>
+          </div>
+          <label class="toggle"><input type="checkbox" id="ed-show-video" checked /><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="tl">Streaming Links</div>
+            <div class="ts">Spotify, Apple Music, etc.</div>
+          </div>
+          <label class="toggle"><input type="checkbox" id="ed-show-streaming" checked /><span class="toggle-slider"></span></label>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="tl">Mailing List signup</div>
+            <div class="ts">Email subscribe via Shopify</div>
+          </div>
+          <label class="toggle"><input type="checkbox" id="ed-show-subscribe" checked /><span class="toggle-slider"></span></label>
+        </div>
+      </div>
+
+      <!-- Video URL override -->
+      <div class="field">
+        <label>Video URL (optional override)</label>
+        <input type="url" id="ed-video-url" placeholder="https://www.youtube.com/watch?v=..." />
+        <div class="field-hint">Leave blank to use the video already linked to this release in Sanity Studio.</div>
+      </div>
+
+      <!-- Streaming links override -->
+      <div class="card" style="margin-bottom:16px;">
+        <div class="card-title">Streaming Links (optional override)</div>
+        <p style="font-size:0.75rem;color:var(--muted);margin-bottom:14px;line-height:1.5">
+          Leave blank to use the links from the main release record.
+          Use these if you want campaign-specific or UTM-tracked links.
+        </p>
+        <div class="platform-grid" id="streaming-overrides">
+          <!-- built by JS -->
+        </div>
+      </div>
+
+      <div class="btn-row">
+        <button class="btn btn-primary" id="ed-save-btn">Save Page</button>
+        <a class="btn btn-ghost" id="ed-preview-btn" href="#" target="_blank">Preview</a>
+      </div>
+      <div class="save-status" id="ed-status"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── CONFIG ──────────────────────────────────────────────────────
+const SANITY_PROJECT = 'oz4mxjaz';
+const SANITY_DATASET = 'production';
+// Password is hashed to avoid plaintext in source. Change by running:
+//   btoa(yourpassword)  — simple obfuscation for shared use
+// For stronger security, replace with a Cloudflare Worker endpoint that checks against an env var.
+const ADMIN_HASH = 'd2RoYW4tYWRtaW4tMjAyNg=='; // base64("wdhan-admin-2026") — CHANGE THIS
+
+const SANITY_TOKEN_KEY = 'wdhan_sanity_token';
+
+function sanityUrl(q) {
+  return `https://${SANITY_PROJECT}.api.sanity.io/v2021-10-21/data/query/${SANITY_DATASET}?query=${encodeURIComponent(q)}`;
+}
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+// ── AUTH ────────────────────────────────────────────────────────
+function checkAuth() {
+  return sessionStorage.getItem('wdhan_admin_auth') === 'ok';
+}
+
+document.getElementById('pw-btn').addEventListener('click', tryLogin);
+document.getElementById('pw-input').addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin(); });
+
+function tryLogin() {
+  const pw = document.getElementById('pw-input').value;
+  if (btoa(pw) === ADMIN_HASH) {
+    sessionStorage.setItem('wdhan_admin_auth', 'ok');
+    document.getElementById('auth-screen').style.display = 'none';
+    document.getElementById('app').classList.add('visible');
+    initApp();
+  } else {
+    document.getElementById('auth-err').textContent = 'Incorrect password.';
+    document.getElementById('pw-input').value = '';
+  }
+}
+
+document.getElementById('logout-btn').addEventListener('click', () => {
+  sessionStorage.removeItem('wdhan_admin_auth');
+  location.reload();
+});
+
+if (checkAuth()) {
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
+  initApp();
+}
+
+// ── TABS ────────────────────────────────────────────────────────
+document.querySelectorAll('.tab-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+// ── SANITY WRITE ────────────────────────────────────────────────
+async function sanityMutate(mutations) {
+  const token = prompt('Enter your Sanity write token (required to save):');
+  if (!token) return null;
+  const res = await fetch(
+    `https://${SANITY_PROJECT}.api.sanity.io/v2021-10-21/data/mutate/${SANITY_DATASET}`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
+      body: JSON.stringify({ mutations })
+    }
+  );
+  return res.json();
+}
+
+// ── ICONS ───────────────────────────────────────────────────────
+const ICONS = {
+  spotify: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.622.622 0 01-.857.207c-2.348-1.435-5.304-1.76-8.785-.964a.622.622 0 01-.277-1.215c3.809-.87 7.077-.496 9.712 1.115a.623.623 0 01.207.857zm1.223-2.722a.78.78 0 01-1.072.257C13.956 12.4 10.5 11.9 7.554 12.762a.78.78 0 01-.45-1.492c3.332-.997 7.273-.494 10.037 1.16a.782.782 0 01.668 1.272zm.105-2.835c-3.223-1.914-8.54-2.09-11.618-1.156a.935.935 0 11-.542-1.79c3.533-1.072 9.404-.865 13.115 1.338a.935.935 0 01-.955 1.608z"/></svg>`,
+  appleMusic: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.994 6.124a9.23 9.23 0 00-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 00-1.877-.726 10.496 10.496 0 00-1.564-.15c-.04-.003-.083-.01-.124-.013H5.986c-.152.01-.303.017-.455.026C4.786.07 4.043.15 3.34.428 2.067.93 1.148 1.824.635 3.083a4.9 4.9 0 00-.346 1.766c-.02.483-.024.967-.04 1.451V18.7c.02.5.09.975.215 1.444.37 1.377 1.22 2.362 2.552 2.914.765.313 1.57.395 2.405.406.077.002.154.008.23.008h13.005c.553-.015 1.098-.082 1.63-.24 1.307-.43 2.18-1.29 2.635-2.58.196-.57.276-1.165.29-1.76.02-.44.013-.883.013-1.325V7.178c-.004-.354-.01-.706-.03-1.054zm-4.94 4.7a.87.87 0 01-.496-.127L10.04 6.73a.44.44 0 01-.204-.373c0-.202.105-.383.266-.49l.06-.036 9.1-3.4a.454.454 0 01.595.43v7.532a.447.447 0 01-.358.43h-.446zm-5.16 5.696c0 1.32-1.055 2.39-2.354 2.39-1.3 0-2.354-1.07-2.354-2.39 0-1.32 1.054-2.39 2.354-2.39 1.3 0 2.354 1.07 2.354 2.39z"/></svg>`,
+  youtube: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`,
+  tidal: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.012 3.992L8.008 7.996 4.004 3.992 0 7.996l4.004 4.004 4.004-4.004 4.004 4.004 4.004-4.004L20.02 11.996l3.98-4.004-4.004-3.996-3.98 4L12.012 3.992zM8.008 12.004l-4.004 4L8.008 20l4.004-3.996-4.004-3.996v-.004z"/></svg>`,
+  bandcamp: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 18.75l7.437-13.5H24l-7.438 13.5z"/></svg>`,
+  music: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+};
+
+const PLATFORMS = [
+  { key: 'spotify',      label: 'Spotify',       icon: 'spotify' },
+  { key: 'appleMusic',   label: 'Apple Music',   icon: 'appleMusic' },
+  { key: 'youtubeMusic', label: 'YouTube Music', icon: 'youtube' },
+  { key: 'tidal',        label: 'Tidal',         icon: 'tidal' },
+  { key: 'amazonMusic',  label: 'Amazon Music',  icon: 'music' },
+  { key: 'deezer',       label: 'Deezer',        icon: 'music' },
+  { key: 'bandcamp',     label: 'Bandcamp',      icon: 'bandcamp' },
+];
+
+// ── INIT APP ────────────────────────────────────────────────────
+function initApp() {
+  loadHubSettings();
+  loadReleases();
+  initCustomLinks();
+  buildPlatformGrid();
+}
+
+// ── BAND HUB ────────────────────────────────────────────────────
+async function loadHubSettings() {
+  try {
+    const res = await fetch(sanityUrl(`*[_type == "bandHubSettings"][0]`)).then(r => r.json());
+    const s = res.result || {};
+    setToggle('hub-show-release',   s.showRelease   !== false);
+    setToggle('hub-show-music',     s.showMusic     !== false);
+    setToggle('hub-show-shows',     s.showShows     !== false);
+    setToggle('hub-show-video',     s.showVideo     !== false);
+    setToggle('hub-show-merch',     s.showMerch     !== false);
+    setToggle('hub-show-subscribe', s.showSubscribe !== false);
+    setToggle('hub-show-socials',   s.showSocials   !== false);
+    if (s.customLinks) renderCustomLinks(s.customLinks);
+  } catch {}
+}
+
+function setToggle(id, val) {
+  const el = document.getElementById(id);
+  if (el) el.checked = !!val;
+}
+
+document.getElementById('hub-save-btn').addEventListener('click', async () => {
+  const status = document.getElementById('hub-status');
+  status.textContent = 'Saving…'; status.className = 'save-status loading';
+
+  const doc = {
+    _id: 'bandHubSettings',
+    _type: 'bandHubSettings',
+    showRelease:   document.getElementById('hub-show-release').checked,
+    showMusic:     document.getElementById('hub-show-music').checked,
+    showShows:     document.getElementById('hub-show-shows').checked,
+    showVideo:     document.getElementById('hub-show-video').checked,
+    showMerch:     document.getElementById('hub-show-merch').checked,
+    showSubscribe: document.getElementById('hub-show-subscribe').checked,
+    showSocials:   document.getElementById('hub-show-socials').checked,
+    customLinks:   readCustomLinks(),
+  };
+
+  try {
+    const result = await sanityMutate([{ createOrReplace: doc }]);
+    if (result?.results?.length) {
+      status.textContent = 'Saved! Changes are live.'; status.className = 'save-status ok';
+    } else {
+      status.textContent = result?.error?.description || 'Save failed.'; status.className = 'save-status err';
+    }
+  } catch (e) {
+    status.textContent = 'Error: ' + e.message; status.className = 'save-status err';
+  }
+});
+
+// ── CUSTOM LINKS ────────────────────────────────────────────────
+let customLinksData = [];
+
+function initCustomLinks() {
+  document.getElementById('add-link-btn').addEventListener('click', () => {
+    customLinksData.push({ label: '', url: '' });
+    renderCustomLinks(customLinksData);
+  });
+}
+
+function renderCustomLinks(links) {
+  customLinksData = links;
+  const list = document.getElementById('custom-links-list');
+  list.innerHTML = '';
+  links.forEach((link, i) => {
+    const row = document.createElement('div');
+    row.className = 'cl-row';
+    row.innerHTML = `
+      <input type="text" placeholder="Label" value="${esc(link.label||'')}" data-i="${i}" data-field="label"
+        style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--font-body);font-size:0.82rem;outline:none;flex:0.8" />
+      <input type="url" placeholder="URL" value="${esc(link.url||'')}" data-i="${i}" data-field="url"
+        style="padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:var(--font-body);font-size:0.82rem;outline:none;flex:1" />
+      <button class="cl-rm" data-i="${i}">✕</button>`;
+    list.appendChild(row);
+  });
+  list.querySelectorAll('input').forEach(input => {
+    input.addEventListener('input', () => {
+      customLinksData[input.dataset.i][input.dataset.field] = input.value;
+    });
+  });
+  list.querySelectorAll('.cl-rm').forEach(btn => {
+    btn.addEventListener('click', () => {
+      customLinksData.splice(parseInt(btn.dataset.i), 1);
+      renderCustomLinks(customLinksData);
+    });
+  });
+}
+
+function readCustomLinks() { return customLinksData.filter(l => l.label || l.url); }
+
+// ── RELEASES ────────────────────────────────────────────────────
+let releases = [];
+let selectedRelease = null;
+
+async function loadReleases() {
+  try {
+    const res = await fetch(sanityUrl(`*[_type == "release"] | order(releaseDate desc){
+      _id, title, releaseType, releaseDate, "slug": slug.current,
+      "artUrl": artwork.asset->url
+    }`)).then(r => r.json());
+    releases = res.result || [];
+    renderReleaseList();
+  } catch (e) {
+    document.getElementById('release-list').innerHTML = `<div style="color:var(--red);font-size:0.85rem">Failed to load releases.</div>`;
+  }
+}
+
+function renderReleaseList() {
+  const list = document.getElementById('release-list');
+  list.innerHTML = '';
+  releases.forEach(rel => {
+    const row = document.createElement('div');
+    row.className = 'release-row';
+    const year = rel.releaseDate ? new Date(rel.releaseDate).getFullYear() : '';
+    row.innerHTML = `
+      <img class="rel-art" src="${esc(rel.artUrl || '')}" alt="" onerror="this.style.visibility='hidden'" />
+      <div class="rel-info">
+        <div class="rel-title">${esc(rel.title)}</div>
+        <div class="rel-meta">${esc(rel.releaseType || '')}${year ? ' · ' + year : ''} · /s/?slug=${esc(rel.slug)}</div>
+      </div>
+      <div class="rel-status draft" id="status-${esc(rel._id)}">DRAFT</div>`;
+    row.addEventListener('click', () => openEditor(rel));
+    list.appendChild(row);
+  });
+  // Check which have shortLink docs
+  loadShortLinkStatuses();
+}
+
+async function loadShortLinkStatuses() {
+  try {
+    const slugs = releases.map(r => `"${r.slug}"`).join(', ');
+    const res = await fetch(sanityUrl(`*[_type == "shortLink" && slug.current in [${slugs}]]{
+      "slug": slug.current, active
+    }`)).then(r => r.json());
+    (res.result || []).forEach(sl => {
+      const rel = releases.find(r => r.slug === sl.slug);
+      if (!rel) return;
+      const el = document.getElementById(`status-${rel._id}`);
+      if (el) { el.textContent = sl.active !== false ? 'LIVE' : 'OFF'; el.className = 'rel-status ' + (sl.active !== false ? 'live' : 'draft'); }
+    });
+  } catch {}
+}
+
+function openEditor(rel) {
+  selectedRelease = rel;
+  document.querySelectorAll('.release-row').forEach(r => r.classList.remove('selected'));
+  const rows = document.querySelectorAll('.release-row');
+  const idx  = releases.indexOf(rel);
+  if (rows[idx]) rows[idx].classList.add('selected');
+
+  // Populate header
+  document.getElementById('editor-art').src = rel.artUrl || '';
+  document.getElementById('editor-title').textContent = rel.title;
+  const year = rel.releaseDate ? new Date(rel.releaseDate).getFullYear() : '';
+  document.getElementById('editor-meta').textContent = `${rel.releaseType || ''}${year ? ' · ' + year : ''}`;
+
+  // Slug
+  document.getElementById('ed-slug').value = rel.slug;
+  document.getElementById('slug-preview-val').textContent = rel.slug;
+
+  // Update preview link
+  document.getElementById('ed-preview-btn').href = `/s/?slug=${rel.slug}`;
+
+  // Reset toggles
+  setToggle('ed-active', true);
+  setToggle('ed-show-video', true);
+  setToggle('ed-show-streaming', true);
+  setToggle('ed-show-subscribe', true);
+
+  // Clear overrides
+  document.getElementById('ed-video-url').value = '';
+  document.querySelectorAll('.platform-override').forEach(i => { i.value = ''; });
+
+  // Load existing shortLink doc if it exists
+  loadExistingShortLink(rel.slug);
+
+  document.getElementById('editor-panel').classList.add('open');
+  document.getElementById('editor-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+async function loadExistingShortLink(slug) {
+  try {
+    const res = await fetch(sanityUrl(`*[_type == "shortLink" && slug.current == "${slug}"][0]`)).then(r => r.json());
+    const sl = res.result;
+    if (!sl) return;
+    setToggle('ed-active',         sl.active         !== false);
+    setToggle('ed-show-video',     sl.showVideo      !== false);
+    setToggle('ed-show-streaming', sl.showStreaming   !== false);
+    setToggle('ed-show-subscribe', sl.showSubscribe   !== false);
+    if (sl.videoUrl) document.getElementById('ed-video-url').value = sl.videoUrl;
+    if (sl.streamingLinks) {
+      PLATFORMS.forEach(p => {
+        const el = document.querySelector(`.platform-override[data-key="${p.key}"]`);
+        if (el && sl.streamingLinks[p.key]) el.value = sl.streamingLinks[p.key];
+      });
+    }
+  } catch {}
+}
+
+document.getElementById('editor-close').addEventListener('click', () => {
+  document.getElementById('editor-panel').classList.remove('open');
+  document.querySelectorAll('.release-row').forEach(r => r.classList.remove('selected'));
+  selectedRelease = null;
+});
+
+document.getElementById('ed-slug').addEventListener('input', function() {
+  document.getElementById('slug-preview-val').textContent = this.value || '…';
+  document.getElementById('ed-preview-btn').href = `/s/?slug=${encodeURIComponent(this.value)}`;
+});
+
+document.getElementById('ed-save-btn').addEventListener('click', async () => {
+  if (!selectedRelease) return;
+  const status = document.getElementById('ed-status');
+  status.textContent = 'Saving…'; status.className = 'save-status loading';
+
+  const slug = document.getElementById('ed-slug').value.trim();
+  const videoUrl = document.getElementById('ed-video-url').value.trim();
+  const streamingOverrides = {};
+  PLATFORMS.forEach(p => {
+    const el = document.querySelector(`.platform-override[data-key="${p.key}"]`);
+    if (el?.value.trim()) streamingOverrides[p.key] = el.value.trim();
+  });
+
+  const doc = {
+    _id: `shortLink-${selectedRelease._id}`,
+    _type: 'shortLink',
+    slug: { _type: 'slug', current: slug },
+    active:         document.getElementById('ed-active').checked,
+    showVideo:      document.getElementById('ed-show-video').checked,
+    showStreaming:  document.getElementById('ed-show-streaming').checked,
+    showSubscribe:  document.getElementById('ed-show-subscribe').checked,
+    release: { _type: 'reference', _ref: selectedRelease._id },
+    ...(videoUrl ? { videoUrl } : {}),
+    ...(Object.keys(streamingOverrides).length ? { streamingLinks: streamingOverrides } : {}),
+  };
+
+  try {
+    const result = await sanityMutate([{ createOrReplace: doc }]);
+    if (result?.results?.length) {
+      status.textContent = 'Saved! Page is live.'; status.className = 'save-status ok';
+      loadShortLinkStatuses();
+    } else {
+      status.textContent = result?.error?.description || 'Save failed — check your token.'; status.className = 'save-status err';
+    }
+  } catch (e) {
+    status.textContent = 'Error: ' + e.message; status.className = 'save-status err';
+  }
+});
+
+// ── PLATFORM GRID ────────────────────────────────────────────────
+function buildPlatformGrid() {
+  const grid = document.getElementById('streaming-overrides');
+  grid.innerHTML = '';
+  PLATFORMS.forEach(p => {
+    const row = document.createElement('div');
+    row.className = 'platform-row';
+    row.innerHTML = `
+      <div class="platform-icon">${ICONS[p.icon] || ICONS.music}</div>
+      <div class="platform-label">${p.label}</div>
+      <input type="url" class="platform-override" data-key="${p.key}" placeholder="Paste URL or leave blank" />`;
+    grid.appendChild(row);
+  });
+}
+</script>
+</body>
+</html>
