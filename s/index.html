@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WD-HAN</title>
+  <meta name="description" content="Stream or download the latest from WD-HAN." />
+  <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg" />
+  <link rel="apple-touch-icon" href="/assets/img/favicon.svg" />
+
+  <style>
+    @font-face {
+      font-family: 'Splatink';
+      src: url('/assets/fonts/Splatink.otf') format('opentype');
+      font-display: swap;
+    }
+    @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap');
+
+    :root {
+      --bg:        #08080a;
+      --surface:   rgba(255,255,255,0.06);
+      --surface-h: rgba(255,255,255,0.11);
+      --border:    rgba(245,241,230,0.10);
+      --text:      #f5f1e6;
+      --muted:     rgba(245,241,230,0.45);
+      --accent:    #e8c84a;
+      --accent-d:  #c9aa2e;
+      --art-color: #e8c84a; /* overridden per release by JS if desired */
+      --font-display: 'Splatink', 'Anton', sans-serif;
+      --font-body:    'DM Sans', system-ui, sans-serif;
+      --radius: 14px;
+      --link-h: 64px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { height: 100%; }
+    body {
+      min-height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── BACKGROUND ── */
+    .bg-wrap {
+      position: fixed; inset: 0; z-index: 0;
+    }
+    .bg-art {
+      position: absolute; inset: 0;
+      background-size: cover; background-position: center;
+      filter: blur(40px) saturate(1.2);
+      transform: scale(1.1);
+      opacity: 0;
+      transition: opacity 1s ease;
+    }
+    .bg-art.loaded { opacity: 1; }
+    .bg-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(8,8,10,0.7) 0%,
+        rgba(8,8,10,0.5) 30%,
+        rgba(8,8,10,0.75) 70%,
+        rgba(8,8,10,0.95) 100%
+      );
+    }
+    .bg-grain {
+      position: absolute; inset: 0; opacity: 0.025;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      background-size: 200px 200px;
+    }
+
+    /* ── LAYOUT ── */
+    .page {
+      position: relative; z-index: 1;
+      min-height: 100vh;
+      display: flex; flex-direction: column; align-items: center;
+      padding: 48px 20px 60px;
+    }
+
+    /* ── ARTWORK HEADER ── */
+    .release-header {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 18px; margin-bottom: 32px;
+      animation: fadeUp 0.6s ease both;
+    }
+    .release-art {
+      width: 160px; height: 160px;
+      border-radius: 12px;
+      object-fit: cover;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.6), 0 0 0 1px var(--border);
+    }
+    .release-art-placeholder {
+      width: 160px; height: 160px;
+      border-radius: 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .release-title {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 8vw, 2.6rem);
+      letter-spacing: 0.04em;
+      line-height: 1;
+      text-align: center;
+    }
+    .release-meta {
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: center;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    /* ── LINK STACK ── */
+    .link-stack {
+      display: flex; flex-direction: column; gap: 10px;
+      width: 100%; max-width: 420px;
+    }
+
+    .section-label {
+      font-size: 0.68rem; font-weight: 600;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--muted); padding: 6px 4px 2px;
+      margin-top: 6px; animation: fadeUp 0.6s ease both;
+    }
+
+    .link-item {
+      display: flex; align-items: center;
+      min-height: var(--link-h);
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 0 20px;
+      text-decoration: none; color: var(--text);
+      cursor: pointer;
+      transition: background 0.18s, border-color 0.18s, transform 0.18s;
+      animation: fadeUp 0.6s ease both;
+      position: relative; overflow: hidden;
+    }
+    .link-item::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.04) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    .link-item:hover, .link-item:focus-visible {
+      background: var(--surface-h);
+      border-color: rgba(245,241,230,0.2);
+      transform: translateY(-1px);
+    }
+    .link-item:active { transform: translateY(0); }
+    .link-item.featured {
+      background: var(--accent); border-color: var(--accent); color: #08080a;
+    }
+    .link-item.featured::before {
+      background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 60%);
+    }
+    .link-item.featured:hover { background: var(--accent-d); border-color: var(--accent-d); }
+    .link-item.featured .link-icon svg,
+    .link-item.featured .link-label,
+    .link-item.featured .link-arrow { color: #08080a; }
+    .link-item.featured .link-sub { color: rgba(8,8,10,0.6); }
+
+    .link-icon {
+      width: 36px; height: 36px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      margin-right: 14px;
+    }
+    .link-icon svg { width: 22px; height: 22px; color: var(--text); }
+    .link-text { flex: 1; display: flex; flex-direction: column; gap: 2px; }
+    .link-label { font-size: 0.95rem; font-weight: 500; line-height: 1.2; }
+    .link-sub { font-size: 0.75rem; color: var(--muted); line-height: 1.2; }
+    .link-arrow { margin-left: 12px; color: var(--muted); flex-shrink: 0; }
+    .link-arrow svg { width: 16px; height: 16px; }
+
+    /* ── VIDEO EMBED ── */
+    .video-wrap {
+      width: 100%; max-width: 420px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      aspect-ratio: 16/9;
+      background: #000;
+      border: 1px solid var(--border);
+      margin-bottom: 4px;
+      animation: fadeUp 0.6s ease both;
+    }
+    .video-wrap iframe { width: 100%; height: 100%; border: 0; display: block; }
+
+    /* ── VIDEO THUMBNAIL ── */
+    .video-thumb-wrap {
+      width: 100%; max-width: 420px;
+      border-radius: var(--radius);
+      overflow: hidden; aspect-ratio: 16/9;
+      background: #000; border: 1px solid var(--border);
+      margin-bottom: 4px;
+      cursor: pointer; position: relative;
+      animation: fadeUp 0.6s ease both;
+    }
+    .video-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .play-overlay {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: rgba(0,0,0,0.25);
+      transition: background 0.18s;
+    }
+    .video-thumb-wrap:hover .play-overlay { background: rgba(0,0,0,0.1); }
+    .play-ring {
+      width: 60px; height: 60px; border-radius: 50%;
+      background: rgba(8,8,10,0.7);
+      border: 2px solid rgba(245,241,230,0.6);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.18s, border-color 0.18s;
+    }
+    .video-thumb-wrap:hover .play-ring {
+      transform: scale(1.08); border-color: var(--text);
+    }
+    .play-ring svg { width: 22px; height: 22px; color: var(--text); margin-left: 3px; }
+
+    /* ── FOOTER ── */
+    .release-footer {
+      margin-top: 40px; text-align: center;
+      animation: fadeUp 0.6s ease both;
+    }
+    .release-footer a {
+      font-size: 0.78rem; color: var(--muted);
+      text-decoration: none; letter-spacing: 0.04em;
+    }
+    .release-footer a:hover { color: var(--text); }
+
+    /* ── SKELETON ── */
+    .skeleton {
+      width: 100%; height: var(--link-h);
+      border-radius: var(--radius); background: var(--surface);
+      border: 1px solid var(--border);
+      animation: shimmer 1.4s ease infinite;
+    }
+    @keyframes shimmer { 0%,100%{opacity:0.4} 50%{opacity:0.8} }
+
+    /* ── 404 ── */
+    .not-found {
+      text-align: center; padding: 60px 20px;
+      animation: fadeUp 0.6s ease both;
+    }
+    .not-found h2 { font-family: var(--font-display); font-size: 2rem; margin-bottom: 12px; }
+    .not-found p { color: var(--muted); font-size: 0.9rem; margin-bottom: 24px; }
+    .not-found a { color: var(--accent); text-decoration: none; font-size: 0.9rem; }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed; inset: 0; z-index: 100;
+      background: rgba(8,8,10,0.85); backdrop-filter: blur(8px);
+      display: flex; align-items: flex-end; justify-content: center;
+      padding: 20px; opacity: 0; pointer-events: none;
+      transition: opacity 0.25s;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: all; }
+    .modal {
+      background: #17171a; border: 1px solid var(--border);
+      border-radius: 20px; padding: 32px 28px 28px;
+      width: 100%; max-width: 420px;
+      transform: translateY(20px); transition: transform 0.25s;
+    }
+    .modal-overlay.open .modal { transform: translateY(0); }
+    .modal h3 { font-family: var(--font-display); font-size: 1.6rem; letter-spacing: 0.03em; margin-bottom: 6px; }
+    .modal p { font-size: 0.85rem; color: var(--muted); margin-bottom: 20px; line-height: 1.5; }
+    .modal input[type="email"] {
+      width: 100%; padding: 14px 16px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text);
+      font-family: var(--font-body); font-size: 0.95rem;
+      margin-bottom: 10px; outline: none; transition: border-color 0.15s;
+    }
+    .modal input:focus { border-color: var(--accent); }
+    .modal-submit {
+      width: 100%; padding: 15px;
+      background: var(--accent); color: #08080a;
+      border: none; border-radius: 10px;
+      font-family: var(--font-body); font-size: 0.95rem; font-weight: 600;
+      cursor: pointer; transition: background 0.15s;
+    }
+    .modal-submit:hover { background: var(--accent-d); }
+    .modal-close {
+      position: absolute; top: 16px; right: 16px;
+      background: none; border: none; color: var(--muted); cursor: pointer; padding: 4px;
+    }
+    .modal-close svg { width: 20px; height: 20px; }
+    .modal-msg { font-size: 0.82rem; text-align: center; margin-top: 10px; min-height: 20px; }
+    .modal-msg.ok { color: #6dd67a; }
+    .modal-msg.err { color: #e07070; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+
+<div class="bg-wrap">
+  <div class="bg-art" id="bg-art"></div>
+  <div class="bg-overlay"></div>
+  <div class="bg-grain"></div>
+</div>
+
+<div class="modal-overlay" id="sub-modal">
+  <div class="modal" style="position:relative">
+    <button class="modal-close" id="modal-close-btn" aria-label="Close">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
+    </button>
+    <h3>Stay in the loop</h3>
+    <p>New music, shows, and stuff — straight to your inbox. No spam, ever.</p>
+    <input type="email" id="sub-email" placeholder="your@email.com" autocomplete="email" />
+    <button class="modal-submit" id="sub-submit">Subscribe</button>
+    <div class="modal-msg" id="sub-msg"></div>
+  </div>
+</div>
+
+<div class="page" id="page">
+  <div class="release-header" id="release-header">
+    <div class="release-art-placeholder" id="art-wrap">
+      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(245,241,230,0.2)" stroke-width="1.2"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="3"/></svg>
+    </div>
+    <div class="release-title" id="release-title">Loading…</div>
+    <div class="release-meta" id="release-meta"></div>
+  </div>
+
+  <div class="link-stack" id="link-stack">
+    <div class="skeleton"></div>
+    <div class="skeleton" style="opacity:0.7"></div>
+    <div class="skeleton" style="opacity:0.5"></div>
+    <div class="skeleton" style="opacity:0.35"></div>
+  </div>
+
+  <div class="release-footer">
+    <a href="/music.html">← All Music</a>
+    &nbsp;&nbsp;·&nbsp;&nbsp;
+    <a href="/links">WD-HAN</a>
+  </div>
+</div>
+
+<script>
+const SANITY_PROJECT = 'oz4mxjaz';
+const SANITY_DATASET = 'production';
+
+function sanityUrl(q) {
+  return `https://${SANITY_PROJECT}.api.sanity.io/v2021-10-21/data/query/${SANITY_DATASET}?query=${encodeURIComponent(q)}`;
+}
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+const PLATFORM_INFO = {
+  spotify:      { label: 'Spotify',       icon: 'spotify',    featured: true },
+  appleMusic:   { label: 'Apple Music',   icon: 'appleMusic' },
+  youtubeMusic: { label: 'YouTube Music', icon: 'youtube' },
+  tidal:        { label: 'Tidal',         icon: 'tidal' },
+  amazonMusic:  { label: 'Amazon Music',  icon: 'music' },
+  deezer:       { label: 'Deezer',        icon: 'music' },
+  soundcloud:   { label: 'SoundCloud',    icon: 'music' },
+  bandcamp:     { label: 'Bandcamp',      icon: 'bandcamp' },
+};
+
+const ICONS = {
+  spotify: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.622.622 0 01-.857.207c-2.348-1.435-5.304-1.76-8.785-.964a.622.622 0 01-.277-1.215c3.809-.87 7.077-.496 9.712 1.115a.623.623 0 01.207.857zm1.223-2.722a.78.78 0 01-1.072.257C13.956 12.4 10.5 11.9 7.554 12.762a.78.78 0 01-.45-1.492c3.332-.997 7.273-.494 10.037 1.16a.782.782 0 01.668 1.272zm.105-2.835c-3.223-1.914-8.54-2.09-11.618-1.156a.935.935 0 11-.542-1.79c3.533-1.072 9.404-.865 13.115 1.338a.935.935 0 01-.955 1.608z"/></svg>`,
+  appleMusic: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.994 6.124a9.23 9.23 0 00-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 00-1.877-.726 10.496 10.496 0 00-1.564-.15c-.04-.003-.083-.01-.124-.013H5.986c-.152.01-.303.017-.455.026C4.786.07 4.043.15 3.34.428 2.067.93 1.148 1.824.635 3.083a4.9 4.9 0 00-.346 1.766c-.02.483-.024.967-.04 1.451V18.7c.02.5.09.975.215 1.444.37 1.377 1.22 2.362 2.552 2.914.765.313 1.57.395 2.405.406.077.002.154.008.23.008h13.005c.553-.015 1.098-.082 1.63-.24 1.307-.43 2.18-1.29 2.635-2.58.196-.57.276-1.165.29-1.76.02-.44.013-.883.013-1.325V7.178c-.004-.354-.01-.706-.03-1.054zm-4.94 4.7a.87.87 0 01-.496-.127L10.04 6.73a.44.44 0 01-.204-.373c0-.202.105-.383.266-.49l.06-.036 9.1-3.4a.454.454 0 01.595.43v7.532a.447.447 0 01-.358.43h-.446zm-5.16 5.696c0 1.32-1.055 2.39-2.354 2.39-1.3 0-2.354-1.07-2.354-2.39 0-1.32 1.054-2.39 2.354-2.39 1.3 0 2.354 1.07 2.354 2.39z"/></svg>`,
+  youtube: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`,
+  music: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+  bandcamp: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 18.75l7.437-13.5H24l-7.438 13.5z"/></svg>`,
+  tidal: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.012 3.992L8.008 7.996 4.004 3.992 0 7.996l4.004 4.004 4.004-4.004 4.004 4.004 4.004-4.004L20.02 11.996l3.98-4.004-4.004-3.996-3.98 4L12.012 3.992zM8.008 12.004l-4.004 4L8.008 20l4.004-3.996-4.004-3.996v-.004z"/></svg>`,
+  mail: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7"/></svg>`,
+  arrow: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`,
+  play: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>`,
+};
+
+function makeLink({ href, label, sub, iconName, featured, onClick }) {
+  const el = document.createElement('a');
+  el.className = 'link-item' + (featured ? ' featured' : '');
+  if (href) { el.href = href; el.target = '_blank'; el.rel = 'noopener'; }
+  if (onClick) el.addEventListener('click', e => { e.preventDefault(); onClick(); });
+  el.innerHTML = `
+    <div class="link-icon">${ICONS[iconName] || ICONS.music}</div>
+    <div class="link-text">
+      <div class="link-label">${esc(label)}</div>
+      ${sub ? `<div class="link-sub">${esc(sub)}</div>` : ''}
+    </div>
+    <div class="link-arrow">${ICONS.arrow}</div>`;
+  return el;
+}
+
+function makeLabel(text) {
+  const el = document.createElement('div');
+  el.className = 'section-label';
+  el.textContent = text;
+  return el;
+}
+
+async function init() {
+  const slug = new URLSearchParams(location.search).get('slug') ||
+               location.pathname.replace(/^\/s\/?/, '').replace(/\/$/, '') || null;
+
+  if (!slug) { show404('No release specified.'); return; }
+
+  // Fetch the shortlink document first, fall back to release
+  const [slRes, relRes] = await Promise.allSettled([
+    fetch(sanityUrl(`*[_type == "shortLink" && slug.current == "${slug}"][0]{
+      title, active, showVideo, showSubscribe, showStreaming,
+      "videoEmbedId": video.embedId,
+      "videoTitle": video.title,
+      streamingLinks,
+      "release": release->{
+        title, releaseType, releaseDate,
+        "artUrl": artwork.asset->url,
+        streamingLinks,
+        "slug": slug.current
+      }
+    }`)).then(r => r.json()),
+    fetch(sanityUrl(`*[_type == "release" && slug.current == "${slug}"][0]{
+      title, releaseType, releaseDate,
+      "artUrl": artwork.asset->url,
+      streamingLinks, "slug": slug.current,
+      "video": *[_type == "video" && (
+        relatedRelease._ref == ^._id
+      )] | order(publishDate desc)[0]{ title, embedId, category }
+    }`)).then(r => r.json()),
+  ]);
+
+  const slDoc   = slRes.value?.result || null;
+  const relDoc  = relRes.value?.result || null;
+
+  // Use shortLink doc if it exists and is active; otherwise fall back to release
+  let data;
+  if (slDoc && slDoc.active !== false) {
+    data = {
+      title:          slDoc.title || slDoc.release?.title,
+      releaseType:    slDoc.release?.releaseType,
+      releaseDate:    slDoc.release?.releaseDate,
+      artUrl:         slDoc.release?.artUrl,
+      streamingLinks: slDoc.streamingLinks || slDoc.release?.streamingLinks,
+      showVideo:      slDoc.showVideo !== false,
+      showSubscribe:  slDoc.showSubscribe !== false,
+      showStreaming:  slDoc.showStreaming !== false,
+      videoEmbedId:   slDoc.videoEmbedId,
+      videoTitle:     slDoc.videoTitle,
+      releaseSlug:    slDoc.release?.slug,
+    };
+  } else if (relDoc) {
+    data = {
+      title:          relDoc.title,
+      releaseType:    relDoc.releaseType,
+      releaseDate:    relDoc.releaseDate,
+      artUrl:         relDoc.artUrl,
+      streamingLinks: relDoc.streamingLinks,
+      showVideo:      true,
+      showSubscribe:  true,
+      showStreaming:  true,
+      videoEmbedId:   relDoc.video?.embedId,
+      videoTitle:     relDoc.video?.title,
+      releaseSlug:    relDoc.slug,
+    };
+  } else {
+    show404('Release not found.'); return;
+  }
+
+  render(data);
+}
+
+function render(data) {
+  // Artwork background
+  if (data.artUrl) {
+    const bg = document.getElementById('bg-art');
+    bg.style.backgroundImage = `url(${data.artUrl})`;
+    bg.classList.add('loaded');
+  }
+
+  // Artwork
+  const artWrap = document.getElementById('art-wrap');
+  if (data.artUrl) {
+    artWrap.outerHTML = `<img class="release-art" src="${esc(data.artUrl)}" alt="${esc(data.title)}" id="art-wrap" />`;
+  }
+
+  // Title + meta
+  document.getElementById('release-title').textContent = data.title || 'WD-HAN';
+  document.title = `${data.title || 'WD-HAN'} — WD-HAN`;
+  const meta = [];
+  if (data.releaseType) meta.push(data.releaseType.toUpperCase());
+  if (data.releaseDate) meta.push(new Date(data.releaseDate).getFullYear());
+  document.getElementById('release-meta').textContent = meta.join(' · ');
+
+  const stack = document.getElementById('link-stack');
+  stack.innerHTML = '';
+  let delay = 0;
+  function addEl(el) {
+    el.style.animationDelay = `${delay}s`;
+    delay += 0.055;
+    stack.appendChild(el);
+  }
+
+  // ── VIDEO ──
+  if (data.showVideo && data.videoEmbedId) {
+    addEl(makeLabel('WATCH'));
+    const thumbWrap = document.createElement('div');
+    thumbWrap.className = 'video-thumb-wrap';
+    thumbWrap.style.animationDelay = `${delay}s`;
+    delay += 0.055;
+    thumbWrap.innerHTML = `
+      <img src="https://img.youtube.com/vi/${data.videoEmbedId}/maxresdefault.jpg"
+           onerror="this.src='https://img.youtube.com/vi/${data.videoEmbedId}/hqdefault.jpg'"
+           alt="${esc(data.videoTitle || 'Video')}" loading="lazy" />
+      <div class="play-overlay">
+        <div class="play-ring">${ICONS.play}</div>
+      </div>`;
+    thumbWrap.addEventListener('click', () => {
+      thumbWrap.innerHTML = `<iframe
+        src="https://www.youtube.com/embed/${data.videoEmbedId}?autoplay=1&rel=0"
+        allow="autoplay; encrypted-media"
+        allowfullscreen></iframe>`;
+      thumbWrap.classList.remove('video-thumb-wrap');
+      thumbWrap.classList.add('video-wrap');
+    });
+    stack.appendChild(thumbWrap);
+  }
+
+  // ── STREAMING ──
+  if (data.showStreaming && data.streamingLinks) {
+    addEl(makeLabel('STREAM'));
+    const links = data.streamingLinks;
+    Object.entries(PLATFORM_INFO).forEach(([key, info]) => {
+      const url = links[key];
+      if (!url) return;
+      addEl(makeLink({
+        href: url,
+        label: info.label,
+        iconName: info.icon,
+        featured: key === 'spotify',
+      }));
+    });
+  }
+
+  // ── SUBSCRIBE ──
+  if (data.showSubscribe) {
+    addEl(makeLabel('STAY CONNECTED'));
+    addEl(makeLink({
+      label: 'Join the Mailing List',
+      sub: 'New music & exclusive updates',
+      iconName: 'mail',
+      onClick: openModal,
+    }));
+  }
+
+  // ── Back to full release page ──
+  if (data.releaseSlug) {
+    const footer = document.querySelector('.release-footer');
+    footer.innerHTML = `<a href="/release/?slug=${esc(data.releaseSlug)}">View full release →</a>
+      &nbsp;&nbsp;·&nbsp;&nbsp;<a href="/links">WD-HAN</a>`;
+  }
+}
+
+function show404(msg) {
+  document.getElementById('release-header').innerHTML = '';
+  document.getElementById('link-stack').innerHTML = `
+    <div class="not-found">
+      <h2>Not Found</h2>
+      <p>${esc(msg)}</p>
+      <a href="/music.html">← Browse all music</a>
+    </div>`;
+}
+
+// ── MODAL ──
+function openModal() {
+  document.getElementById('sub-modal').classList.add('open');
+}
+document.getElementById('modal-close-btn').addEventListener('click', () => {
+  document.getElementById('sub-modal').classList.remove('open');
+});
+document.getElementById('sub-modal').addEventListener('click', e => {
+  if (e.target === e.currentTarget) e.currentTarget.classList.remove('open');
+});
+document.getElementById('sub-submit').addEventListener('click', async () => {
+  const email = document.getElementById('sub-email').value.trim();
+  const msg   = document.getElementById('sub-msg');
+  if (!email || !email.includes('@')) { msg.textContent = 'Please enter a valid email.'; msg.className = 'modal-msg err'; return; }
+  msg.textContent = 'Subscribing…'; msg.className = 'modal-msg';
+  try {
+    const fd = new FormData();
+    fd.append('contact[email]', email);
+    fd.append('contact[tags]', 'newsletter');
+    await fetch('https://wd-han.myshopify.com/contact', { method: 'POST', body: fd, mode: 'no-cors' });
+    msg.textContent = "You're in! 🎉"; msg.className = 'modal-msg ok';
+    document.getElementById('sub-email').value = '';
+    setTimeout(() => document.getElementById('sub-modal').classList.remove('open'), 2000);
+  } catch {
+    msg.textContent = 'Something went wrong — try again.'; msg.className = 'modal-msg err';
+  }
+});
+
+init().catch(console.error);
+</script>
+</body>
+</html>
