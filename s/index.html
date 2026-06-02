@@ -422,14 +422,12 @@ async function init() {
       "videoEmbedId": video->embedId,
       "videoTitle": video->title,
       streamingLinks,
+      "releaseId": release._ref,
       "release": release->{
-        title, releaseType, releaseDate,
+        _id, title, releaseType, releaseDate,
         "artUrl": artwork.asset->url,
         streamingLinks,
-        "slug": slug.current,
-        "video": *[_type == "video" && relatedRelease._ref == ^._id] | order(publishDate desc)[0]{
-          embedId, title
-        }
+        "slug": slug.current
       }
     }`)).then(r => r.json()),
     fetch(sanityUrl(`*[_type == "release" && slug.current == "${slug}"][0]{
@@ -444,7 +442,7 @@ async function init() {
 
   // Fetch video separately using release _id (avoids GROQ self-reference issues)
   let releaseVideo = null;
-  const releaseId = slDoc?.release?._ref || relDoc?._id;
+  const releaseId = slDoc?.releaseId || slDoc?.release?._id || relDoc?._id;
   if (releaseId) {
     try {
       const vRes = await fetch(sanityUrl(
