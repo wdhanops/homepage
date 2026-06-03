@@ -25,7 +25,7 @@
 
   /* ── Helpers ── */
   function sanityUrl(q) {
-    return `https://${SANITY_PROJECT}.api.sanity.io/v2021-10-21/data/query/${SANITY_DATASET}?query=${encodeURIComponent(q)}`;
+    return `https://${SANITY_PROJECT}.apicdn.sanity.io/v2021-10-21/data/query/${SANITY_DATASET}?query=${encodeURIComponent(q)}`;
   }
 
   /* Work out path depth so relative links resolve correctly.
