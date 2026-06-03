@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg" />
-<link rel="apple-touch-icon" href="/assets/img/favicon.svg" />
+  <link rel="apple-touch-icon" href="/assets/img/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Music — WD-HAN</title>
   <meta name="description" content="The complete WD-HAN discography. Singles, EPs, and albums — stream and buy." />
@@ -69,32 +69,131 @@
     .b2{animation:drift2 22s ease-in-out infinite;width:360px;height:360px;top:50%;left:72%;}
     @media(prefers-reduced-motion:reduce){.glow{animation:none!important;}}
 
-    /* ── Page hero ── */
+    /* ══════════════════════════════════════
+       PAGE HERO — cinematic full-bleed (matches videos.html)
+    ══════════════════════════════════════ */
     .page-hero{
       position:relative;z-index:2;
-      padding:140px 0 60px;
+      min-height:60vh;display:flex;align-items:flex-end;
+      padding:0;overflow:hidden;
       border-bottom:1px solid var(--line);
     }
-    .page-hero .wrap{display:flex;align-items:flex-end;justify-content:space-between;gap:32px;flex-wrap:wrap;}
-    .page-hero h1{
+    .hero-bg{
+      position:absolute;inset:0;z-index:0;
+      background-size:cover;background-position:center;
+      filter:brightness(.35) saturate(.8);
+      transition:background-image .5s;
+    }
+    .hero-bg::after{
+      content:"";position:absolute;inset:0;
+      background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity:.5;pointer-events:none;
+    }
+    .hero-grad{
+      position:absolute;inset:0;z-index:1;
+      background:linear-gradient(to top,var(--bg) 0%,rgba(8,8,10,.6) 40%,rgba(8,8,10,.15) 70%,transparent 100%);
+    }
+    .hero-grad-left{
+      position:absolute;inset:0;z-index:1;
+      background:linear-gradient(to right,rgba(8,8,10,.7) 0%,transparent 60%);
+    }
+    .hero-content{
+      position:relative;z-index:3;
+      width:100%;padding:130px 0 56px;
+    }
+    .hero-content .wrap{display:flex;flex-direction:column;gap:0;}
+    .hero-eyebrow{
+      font-family:"Space Mono";font-size:10px;letter-spacing:.36em;text-transform:uppercase;
+      color:var(--accent);margin-bottom:16px;
+      display:flex;align-items:center;gap:10px;
+    }
+    .hero-eyebrow .dot{width:6px;height:6px;border-radius:50%;background:var(--accent);}
+    .hero-h1{
       font-family:var(--font-display);
-      font-size:clamp(64px,12vw,140px);
-      line-height:.88;text-transform:uppercase;letter-spacing:.01em;
+      font-size:clamp(72px,13vw,160px);
+      line-height:.86;text-transform:uppercase;letter-spacing:.01em;
+      max-width:8ch;
     }
-    .page-hero h1 em{color:var(--accent);font-style:normal;}
-    .page-hero-meta{
-      font-family:"Space Mono";font-size:12px;letter-spacing:.22em;text-transform:uppercase;
-      color:var(--faint);padding-bottom:8px;max-width:28ch;line-height:1.8;text-align:right;
+    .hero-h1 em{color:var(--accent);font-style:normal;}
+    .hero-sub-row{
+      display:flex;align-items:flex-end;justify-content:space-between;
+      gap:24px;margin-top:28px;flex-wrap:wrap;
     }
-    .page-hero-meta strong{color:var(--muted);font-weight:400;}
+    .hero-stat{
+      font-family:"Space Mono";font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);
+    }
+    .hero-stat strong{color:var(--muted);font-weight:400;display:block;font-size:24px;font-family:"Anton";letter-spacing:.04em;margin-bottom:2px;}
+    .hero-stats{display:flex;gap:40px;}
+
+    /* ══════════════════════════════════════
+       FILTER BAR + SEARCH (identical to videos.html)
+    ══════════════════════════════════════ */
+    .filter-bar{
+      position:sticky;top:80px;z-index:30;
+      background:color-mix(in srgb,var(--bg) 88%,transparent);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--line);
+      padding:0;
+    }
+    .filter-bar-inner{
+      display:flex;align-items:center;gap:12px;
+      padding:12px 0;
+    }
+    .filter-inner{
+      display:flex;align-items:center;gap:6px;
+      flex:1;min-width:0;
+      overflow-x:auto;
+      scrollbar-width:none;-ms-overflow-style:none;
+    }
+    .filter-inner::-webkit-scrollbar{display:none;}
+    .filter-pill{
+      flex-shrink:0;
+      font-family:"Space Mono";font-size:11px;letter-spacing:.18em;text-transform:uppercase;
+      padding:8px 18px;border-radius:100px;border:1px solid var(--card-line);
+      background:transparent;color:var(--muted);
+      transition:all .18s var(--ease);white-space:nowrap;cursor:pointer;
+    }
+    .filter-pill:hover{border-color:var(--ink);color:var(--ink);}
+    .filter-pill.active{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
+
+    /* Search */
+    .search-wrap{position:relative;flex-shrink:0;}
+    .search-wrap svg{
+      position:absolute;left:14px;top:50%;transform:translateY(-50%);
+      width:14px;height:14px;color:var(--faint);pointer-events:none;
+      stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;
+    }
+    .search-input{
+      background:var(--card);border:1px solid var(--card-line);color:var(--ink);
+      padding:8px 16px 8px 36px;border-radius:100px;
+      font-family:"Space Mono";font-size:11px;letter-spacing:.1em;
+      outline:none;width:200px;
+      transition:border-color .2s,width .3s var(--ease),background .2s;
+    }
+    .search-input::placeholder{color:var(--faint);}
+    .search-input:focus{border-color:var(--accent);background:color-mix(in srgb,var(--card) 80%,transparent);width:260px;}
+    .search-input.has-value{border-color:var(--muted);}
+    .search-clear{
+      position:absolute;right:12px;top:50%;transform:translateY(-50%);
+      background:none;border:none;color:var(--faint);cursor:pointer;
+      display:none;align-items:center;justify-content:center;padding:2px;transition:color .18s;
+    }
+    .search-clear:hover{color:var(--accent);}
+    .search-clear svg{width:12px;height:12px;stroke:currentColor;fill:none;stroke-width:2.5;stroke-linecap:round;}
+    .search-wrap.active .search-clear{display:flex;}
+
+    /* ══════════════════════════════════════
+       MUSIC CONTENT AREA
+    ══════════════════════════════════════ */
+    .music-main{position:relative;z-index:2;padding:64px 0 80px;}
 
     /* ── Section chrome ── */
-    .music-section{position:relative;z-index:2;padding:72px 0;}
-    .music-section + .music-section{border-top:1px solid var(--line);}
-    .section-label{display:flex;align-items:baseline;gap:18px;margin-bottom:48px;}
+    .music-section{margin-bottom:64px;}
+    .music-section + .music-section{border-top:1px solid var(--line);padding-top:64px;}
+    .section-label{display:flex;align-items:baseline;gap:18px;margin-bottom:40px;}
     .section-label h2{
       font-family:var(--font-display);
-      font-size:clamp(36px,5vw,72px);
+      font-size:clamp(32px,4.5vw,60px);
       line-height:.92;text-transform:uppercase;
     }
     .section-label .count{
@@ -139,6 +238,10 @@
     .single-meta{display:flex;align-items:center;gap:10px;margin-top:4px;flex-wrap:wrap;}
     .single-year{font-family:"Space Mono";font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);}
     .single-duration{font-family:"Space Mono";font-size:11px;color:var(--faint);}
+    .single-type-badge{
+      font-family:"Space Mono";font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+      color:var(--accent);padding:3px 8px;border-radius:100px;border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);
+    }
 
     .single-links{display:flex;align-items:center;gap:8px;flex-shrink:0;}
     .slink{
@@ -238,16 +341,20 @@
     .sk-album-art{aspect-ratio:1;}
     .sk-album-body{padding:20px 22px;display:flex;flex-direction:column;gap:10px;}
 
-    /* ── Empty state ── */
+    /* ── Empty / no results ── */
     .empty{
       text-align:center;padding:60px 24px;
       font-family:"Space Mono";font-size:12px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);
     }
+    .no-results{
+      text-align:center;padding:60px 24px;
+      font-family:"Space Mono";font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--faint);
+    }
 
     /* ── Footer ── */
     .foot{
-      position:relative;z-index:2;padding:60px 0 36px;
-      border-top:1px solid var(--line);margin-top:48px;
+      position:relative;z-index:2;padding:56px 0 36px;
+      border-top:1px solid var(--line);
     }
     .foot-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;flex-wrap:wrap;}
     .foot-wordmark{font-family:var(--font-display);font-size:22px;letter-spacing:.04em;}
@@ -261,8 +368,11 @@
 
     /* ── Responsive ── */
     @media(max-width:900px){
-      .page-hero-meta{text-align:left;}
       .single-links .slink:not(.primary){display:none;}
+      .hero-stats{gap:24px;}
+      .search-input{width:160px;}
+      .search-input:focus{width:200px;}
+      .hero-sub-row{flex-direction:column;align-items:flex-start;gap:20px;}
     }
     @media(max-width:640px){
       .wrap{padding:0 18px;}
@@ -270,6 +380,10 @@
       .single-links{display:none;}
       .single-art{width:56px;height:56px;}
       .albums-grid{grid-template-columns:1fr 1fr;}
+      .filter-bar-inner{flex-wrap:wrap;gap:8px;}
+      .search-wrap{width:100%;}
+      .search-input{width:100%;}
+      .search-input:focus{width:100%;}
     }
     @media(max-width:420px){
       .albums-grid{grid-template-columns:1fr;}
@@ -290,55 +404,111 @@
   <div class="glow b2"></div>
 </div>
 
-<!-- ── Page hero ── -->
-<div class="page-hero">
-  <div class="wrap">
-    <h1>All the<br><em>music</em></h1>
-    <p class="page-hero-meta" id="hero-meta">Loading catalogue…</p>
+<!-- ══════════════════════════════════════
+     PAGE HERO — cinematic full-bleed
+══════════════════════════════════════ -->
+<div class="page-hero" id="page-hero">
+  <div class="hero-bg" id="hero-bg"></div>
+  <div class="hero-grad"></div>
+  <div class="hero-grad-left"></div>
+  <div class="hero-content">
+    <div class="wrap">
+      <div class="hero-eyebrow"><span class="dot"></span> WD-HAN</div>
+      <h1 class="hero-h1">All the<br><em>music</em></h1>
+      <div class="hero-sub-row">
+        <div class="hero-stats">
+          <div class="hero-stat" id="stat-releases"><strong>—</strong>Releases</div>
+          <div class="hero-stat" id="stat-tracks"><strong>—</strong>Tracks</div>
+        </div>
+      </div>
+    </div>
   </div>
 </div>
 
-<!-- ═══════════════════ SINGLES ═══════════════════ -->
-<section class="music-section" id="singles">
+<!-- ══════════════════════════════════════
+     FILTER BAR + SEARCH
+══════════════════════════════════════ -->
+<div class="filter-bar">
   <div class="wrap">
-    <div class="section-label reveal">
-      <h2>Singles</h2>
-      <span class="count" id="singles-count"></span>
-    </div>
-    <div id="singles-list">
-      <div class="sk-single-row">
-        <div class="sk sk-thumb"></div>
-        <div class="sk-lines"><div class="sk sk-line w80"></div><div class="sk sk-line w50"></div></div>
-        <div class="sk-btns"><div class="sk sk-btn"></div><div class="sk sk-btn"></div></div>
+    <div class="filter-bar-inner">
+      <div class="filter-inner" id="filter-inner">
+        <button class="filter-pill active" data-type="all">All</button>
+        <button class="filter-pill" data-type="single">Singles</button>
+        <button class="filter-pill" data-type="ep">EPs</button>
+        <button class="filter-pill" data-type="album">Albums</button>
+        <button class="filter-pill" data-type="remix">Remixes</button>
       </div>
-      <div class="sk-single-row">
-        <div class="sk sk-thumb"></div>
-        <div class="sk-lines"><div class="sk sk-line w80"></div><div class="sk sk-line w50"></div></div>
-        <div class="sk-btns"><div class="sk sk-btn"></div><div class="sk sk-btn"></div></div>
-      </div>
-      <div class="sk-single-row">
-        <div class="sk sk-thumb"></div>
-        <div class="sk-lines"><div class="sk sk-line w80"></div><div class="sk sk-line w50"></div></div>
-        <div class="sk-btns"><div class="sk sk-btn"></div><div class="sk sk-btn"></div></div>
+      <div class="search-wrap" id="search-wrap">
+        <svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        <input class="search-input" id="search-input" type="search" placeholder="Search releases…" autocomplete="off" spellcheck="false" aria-label="Search releases" />
+        <button class="search-clear" id="search-clear" aria-label="Clear search">
+          <svg viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></svg>
+        </button>
       </div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- ═══════════════════ ALBUMS & EPs ═══════════════════ -->
-<section class="music-section" id="albums">
+<!-- ══════════════════════════════════════
+     MUSIC CONTENT
+══════════════════════════════════════ -->
+<main class="music-main">
   <div class="wrap">
-    <div class="section-label reveal">
-      <h2>Albums &amp; EPs</h2>
-      <span class="count" id="albums-count"></span>
+
+    <!-- Singles section -->
+    <div class="music-section" id="section-singles">
+      <div class="section-label reveal">
+        <h2>Singles</h2>
+        <span class="count" id="singles-count"></span>
+      </div>
+      <div id="singles-list">
+        <div class="sk-single-row">
+          <div class="sk sk-thumb"></div>
+          <div class="sk-lines"><div class="sk sk-line w80"></div><div class="sk sk-line w50"></div></div>
+          <div class="sk-btns"><div class="sk sk-btn"></div><div class="sk sk-btn"></div></div>
+        </div>
+        <div class="sk-single-row">
+          <div class="sk sk-thumb"></div>
+          <div class="sk-lines"><div class="sk sk-line w80"></div><div class="sk sk-line w50"></div></div>
+          <div class="sk-btns"><div class="sk sk-btn"></div><div class="sk sk-btn"></div></div>
+        </div>
+        <div class="sk-single-row">
+          <div class="sk sk-thumb"></div>
+          <div class="sk-lines"><div class="sk sk-line w80"></div><div class="sk sk-line w50"></div></div>
+          <div class="sk-btns"><div class="sk sk-btn"></div><div class="sk sk-btn"></div></div>
+        </div>
+      </div>
     </div>
-    <div class="albums-grid" id="albums-grid">
-      <div class="sk-album-card"><div class="sk sk-album-art"></div><div class="sk-album-body"><div class="sk sk-line w80"></div><div class="sk sk-line w50"></div></div></div>
-      <div class="sk-album-card"><div class="sk sk-album-art"></div><div class="sk-album-body"><div class="sk sk-line w80"></div><div class="sk sk-line w50"></div></div></div>
-      <div class="sk-album-card"><div class="sk sk-album-art"></div><div class="sk-album-body"><div class="sk sk-line w80"></div><div class="sk sk-line w50"></div></div></div>
+
+    <!-- Albums & EPs section -->
+    <div class="music-section" id="section-albums">
+      <div class="section-label reveal">
+        <h2>Albums &amp; EPs</h2>
+        <span class="count" id="albums-count"></span>
+      </div>
+      <div class="albums-grid" id="albums-grid">
+        <div class="sk-album-card"><div class="sk sk-album-art"></div><div class="sk-album-body"><div class="sk sk-line w80"></div><div class="sk sk-line w50"></div></div></div>
+        <div class="sk-album-card"><div class="sk sk-album-art"></div><div class="sk-album-body"><div class="sk sk-line w80"></div><div class="sk sk-line w50"></div></div></div>
+        <div class="sk-album-card"><div class="sk sk-album-art"></div><div class="sk-album-body"><div class="sk sk-line w80"></div><div class="sk sk-line w50"></div></div></div>
+      </div>
     </div>
+
+    <!-- Remixes section (hidden until remixes exist) -->
+    <div class="music-section" id="section-remixes" style="display:none;">
+      <div class="section-label reveal">
+        <h2>Remixes</h2>
+        <span class="count" id="remixes-count"></span>
+      </div>
+      <div id="remixes-list"></div>
+    </div>
+
+    <!-- Filtered/search results view (replaces sectioned layout) -->
+    <div id="filtered-view" style="display:none;">
+      <div class="albums-grid" id="filtered-grid"></div>
+    </div>
+
   </div>
-</section>
+</main>
 
 <!-- ── Footer ── -->
 <footer class="foot">
@@ -380,7 +550,9 @@
 
   /* ── Scroll reveal ── */
   const revealIO = new IntersectionObserver(entries => {
-    entries.forEach(en => { if (en.isIntersecting) { en.target.classList.add('in'); revealIO.unobserve(en.target); } });
+    entries.forEach(en => {
+      if (en.isIntersecting) { en.target.classList.add('in'); revealIO.unobserve(en.target); }
+    });
   }, { threshold: 0.08 });
   function observe() { document.querySelectorAll('.reveal:not(.in)').forEach(el => revealIO.observe(el)); }
   setTimeout(observe, 80);
@@ -396,65 +568,185 @@
     bandcamp:    `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 18.75l7.437-13.5H24l-7.438 13.5z"/></svg>`,
   };
 
-  function streamingLinks(links, style = 'single') {
+  function streamingLinks(links, style) {
     if (!links) return '';
     const order  = ['spotify','appleMusic','youtube','tidal','amazonMusic','soundcloud','bandcamp'];
     const labels = { spotify:'Spotify', appleMusic:'Apple', youtube:'YouTube', tidal:'Tidal', amazonMusic:'Amazon', soundcloud:'SoundCloud', bandcamp:'Bandcamp' };
     return order
       .filter(k => links[k])
       .map((k, i) => {
-        const isPrimary = i === 0 && style === 'single';
+        const isPrimary = i === 0 && style !== 'album';
         return `<a class="slink${isPrimary ? ' primary' : ''}" href="${esc(links[k])}" target="_blank" rel="noopener">
           ${ICONS[k] || ''} ${labels[k]}
         </a>`;
       }).join('');
   }
 
-  /* ── Main Sanity fetch ── */
-  (async function() {
-    const query = `*[_type == "release"] | order(releaseDate desc) {
-      title, slug, releaseType, releaseDate, featured,
-      "artworkUrl": artwork.asset->url,
-      streamingLinks,
-      "trackCount": count(tracks),
-      "tracks": tracks[]->{title, duration, trackNumber, streamingLinks}
-    }`;
+  /* ── State ── */
+  let allReleases  = [];
+  let activeFilter = 'all';
+  let searchQuery  = '';
 
-    let releases;
-    try {
-      const res = await fetch(sanityUrl(query));
-      const { result } = await res.json();
-      releases = result;
-    } catch(err) {
-      console.warn('Sanity fetch failed', err);
-      document.getElementById('singles-list').innerHTML = '<div class="empty">Unable to load music. Please try again.</div>';
-      document.getElementById('albums-grid').innerHTML  = '<div class="empty">Unable to load music. Please try again.</div>';
-      return;
+  /* ── Filter helpers ── */
+  const TYPE_MAP = {
+    single: ['single'],
+    ep:     ['ep'],
+    album:  ['album'],
+    remix:  ['remix'],
+  };
+
+  function getFiltered() {
+    let list = allReleases;
+    if (activeFilter !== 'all') {
+      const types = TYPE_MAP[activeFilter] || [activeFilter];
+      list = list.filter(r => types.includes((r.releaseType || '').toLowerCase()));
     }
-
-    if (!releases?.length) {
-      document.getElementById('singles-list').innerHTML = '<div class="empty">No releases found.</div>';
-      document.getElementById('albums-grid').innerHTML  = '<div class="empty">No releases found.</div>';
-      return;
+    if (searchQuery) {
+      const q = searchQuery.toLowerCase();
+      list = list.filter(r =>
+        (r.title || '').toLowerCase().includes(q) ||
+        (r.releaseType || '').toLowerCase().includes(q) ||
+        String(r.releaseDate ? new Date(r.releaseDate).getFullYear() : '').includes(q)
+      );
     }
+    return list;
+  }
 
-    const singles = releases.filter(r => r.releaseType === 'single');
-    const albums  = releases.filter(r => r.releaseType !== 'single');
+  /* ── Filter pill clicks ── */
+  function applyFilter(type) {
+    activeFilter = type;
+    document.querySelectorAll('.filter-pill').forEach(p =>
+      p.classList.toggle('active', p.dataset.type === type));
+    updateView();
+  }
 
-    const totalTracks = releases.reduce((acc, r) => acc + (r.trackCount || 0), 0);
-    document.getElementById('hero-meta').innerHTML =
-      `<strong style="color:var(--muted)">${releases.length} releases</strong> &nbsp;·&nbsp; ${totalTracks} tracks`;
+  /* ── Search ── */
+  function setupSearch() {
+    const input = document.getElementById('search-input');
+    const wrap  = document.getElementById('search-wrap');
+    const clear = document.getElementById('search-clear');
+    if (!input) return;
+    input.addEventListener('input', () => {
+      searchQuery = input.value.trim();
+      wrap.classList.toggle('active', searchQuery.length > 0);
+      input.classList.toggle('has-value', searchQuery.length > 0);
+      updateView();
+    });
+    clear.addEventListener('click', () => {
+      input.value = ''; searchQuery = '';
+      wrap.classList.remove('active');
+      input.classList.remove('has-value');
+      input.focus();
+      updateView();
+    });
+  }
 
-    renderSingles(singles);
-    renderAlbums(albums);
+  /* ── Update view based on filter + search state ── */
+  function updateView() {
+    const isFiltered = activeFilter !== 'all' || searchQuery.length > 0;
+
+    if (isFiltered) {
+      // Show unified filtered grid, hide sectioned layout
+      document.getElementById('section-singles').style.display = 'none';
+      document.getElementById('section-albums').style.display  = 'none';
+      document.getElementById('section-remixes').style.display = 'none';
+      document.getElementById('filtered-view').style.display   = '';
+      renderFilteredGrid(getFiltered());
+    } else {
+      // Show normal sectioned layout
+      document.getElementById('filtered-view').style.display   = 'none';
+      document.getElementById('section-singles').style.display = '';
+      document.getElementById('section-albums').style.display  = '';
+      // Remixes only shown if they exist
+      const remixes = allReleases.filter(r => (r.releaseType || '').toLowerCase() === 'remix');
+      document.getElementById('section-remixes').style.display = remixes.length ? '' : 'none';
+    }
     observe();
-  })();
+  }
+
+  /* ── Render filtered/search grid (card view for everything) ── */
+  function renderFilteredGrid(releases) {
+    const grid = document.getElementById('filtered-grid');
+    if (!releases.length) {
+      grid.innerHTML = '<div class="no-results" style="grid-column:1/-1;">No releases match your search.</div>';
+      return;
+    }
+    grid.innerHTML = releases.map((rel, idx) => buildAlbumCard(rel, `filt-${idx}`)).join('');
+    observe();
+  }
+
+  /* ── Shared album card builder ── */
+  function buildAlbumCard(rel, idx) {
+    const year      = rel.releaseDate ? new Date(rel.releaseDate).getFullYear() : '';
+    const typeLabel = (rel.releaseType || 'release').toUpperCase();
+    const artUrl    = rel.artworkUrl ? sanityImg(rel.artworkUrl, 600) : null;
+    const src       = embedSrc(rel.streamingLinks?.spotify);
+    const trackCount = rel.trackCount || 0;
+    const slug      = rel.slug?.current || '';
+    const relUrl    = `/release/?slug=${esc(slug)}`;
+    return `
+      <div class="album-card reveal">
+        <a class="album-art" href="${relUrl}" aria-label="View ${esc(rel.title)}">
+          ${artUrl
+            ? `<img src="${esc(artUrl)}" alt="${esc(rel.title)}" loading="lazy">`
+            : `<div class="album-art-ph"><span>${esc(rel.title)}</span></div>`}
+          <span class="album-type-badge">${typeLabel}</span>
+          ${src ? `
+          <button class="album-play-btn" id="album-play-${idx}"
+            onclick="event.preventDefault();toggleAlbumEmbed('${idx}')"
+            aria-label="Play ${esc(rel.title)} on Spotify">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>
+          </button>` : ''}
+        </a>
+        ${src ? `<div class="album-embed" id="album-embed-${idx}">
+          <iframe src="" data-src="${esc(src)}"
+            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+            loading="lazy" title="Spotify player for ${esc(rel.title)}"></iframe>
+        </div>` : ''}
+        <div class="album-body">
+          <a class="album-title" href="${relUrl}">${esc(rel.title)}</a>
+          <div class="album-sub">${year}${trackCount ? ` · ${trackCount} track${trackCount !== 1 ? 's' : ''}` : ''}</div>
+        </div>
+        <div class="album-links">${streamingLinks(rel.streamingLinks, 'album')}</div>
+      </div>`;
+  }
+
+  /* ── Toggle album Spotify embed ── */
+  let openAlbum = null;
+  function toggleAlbumEmbed(idx) {
+    const wrap = document.getElementById(`album-embed-${idx}`);
+    const btn  = document.getElementById(`album-play-${idx}`);
+    if (!wrap) return;
+    const isOpen = wrap.classList.contains('open');
+    if (openAlbum !== null && openAlbum !== idx) {
+      const prev    = document.getElementById(`album-embed-${openAlbum}`);
+      const prevBtn = document.getElementById(`album-play-${openAlbum}`);
+      if (prev) prev.classList.remove('open');
+      if (prevBtn) { prevBtn.classList.remove('active'); prevBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>`; }
+    }
+    if (isOpen) {
+      wrap.classList.remove('open');
+      if (btn) { btn.classList.remove('active'); btn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>`; }
+      openAlbum = null;
+    } else {
+      const iframe = wrap.querySelector('iframe');
+      if (iframe && !iframe.src) iframe.src = iframe.dataset.src;
+      wrap.classList.add('open');
+      if (btn) { btn.classList.add('active'); btn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`; }
+      openAlbum = idx;
+    }
+  }
+  window.toggleAlbumEmbed = toggleAlbumEmbed;
 
   /* ═══ SINGLES RENDERER ═══ */
   function renderSingles(singles) {
     const container = document.getElementById('singles-list');
     const countEl   = document.getElementById('singles-count');
-    if (!singles.length) { container.innerHTML = '<div class="empty">No singles yet.</div>'; return; }
+    if (!singles.length) {
+      container.innerHTML = '<div class="empty">No singles yet.</div>';
+      document.getElementById('section-singles').style.display = 'none';
+      return;
+    }
     countEl.textContent = `${singles.length} tracks`;
     container.innerHTML = singles.map(rel => {
       const year   = rel.releaseDate ? new Date(rel.releaseDate).getFullYear() : '';
@@ -485,71 +777,90 @@
   function renderAlbums(albums) {
     const grid    = document.getElementById('albums-grid');
     const countEl = document.getElementById('albums-count');
-    if (!albums.length) { grid.innerHTML = '<div class="empty" style="grid-column:1/-1;">No albums or EPs yet.</div>'; return; }
+    if (!albums.length) {
+      grid.innerHTML = '<div class="empty" style="grid-column:1/-1;">No albums or EPs yet.</div>';
+      document.getElementById('section-albums').style.display = 'none';
+      return;
+    }
     countEl.textContent = `${albums.length} releases`;
-    grid.innerHTML = albums.map((rel, idx) => {
-      const year       = rel.releaseDate ? new Date(rel.releaseDate).getFullYear() : '';
-      const typeLabel  = (rel.releaseType || 'release').toUpperCase();
-      const artUrl     = rel.artworkUrl ? sanityImg(rel.artworkUrl, 600) : null;
-      const src        = embedSrc(rel.streamingLinks?.spotify);
-      const trackCount = rel.trackCount || 0;
-      const slug       = rel.slug?.current || '';
-      const relUrl     = `/release/?slug=${esc(slug)}`;
-      return `
-        <div class="album-card reveal">
-          <a class="album-art" href="${relUrl}" aria-label="View ${esc(rel.title)}">
-            ${artUrl
-              ? `<img src="${esc(artUrl)}" alt="${esc(rel.title)}" loading="lazy">`
-              : `<div class="album-art-ph"><span>${esc(rel.title)}</span></div>`}
-            <span class="album-type-badge">${typeLabel}</span>
-            ${src ? `
-            <button class="album-play-btn" id="album-play-${idx}"
-              onclick="event.preventDefault();toggleAlbumEmbed(${idx})"
-              aria-label="Play ${esc(rel.title)} on Spotify">
-              <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>
-            </button>` : ''}
-          </a>
-          ${src ? `<div class="album-embed" id="album-embed-${idx}">
-            <iframe src="" data-src="${esc(src)}"
-              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-              loading="lazy" title="Spotify player for ${esc(rel.title)}"></iframe>
-          </div>` : ''}
-          <div class="album-body">
-            <a class="album-title" href="${relUrl}">${esc(rel.title)}</a>
-            <div class="album-sub">${year}${trackCount ? ` · ${trackCount} track${trackCount !== 1 ? 's' : ''}` : ''}</div>
-          </div>
-          <div class="album-links">${streamingLinks(rel.streamingLinks, 'album')}</div>
-        </div>`;
-    }).join('');
+    grid.innerHTML = albums.map((rel, idx) => buildAlbumCard(rel, idx)).join('');
   }
 
-  /* ── Toggle album Spotify embed ── */
-  let openAlbum = null;
-  function toggleAlbumEmbed(idx) {
-    const wrap = document.getElementById(`album-embed-${idx}`);
-    const btn  = document.getElementById(`album-play-${idx}`);
-    if (!wrap) return;
-    const isOpen = wrap.classList.contains('open');
-    // Close previously open
-    if (openAlbum !== null && openAlbum !== idx) {
-      const prev    = document.getElementById(`album-embed-${openAlbum}`);
-      const prevBtn = document.getElementById(`album-play-${openAlbum}`);
-      if (prev) prev.classList.remove('open');
-      if (prevBtn) { prevBtn.classList.remove('active'); prevBtn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>`; }
-    }
-    if (isOpen) {
-      wrap.classList.remove('open');
-      if (btn) { btn.classList.remove('active'); btn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>`; }
-      openAlbum = null;
-    } else {
-      const iframe = wrap.querySelector('iframe');
-      if (iframe && !iframe.src) iframe.src = iframe.dataset.src;
-      wrap.classList.add('open');
-      if (btn) { btn.classList.add('active'); btn.innerHTML = `<svg viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>`; }
-      openAlbum = idx;
-    }
+  /* ═══ REMIXES RENDERER ═══ */
+  function renderRemixes(remixes) {
+    if (!remixes.length) return;
+    const container = document.getElementById('remixes-list');
+    const countEl   = document.getElementById('remixes-count');
+    document.getElementById('section-remixes').style.display = '';
+    countEl.textContent = `${remixes.length} remixes`;
+    container.innerHTML = `<div class="albums-grid">${remixes.map((rel, idx) => buildAlbumCard(rel, `remix-${idx}`)).join('')}</div>`;
   }
-  window.toggleAlbumEmbed = toggleAlbumEmbed;
+
+  /* ── Main Sanity fetch ── */
+  (async function() {
+    const query = `*[_type == "release"] | order(featured desc, releaseDate desc) {
+      title, slug, releaseType, releaseDate, featured,
+      "artworkUrl": artwork.asset->url,
+      streamingLinks,
+      "trackCount": count(tracks),
+      "tracks": tracks[]->{title, duration, trackNumber, streamingLinks}
+    }`;
+
+    let releases;
+    try {
+      const res = await fetch(sanityUrl(query));
+      const { result } = await res.json();
+      releases = result;
+    } catch(err) {
+      console.warn('Sanity fetch failed', err);
+      document.getElementById('singles-list').innerHTML = '<div class="empty">Unable to load music. Please try again.</div>';
+      document.getElementById('albums-grid').innerHTML  = '<div class="empty">Unable to load music. Please try again.</div>';
+      return;
+    }
+
+    if (!releases?.length) {
+      document.getElementById('singles-list').innerHTML = '<div class="empty">No releases found.</div>';
+      document.getElementById('albums-grid').innerHTML  = '<div class="empty">No releases found.</div>';
+      return;
+    }
+
+    allReleases = releases;
+
+    // Hero background — use latest release artwork
+    const latestWithArt = releases.find(r => r.artworkUrl);
+    if (latestWithArt) {
+      const bg = document.getElementById('hero-bg');
+      bg.style.backgroundImage = `url('${sanityImg(latestWithArt.artworkUrl, 1600)}')`;
+    }
+
+    // Stats
+    const totalTracks = releases.reduce((acc, r) => acc + (r.trackCount || 0), 0);
+    document.getElementById('stat-releases').innerHTML = `<strong>${releases.length}</strong>Releases`;
+    document.getElementById('stat-tracks').innerHTML   = `<strong>${totalTracks}</strong>Tracks`;
+
+    // Segment
+    const singles = releases.filter(r => (r.releaseType || '').toLowerCase() === 'single');
+    const albums  = releases.filter(r => ['album','ep'].includes((r.releaseType || '').toLowerCase()));
+    const remixes = releases.filter(r => (r.releaseType || '').toLowerCase() === 'remix');
+
+    // Show remix pill only if remixes exist
+    if (!remixes.length) {
+      const remixPill = document.querySelector('.filter-pill[data-type="remix"]');
+      if (remixPill) remixPill.style.display = 'none';
+    }
+
+    renderSingles(singles);
+    renderAlbums(albums);
+    renderRemixes(remixes);
+
+    // Wire filter pills
+    document.querySelectorAll('.filter-pill').forEach(pill => {
+      pill.addEventListener('click', () => applyFilter(pill.dataset.type));
+    });
+
+    setupSearch();
+    observe();
+  })();
 </script>
 
 <script src="/assets/js/nav.js"></script>
