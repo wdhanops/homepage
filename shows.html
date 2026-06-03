@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tour — WD-HAN</title>
+  <meta name="description" content="WD-HAN live shows and tour dates." />
+
+  <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg" />
+  <link rel="apple-touch-icon" href="/assets/img/favicon.svg" />
+  <link rel="stylesheet" href="/assets/css/nav.css" />
+
+  <style>
+    /* ── Tokens ── */
+    :root {
+      --accent: #ff3b2e;
+      --accent-ink: #0a0a0a;
+      --bg: #08080a;
+      --bg2: #101014;
+      --ink: #f5f1e6;
+      --muted: rgba(245,241,230,.55);
+      --faint: rgba(245,241,230,.30);
+      --line: rgba(245,241,230,.13);
+      --card: rgba(245,241,230,.045);
+      --card-hover: rgba(245,241,230,.07);
+      --ease: cubic-bezier(.22,.61,.36,1);
+      --font-display: 'Splatink', 'Anton', sans-serif;
+      --maxw: 1100px;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--ink);
+      font-family: 'Space Grotesk', system-ui, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+      min-height: 100vh;
+    }
+
+    @font-face {
+      font-family: 'Splatink';
+      src: url('/assets/fonts/Splatink.otf') format('opentype');
+      font-weight: normal;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    a { color: inherit; text-decoration: none; }
+    img { display: block; max-width: 100%; }
+    ::selection { background: var(--accent); color: var(--accent-ink); }
+
+    /* ── Page wrapper ── */
+    .page {
+      padding-top: 80px; /* nav height */
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Grain overlay ── */
+    body::after {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='1'/%3E%3C/svg%3E");
+      opacity: .028;
+      pointer-events: none;
+      z-index: 999;
+    }
+
+    /* ── Hero ── */
+    .hero {
+      padding: 80px 28px 60px;
+      max-width: var(--maxw);
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .hero-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .4em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 20px;
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(56px, 10vw, 120px);
+      line-height: .92;
+      letter-spacing: -.02em;
+      text-transform: uppercase;
+      color: var(--ink);
+      margin-bottom: 28px;
+    }
+
+    .hero-title em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      font-size: 16px;
+      color: var(--muted);
+      max-width: 480px;
+      line-height: 1.6;
+    }
+
+    /* ── Divider ── */
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: var(--line);
+      max-width: var(--maxw);
+      margin: 0 auto;
+    }
+
+    /* ── Shows section ── */
+    .shows-section {
+      flex: 1;
+      max-width: var(--maxw);
+      margin: 0 auto;
+      width: 100%;
+      padding: 60px 28px 100px;
+    }
+
+    /* ── BIT widget wrapper ── */
+    .bit-widget-container {
+      width: 100%;
+    }
+
+    /* Override Bandsintown widget styles to match site */
+    .bit-widget-container .bit-widget {
+      background: transparent !important;
+      font-family: 'Space Grotesk', system-ui, sans-serif !important;
+    }
+
+    /* ── Empty state ── */
+    .empty-state {
+      display: none;
+      text-align: center;
+      padding: 80px 28px;
+    }
+
+    .empty-state.visible {
+      display: block;
+    }
+
+    .empty-icon {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 28px;
+      opacity: .25;
+    }
+
+    .empty-title {
+      font-family: var(--font-display);
+      font-size: 32px;
+      text-transform: uppercase;
+      letter-spacing: -.01em;
+      color: var(--ink);
+      margin-bottom: 12px;
+    }
+
+    .empty-body {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 360px;
+      margin: 0 auto 36px;
+    }
+
+    /* ── Follow / notify button ── */
+    .follow-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin-top: 48px;
+    }
+
+    .btn-outline {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border: 1px solid var(--line);
+      border-radius: 3px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--ink);
+      background: transparent;
+      cursor: pointer;
+      transition: border-color .2s, background .2s, color .2s;
+    }
+
+    .btn-outline:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-filled {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 24px;
+      border: 1px solid var(--accent);
+      border-radius: 3px;
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .2em;
+      text-transform: uppercase;
+      color: var(--accent-ink);
+      background: var(--accent);
+      cursor: pointer;
+      transition: opacity .2s;
+      text-decoration: none;
+    }
+
+    .btn-filled:hover { opacity: .85; }
+
+    /* ── BIT signup form (fan email collection) ── */
+    .bit-follow-section {
+      border-top: 1px solid var(--line);
+      margin-top: 60px;
+      padding-top: 48px;
+      text-align: center;
+    }
+
+    .bit-follow-label {
+      font-family: 'Space Mono', monospace;
+      font-size: 11px;
+      letter-spacing: .35em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 20px;
+    }
+
+    /* ── Loading skeleton ── */
+    .skeleton-row {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 22px 0;
+      border-bottom: 1px solid var(--line);
+      animation: pulse 1.4s ease-in-out infinite;
+    }
+
+    .skeleton-row:first-child { border-top: 1px solid var(--line); }
+
+    .skel {
+      background: var(--line);
+      border-radius: 3px;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: .4; }
+      50%       { opacity: .8; }
+    }
+
+    /* ── Responsive ── */
+    @media (max-width: 600px) {
+      .hero { padding: 48px 20px 40px; }
+      .shows-section { padding: 40px 20px 80px; }
+      .follow-row { flex-direction: column; align-items: stretch; }
+      .btn-outline, .btn-filled { justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="nav-mount"></div>
+
+<div class="page">
+
+  <!-- ── Hero ── -->
+  <header class="hero">
+    <p class="hero-label">Live</p>
+    <h1 class="hero-title">On<em> Tour</em></h1>
+    <p class="hero-sub">Catch WD-HAN live. Dates below — grab your tickets before they're gone.</p>
+  </header>
+
+  <div class="divider"></div>
+
+  <!-- ── Shows ── -->
+  <section class="shows-section">
+
+    <!-- Skeleton loaders shown while BIT widget loads -->
+    <div id="bit-loading" aria-hidden="true">
+      <div class="skeleton-row">
+        <div class="skel" style="width:52px;height:52px;border-radius:4px;flex-shrink:0"></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+          <div class="skel" style="width:55%;height:14px"></div>
+          <div class="skel" style="width:35%;height:12px"></div>
+        </div>
+        <div class="skel" style="width:100px;height:36px;border-radius:3px;flex-shrink:0"></div>
+      </div>
+      <div class="skeleton-row">
+        <div class="skel" style="width:52px;height:52px;border-radius:4px;flex-shrink:0"></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+          <div class="skel" style="width:48%;height:14px"></div>
+          <div class="skel" style="width:30%;height:12px"></div>
+        </div>
+        <div class="skel" style="width:100px;height:36px;border-radius:3px;flex-shrink:0"></div>
+      </div>
+      <div class="skeleton-row">
+        <div class="skel" style="width:52px;height:52px;border-radius:4px;flex-shrink:0"></div>
+        <div style="flex:1;display:flex;flex-direction:column;gap:8px">
+          <div class="skel" style="width:60%;height:14px"></div>
+          <div class="skel" style="width:38%;height:12px"></div>
+        </div>
+        <div class="skel" style="width:100px;height:36px;border-radius:3px;flex-shrink:0"></div>
+      </div>
+    </div>
+
+    <!-- Bandsintown widget — injected here -->
+    <div class="bit-widget-container" id="bit-widget-container" style="display:none">
+      <div id="bit-widget-mount"></div>
+    </div>
+
+    <!-- Empty state — shown if no events -->
+    <div class="empty-state" id="empty-state">
+      <svg class="empty-icon" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="8" y="16" width="48" height="40" rx="3" stroke="currentColor" stroke-width="2"/>
+        <line x1="8" y1="26" x2="56" y2="26" stroke="currentColor" stroke-width="2"/>
+        <line x1="22" y1="8" x2="22" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+        <line x1="42" y1="8" x2="42" y2="22" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <h2 class="empty-title">No shows yet</h2>
+      <p class="empty-body">Nothing announced right now — follow us on Bandsintown to get notified the moment dates drop.</p>
+      <div class="follow-row">
+        <a class="btn-filled" href="https://www.bandsintown.com/a/939611" target="_blank" rel="noopener">
+          <svg viewBox="0 0 20 20" style="width:14px;height:14px;fill:currentColor"><path d="M10 2a8 8 0 100 16A8 8 0 0010 2zm0 3a1.5 1.5 0 110 3 1.5 1.5 0 010-3zm0 9.5c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08A7.16 7.16 0 0110 14.5z"/></svg>
+          Follow on Bandsintown
+        </a>
+      </div>
+    </div>
+
+    <!-- BIT Follow button + fan signup — always shown below events -->
+    <div class="bit-follow-section" id="bit-follow-section" style="display:none">
+      <p class="bit-follow-label">Never miss a show</p>
+      <!-- Bandsintown Follow Button widget -->
+      <div id="bit-follow-btn"></div>
+    </div>
+
+  </section>
+</div>
+
+<script src="/assets/js/nav.js"></script>
+
+<script>
+(function () {
+
+  const BIT_ARTIST_ID = 'wd-han';
+  const BIT_APP_ID    = 'wdhan-website';
+  const WORKER_URL    = 'https://admin-api.wdhan.com/bandsintown';
+
+  const loading   = document.getElementById('bit-loading');
+  const container = document.getElementById('bit-widget-container');
+  const empty     = document.getElementById('empty-state');
+  const followSec = document.getElementById('bit-follow-section');
+
+  /* ── Fetch events via Worker proxy ── */
+  async function loadShows() {
+    try {
+      const res    = await fetch(WORKER_URL, { headers: { Accept: 'application/json' } });
+      const events = await res.json();
+
+      loading.style.display = 'none';
+
+      if (!Array.isArray(events) || events.length === 0) {
+        // No upcoming shows
+        empty.classList.add('visible');
+        return;
+      }
+
+      // Has events — inject the Bandsintown embed widget
+      container.style.display = '';
+      injectBITWidget();
+      followSec.style.display = '';
+      injectBITFollowButton();
+
+    } catch (err) {
+      console.warn('[shows] BIT fetch failed', err);
+      loading.style.display = 'none';
+      empty.classList.add('visible');
+    }
+  }
+
+  /* ── Inject Bandsintown Events Widget ── */
+  function injectBITWidget() {
+    const mount = document.getElementById('bit-widget-mount');
+
+    // BIT Events Widget script tag
+    const div = document.createElement('div');
+    div.id = 'bit-events-widget';
+    div.setAttribute('data-bit-artist-name', 'wd-han');
+    div.setAttribute('data-bit-widget-layout', 'standard');
+    div.setAttribute('data-bit-theme', 'dark');
+    div.setAttribute('data-bit-bg-color', '08080a');
+    div.setAttribute('data-bit-primary-color', 'ff3b2e');
+    div.setAttribute('data-bit-font', 'Space Grotesk');
+    mount.appendChild(div);
+
+    const script = document.createElement('script');
+    script.src = 'https://widget.bandsintown.com/main.min.js';
+    script.charset = 'utf-8';
+    document.body.appendChild(script);
+  }
+
+  /* ── Inject Bandsintown Follow Button ── */
+  function injectBITFollowButton() {
+    const mount = document.getElementById('bit-follow-btn');
+
+    const a = document.createElement('a');
+    a.className = 'bit-widget-initializer';
+    a.setAttribute('data-artist-name', 'wd-han');
+    a.setAttribute('data-widget-type', 'follow');
+    a.setAttribute('data-theme', 'dark');
+    a.setAttribute('data-bg-color', '08080a');
+    a.setAttribute('data-button-color', 'ff3b2e');
+    a.setAttribute('data-separator-color', '333333');
+    a.setAttribute('data-font', 'Space Grotesk');
+    a.setAttribute('data-auto-style', 'false');
+    mount.appendChild(a);
+  }
+
+  loadShows();
+
+})();
+</script>
+
+</body>
+</html>
