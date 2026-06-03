@@ -521,8 +521,6 @@ function wireLink(id, url) {
     const doc  = data?.result || {};
     const hs   = doc.homepageSettings || {};
     const s    = doc.socials || {};
-
-console.log('homepageSettings from Sanity:', JSON.stringify(hs, null, 2));
     
     // ── Main Color ──────────────────────────────────────
     if (hs.mainColor) setAccent(hs.mainColor);
