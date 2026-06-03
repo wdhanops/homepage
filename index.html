@@ -344,16 +344,24 @@
       .cta-row { gap: 10px; }
       .btn { padding: 13px 20px; font-size: 13px; }
     }
-    /* ============================================================
+    
+/* ============================================================
    MOBILE FIXES
 ============================================================ */
 @media (max-width: 768px) {
 
-  /* Background image: full width, anchor to top so faces show */
+  /* Force background stage to viewport width only */
+  .bg-stage {
+    width: 100vw;
+    max-width: 100%;
+    overflow: hidden;
+  }
+
   .bg-slide {
     background-position: center top;
     background-size: cover;
     width: 100%;
+    max-width: 100vw;
   }
 
   /* Feather top AND bottom into black */
@@ -369,15 +377,18 @@
     );
   }
 
-  /* Hero title: wrap instead of overflow */
+  /* Hero title: scale down but NEVER break mid-word */
   .hero-wordmark {
-    font-size: clamp(44px, 18vw, 80px);
+    font-size: clamp(36px, 15vw, 72px);
     white-space: normal;
-    word-break: break-word;
-    overflow-wrap: break-word;
+    word-break: normal;       /* no mid-word breaks */
+    overflow-wrap: normal;    /* no mid-word breaks */
+    word-wrap: normal;
+    hyphens: none;
     text-align: center;
     line-height: 0.9;
     padding: 0 12px;
+    width: 100%;
   }
 
   /* Keep sub-copy readable */
