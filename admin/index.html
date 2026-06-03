@@ -594,7 +594,7 @@ const SANITY_DATASET = 'production';
 // This is used for both the login screen AND as the auth token sent to the Worker.
 // The Worker validates it against its own ADMIN_PASSWORD_HASH env var (set in Cloudflare).
 // Nothing secret is hardcoded here — safe for a public repo.
-const ADMIN_HASH = 'd2RoYW4tYWRtaW4tMjAyNg=='; // base64("wdhan-admin-2026") — CHANGE THIS
+const ADMIN_HASH = 'bb53fd32697a28411ef37bd5733d56fd3fc9c3ae7283465834915b308abda241'; // base64("wdhan-admin-2026") — CHANGE THIS
 
 // Worker proxy URL — Sanity token lives here, never in this file
 const WORKER_URL = 'https://admin-api.wdhan.com/mutate';
