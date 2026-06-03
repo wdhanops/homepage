@@ -344,6 +344,48 @@
       .cta-row { gap: 10px; }
       .btn { padding: 13px 20px; font-size: 13px; }
     }
+    /* ============================================================
+   MOBILE FIXES
+============================================================ */
+@media (max-width: 768px) {
+
+  /* Background image: full width, anchor to top so faces show */
+  .bg-slide {
+    background-position: center top;
+    background-size: cover;
+    width: 100%;
+  }
+
+  /* Feather top AND bottom into black */
+  .bg-overlay {
+    background: linear-gradient(
+      to bottom,
+      #08080a 0%,
+      rgba(8,8,10,0.5) 12%,
+      rgba(8,8,10,0.15) 30%,
+      rgba(8,8,10,0.15) 60%,
+      rgba(8,8,10,0.7) 80%,
+      #08080a 100%
+    );
+  }
+
+  /* Hero title: wrap instead of overflow */
+  .hero-wordmark {
+    font-size: clamp(44px, 18vw, 80px);
+    white-space: normal;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    text-align: center;
+    line-height: 0.9;
+    padding: 0 12px;
+  }
+
+  /* Keep sub-copy readable */
+  .hero-sub {
+    font-size: 15px;
+    padding: 0 8px;
+  }
+}
   </style>
 </head>
 <body>
