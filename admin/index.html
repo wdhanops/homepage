@@ -590,8 +590,7 @@
 const SANITY_PROJECT = 'oz4mxjaz';
 const SANITY_DATASET = 'production';
 
-// Admin password hash — run btoa('yourpassword') in browser console to generate
-// This is used for both the login screen AND as the auth token sent to the Worker.
+// Admin password hash — generate with: crypto.subtle.digest('SHA-256', ...) in browser console// This is used for both the login screen AND as the auth token sent to the Worker.
 // The Worker validates it against its own ADMIN_PASSWORD_HASH env var (set in Cloudflare).
 // Nothing secret is hardcoded here — safe for a public repo.
 const ADMIN_HASH = 'bb53fd32697a28411ef37bd5733d56fd3fc9c3ae7283465834915b308abda241'; // base64("wdhan-admin-2026") — CHANGE THIS
@@ -612,9 +611,12 @@ function checkAuth() {
 document.getElementById('pw-btn').addEventListener('click', tryLogin);
 document.getElementById('pw-input').addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin(); });
 
-function tryLogin() {
+async function tryLogin() {
   const pw = document.getElementById('pw-input').value;
-  if (btoa(pw) === ADMIN_HASH) {
+  const enc = new TextEncoder();
+  const buf = await crypto.subtle.digest('SHA-256', enc.encode(pw));
+  const hex = Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+  if (hex === ADMIN_HASH) {
     sessionStorage.setItem('wdhan_admin_auth', 'ok');
     document.getElementById('auth-screen').style.display = 'none';
     document.getElementById('app').classList.add('visible');
