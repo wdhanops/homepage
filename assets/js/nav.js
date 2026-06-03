@@ -163,9 +163,9 @@
   /* ── Bandsintown: show Tour link only when upcoming events exist ── */
   async function initTourNav() {
     try {
-      const res = await fetch('https://admin-api.wdhan.com/bandsintown');
-        { headers: { Accept: 'application/json' } }
-      );
+      const res = await fetch('https://admin-api.wdhan.com/bandsintown', {
+  headers: { Accept: 'application/json' }
+   });
       const events = await res.json();
       if (Array.isArray(events) && events.length > 0) {
         const desktop = document.getElementById('nav-tour-link');
