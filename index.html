@@ -685,10 +685,7 @@ function wireLink(id, url) {
 // ════════════════════════════════════════════════════════
 (async function initTourNav() {
   try {
-    const res    = await fetch(
-      `https://rest.bandsintown.com/artists/${encodeURIComponent(BIT_ARTIST)}/events?app_id=${BIT_APP_ID}&date=upcoming`,
-      { headers: { Accept: 'application/json' } }
-    );
+    const res    = await fetch('https://admin-api.wdhan.com/bandsintown');
     const events = await res.json();
     if (Array.isArray(events) && events.length > 0) {
       const desktop = document.getElementById('nav-tour-link');
