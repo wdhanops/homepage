@@ -7,6 +7,7 @@
  *  2. Fetches siteSettings from Sanity → wires social + streaming links
  *  3. Fetches Bandsintown → shows/hides Tour link dynamically
  *  4. Handles mobile burger open/close + keyboard Escape
+ *  5. Opens streaming modal on play button click — links to all platforms
  *
  * Each page needs ONE element in its <body> (before this script):
  *   <div id="nav-mount"></div>
@@ -65,6 +66,348 @@
     { label: 'Merch',   href: 'https://wd-han.myshopify.com' },
   ];
 
+  /* ── Platform definitions for the streaming modal ── */
+  /*
+   * followUrl: direct link to follow/subscribe action on that platform.
+   *   - YouTube Music: sub_confirmation=1 triggers subscribe prompt
+   *   - Tidal / Deezer: platform picks up the artist page as a follow target
+   *   - Spotify: no dedicated follow URL — set to null, falls back to main url
+   *   - Apple Music / Amazon: no follow URL — set to null, follow btn hidden
+   *
+   * To add your Tidal or Deezer artist IDs later, replace the placeholder
+   * strings in followUrl below with the correct URLs.
+   */
+  const PLATFORMS = [
+    {
+      key:       'spotify',
+      label:     'Spotify',
+      color:     '#1DB954',
+      followUrl: null,  // Spotify has no direct follow link — main link used
+      canFollow: false, // hide follow btn; Spotify's artist page handles it
+      icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.622.622 0 01-.857.207c-2.348-1.469-5.304-1.8-8.785-.986a.623.623 0 01-.277-1.215c3.809-.87 7.076-.496 9.712 1.137a.624.624 0 01.207.857zm1.223-2.722a.78.78 0 01-1.072.257C14.1 12.307 10.539 11.88 7.2 12.84a.778.778 0 01-.453-1.489c3.795-1.153 7.707-.595 10.806 1.28a.778.778 0 01.256 1.071zm.105-2.835c-3.223-1.914-8.54-2.09-11.618-1.156a.935.935 0 11-.543-1.79c3.532-1.073 9.404-.866 13.115 1.337a.934.934 0 01-1.109 1.498z"/></svg>`,
+    },
+    {
+      key:       'appleMusic',
+      label:     'Apple Music',
+      color:     '#FC3C44',
+      followUrl: null,
+      canFollow: false,
+      icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.994 6.124a9.23 9.23 0 00-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 00-1.769-.75c-.69-.15-1.39-.2-2.09-.2H6.289c-.7 0-1.4.05-2.09.2a5.022 5.022 0 00-1.77.75C1.31 1.624.563 2.624.244 3.934a9.23 9.23 0 00-.24 2.19C0 6.75 0 7.5 0 8.25v7.5c0 .75 0 1.5.004 2.126a9.23 9.23 0 00.24 2.19c.317 1.31 1.062 2.31 2.18 3.043a5.022 5.022 0 001.769.75c.69.15 1.39.2 2.09.2h11.433c.7 0 1.4-.05 2.09-.2a5.022 5.022 0 001.77-.75c1.118-.734 1.863-1.734 2.18-3.043a9.23 9.23 0 00.24-2.19c.004-.626.004-1.376.004-2.126v-7.5c0-.75 0-1.5-.012-2.126zM8.073 16.915V8.205l8 4.355-8 4.355z"/></svg>`,
+    },
+    {
+      key:       'youtubeMusic',
+      label:     'YouTube Music',
+      color:     '#FF0000',
+      followUrl: 'https://www.youtube.com/@wdhanband?sub_confirmation=1',
+      canFollow: true,
+      icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm-1 14.5v-9l7 4.5-7 4.5z"/></svg>`,
+    },
+    {
+      key:       'amazonMusic',
+      label:     'Amazon Music',
+      color:     '#25D1DA',
+      followUrl: null,
+      canFollow: false,
+      icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.958 10.09c0 1.232.029 2.256-.591 3.351-.502.891-1.301 1.438-2.186 1.438-1.214 0-1.922-.924-1.922-2.292 0-2.692 2.415-3.182 4.699-3.182v.685zm3.186 7.705a.661.661 0 01-.75.074c-1.052-.874-1.238-1.276-1.814-2.106-1.734 1.767-2.962 2.297-5.209 2.297-2.66 0-4.731-1.641-4.731-4.925 0-2.565 1.391-4.309 3.37-5.164 1.715-.754 4.11-.891 5.942-1.098v-.41c0-.753.06-1.642-.383-2.294-.385-.579-1.124-.818-1.775-.818-1.206 0-2.277.618-2.54 1.897-.054.285-.261.567-.547.582l-3.065-.33c-.259-.057-.548-.266-.472-.662C5.97 2.368 9.04 1 12.06 1c1.644 0 3.791.438 5.089 1.685 1.644 1.538 1.487 3.594 1.487 5.831v5.279c0 1.588.659 2.286 1.279 3.145.216.305.263.668-.01.894-.693.578-1.927 1.655-2.607 2.258l-.154-.097zm3.21 1.681c-1.504.5-3.073.874-4.717.874-2.144 0-4.051-.58-5.622-1.557-.201-.123-.425.1-.248.275 1.497 1.753 3.503 2.808 5.87 2.808 1.994 0 4.32-.754 5.854-2.302.321-.32.122-.703-.137-.598z"/></svg>`,
+    },
+    {
+      key:       'tidal',
+      label:     'Tidal',
+      color:     '#000000',
+      // Replace with your Tidal artist follow URL once you have your artist ID:
+      // e.g. 'https://tidal.com/artist/YOUR_TIDAL_ID/follow'
+      followUrl: null,
+      canFollow: false,
+      icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.012 3.992L8.008 7.996 4.004 3.992 0 7.996l4.004 4.004 4.004-4.004 4.004 4.004 4.004-4.004L20.02 11.996l-4.004 4.004-4.004-4.004-4.004 4.004-4.004-4.004L0 16.004l4.004 4.004 4.004-4.004 4.004 4.004 4.004-4.004 4.004 4.004L24 16.004l-4.004-4.004 4.004-4.004z"/></svg>`,
+    },
+    {
+      key:       'deezer',
+      label:     'Deezer',
+      color:     '#EF5466',
+      // Replace with your Deezer artist URL once you have your artist ID:
+      // e.g. 'https://www.deezer.com/artist/YOUR_DEEZER_ID'
+      followUrl: null,
+      canFollow: false,
+      icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.944 17.773h3.944v2.25h-3.944zm-5.372 0h3.944v2.25H13.57zm-5.37 0h3.944v2.25H8.2zm-5.317 0H6.83v2.25H2.883zM13.57 14.036h3.944v2.25H13.57zm-5.37 0h3.944v2.25H8.2zm-5.317 0H6.83v2.25H2.883zm16.06-3.738h3.944v2.25h-3.944zm-5.373 0h3.944v2.25H13.57zm-5.37 0h3.944v2.25H8.2zm-5.317 0H6.83v2.25H2.883zm16.06-3.737h3.944v2.25h-3.944zm-5.373 0h3.944v2.25H13.57zm-5.37 0h3.944v2.25H8.2zM18.944 2.824h3.944v2.25h-3.944zm-5.374 0h3.944v2.25H13.57z"/></svg>`,
+    },
+  ];
+
+  /* ── Streaming modal ── */
+  function buildStreamingModal() {
+    const existing = document.getElementById('streaming-modal-overlay');
+    if (existing) return; // already injected
+
+    const style = document.createElement('style');
+    style.textContent = `
+      #streaming-modal-overlay {
+        position: fixed;
+        inset: 0;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(0,0,0,.72);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity .25s ease, visibility .25s ease;
+      }
+      #streaming-modal-overlay.open {
+        opacity: 1;
+        visibility: visible;
+      }
+      #streaming-modal {
+        position: relative;
+        width: min(420px, calc(100vw - 32px));
+        background: #0e0e10;
+        border: 1px solid rgba(255,255,255,.08);
+        border-radius: 20px;
+        overflow: hidden;
+        transform: translateY(18px) scale(.97);
+        transition: transform .3s cubic-bezier(.22,1,.36,1);
+        box-shadow: 0 32px 80px rgba(0,0,0,.6);
+      }
+      #streaming-modal-overlay.open #streaming-modal {
+        transform: translateY(0) scale(1);
+      }
+      #streaming-modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 20px 20px 16px;
+        border-bottom: 1px solid rgba(255,255,255,.06);
+      }
+      #streaming-modal-header h2 {
+        font-size: 13px;
+        font-weight: 600;
+        letter-spacing: .08em;
+        text-transform: uppercase;
+        color: rgba(255,255,255,.45);
+        margin: 0;
+      }
+      #streaming-modal-close {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.07);
+        border: none;
+        cursor: pointer;
+        color: rgba(255,255,255,.6);
+        transition: background .15s, color .15s;
+        padding: 0;
+      }
+      #streaming-modal-close:hover {
+        background: rgba(255,255,255,.14);
+        color: #fff;
+      }
+      #streaming-modal-body {
+        padding: 12px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      /* ── Platform row ── */
+      .stream-row {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-radius: 12px;
+        overflow: hidden;
+      }
+      .stream-main {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: 14px;
+        padding: 14px 16px;
+        background: rgba(255,255,255,.04);
+        border-radius: 12px;
+        text-decoration: none;
+        color: #fff;
+        transition: background .15s, transform .12s;
+        min-width: 0;
+        border: 1px solid rgba(255,255,255,.06);
+      }
+      .stream-main:hover {
+        background: rgba(255,255,255,.09);
+        transform: translateX(2px);
+      }
+      .stream-main:active {
+        transform: translateX(0) scale(.98);
+      }
+      .stream-icon {
+        flex-shrink: 0;
+        width: 36px;
+        height: 36px;
+        border-radius: 9px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .stream-icon svg {
+        width: 20px;
+        height: 20px;
+      }
+      .stream-label {
+        font-size: 15px;
+        font-weight: 500;
+        letter-spacing: .01em;
+        flex: 1;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+      .stream-arrow {
+        flex-shrink: 0;
+        width: 16px;
+        height: 16px;
+        opacity: .3;
+        transition: opacity .15s, transform .15s;
+      }
+      .stream-main:hover .stream-arrow {
+        opacity: .7;
+        transform: translateX(2px);
+      }
+
+      /* ── Follow button ── */
+      .stream-follow {
+        flex-shrink: 0;
+        width: 64px;
+        height: 64px;
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 3px;
+        text-decoration: none;
+        background: rgba(255,255,255,.04);
+        border: 1px solid rgba(255,255,255,.06);
+        color: rgba(255,255,255,.6);
+        font-size: 9px;
+        font-weight: 700;
+        letter-spacing: .07em;
+        text-transform: uppercase;
+        transition: background .15s, color .15s, border-color .15s, transform .12s;
+        cursor: pointer;
+      }
+      .stream-follow:hover {
+        color: #fff;
+        transform: scale(1.06);
+      }
+      .stream-follow:active {
+        transform: scale(.97);
+      }
+      .stream-follow svg {
+        width: 18px;
+        height: 18px;
+      }
+      .stream-follow-label {
+        line-height: 1;
+      }
+
+      /* Footer nudge */
+      #streaming-modal-footer {
+        padding: 10px 20px 18px;
+        text-align: center;
+        font-size: 11px;
+        color: rgba(255,255,255,.22);
+        letter-spacing: .04em;
+      }
+    `;
+    document.head.appendChild(style);
+
+    // Build row HTML — filled in later once we have URLs from Sanity
+    const overlay = document.createElement('div');
+    overlay.id = 'streaming-modal-overlay';
+    overlay.setAttribute('role', 'dialog');
+    overlay.setAttribute('aria-modal', 'true');
+    overlay.setAttribute('aria-label', 'Listen on streaming platforms');
+
+    overlay.innerHTML = `
+      <div id="streaming-modal">
+        <div id="streaming-modal-header">
+          <h2>Listen on</h2>
+          <button id="streaming-modal-close" aria-label="Close">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" style="width:14px;height:14px">
+              <line x1="6" y1="6" x2="18" y2="18"/>
+              <line x1="18" y1="6" x2="6" y2="18"/>
+            </svg>
+          </button>
+        </div>
+        <div id="streaming-modal-body">
+          <!-- rows injected by populateStreamingModal() -->
+        </div>
+        <div id="streaming-modal-footer">Follow us to never miss a release</div>
+      </div>
+    `;
+
+    document.body.appendChild(overlay);
+
+    // Close behaviours
+    const closeModal = () => overlay.classList.remove('open');
+
+    document.getElementById('streaming-modal-close').addEventListener('click', closeModal);
+
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay) closeModal();
+    });
+
+    window.addEventListener('keydown', e => {
+      if (e.key === 'Escape') closeModal();
+    });
+  }
+
+  function populateStreamingModal(socials) {
+    const body = document.getElementById('streaming-modal-body');
+    if (!body) return;
+
+    // Follow icon SVG (generic "add person" / "+" style)
+    const followIconSVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>`;
+
+    const arrowSVG = `<svg class="stream-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`;
+
+    let html = '';
+
+    PLATFORMS.forEach(p => {
+      const url = socials[p.key];
+      if (!url) return; // skip platforms with no URL in Sanity
+
+      const followUrl = p.canFollow && p.followUrl ? p.followUrl : null;
+
+      // Follow button: uses platform color on hover via inline style trick
+      const followBtn = followUrl
+        ? `<a class="stream-follow" href="${followUrl}" target="_blank" rel="noopener"
+             style="--follow-color:${p.color}"
+             aria-label="Follow WD-HAN on ${p.label}"
+             onmouseover="this.style.background='${p.color}22';this.style.borderColor='${p.color}55';this.style.color='${p.color}'"
+             onmouseout="this.style.background='';this.style.borderColor='';this.style.color=''">
+             ${followIconSVG}
+             <span class="stream-follow-label">Follow</span>
+           </a>`
+        : '';
+
+      html += `
+        <div class="stream-row">
+          <a class="stream-main" href="${url}" target="_blank" rel="noopener" aria-label="Listen on ${p.label}">
+            <span class="stream-icon" style="background:${p.color}22;color:${p.color}">
+              ${p.icon}
+            </span>
+            <span class="stream-label">${p.label}</span>
+            ${arrowSVG}
+          </a>
+          ${followBtn}
+        </div>`;
+    });
+
+    body.innerHTML = html || '<p style="color:rgba(255,255,255,.4);padding:12px;font-size:14px">No streaming links configured yet.</p>';
+  }
+
   /* ── Inject nav HTML ── */
   function buildNav() {
     const mount = document.getElementById('nav-mount');
@@ -96,9 +439,9 @@
     ${desktopLinks}
   </div>
 
-  <a class="nav-cta" id="nav-spotify-cta" href="#" target="_blank" rel="noopener" aria-label="Listen on Spotify">
+  <button class="nav-cta" id="nav-spotify-cta" aria-label="Listen on streaming platforms">
     <svg viewBox="0 0 24 24" style="width:16px;height:16px;fill:currentColor;margin-left:2px"><path d="M6 4.5v15l13-7.5z"/></svg>
-  </a>
+  </button>
 
   <button class="nav-burger" id="nav-burger-btn" aria-label="Open menu">
     <svg viewBox="0 0 22 22" style="width:22px;height:22px;stroke:currentColor;stroke-width:2;stroke-linecap:round;fill:none">
@@ -129,18 +472,25 @@
       const { result } = await res.json();
       const s = result?.socials || {};
 
+      // Build + populate the streaming modal
+      buildStreamingModal();
+      populateStreamingModal(s);
+
+      // Wire the nav play button to open the modal
+      const cta = document.getElementById('nav-spotify-cta');
+      if (cta) {
+        cta.addEventListener('click', () => {
+          const overlay = document.getElementById('streaming-modal-overlay');
+          if (overlay) overlay.classList.add('open');
+        });
+      }
+
       function wire(id, url) {
         if (!url) return;
         const el = document.getElementById(id);
         if (!el) return;
         el.href = url;
         el.style.display = '';
-      }
-
-      // Nav Spotify play button
-      if (s.spotify) {
-        const cta = document.getElementById('nav-spotify-cta');
-        if (cta) cta.href = s.spotify;
       }
 
       // Footer listen cluster (present on homepage only; safe to no-op elsewhere)
@@ -157,6 +507,18 @@
 
     } catch(e) {
       console.warn('[nav.js] Site settings fetch failed', e);
+
+      // Even on fetch failure, inject the modal so button isn't dead
+      buildStreamingModal();
+      populateStreamingModal({});
+
+      const cta = document.getElementById('nav-spotify-cta');
+      if (cta) {
+        cta.addEventListener('click', () => {
+          const overlay = document.getElementById('streaming-modal-overlay');
+          if (overlay) overlay.classList.add('open');
+        });
+      }
     }
   }
 
@@ -164,8 +526,8 @@
   async function initTourNav() {
     try {
       const res = await fetch('https://admin-api.wdhan.com/bandsintown', {
-  headers: { Accept: 'application/json' }
-   });
+        headers: { Accept: 'application/json' }
+      });
       const events = await res.json();
       if (Array.isArray(events) && events.length > 0) {
         const desktop = document.getElementById('nav-tour-link');
