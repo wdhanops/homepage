@@ -40,17 +40,19 @@
   justify-content: center;
   gap: 28px;
 }
+
 .nav-center a {
-  font-size: 12px;
-  letter-spacing: .18em;
+  font-size: 14px;
+  letter-spacing: .14em;
   text-transform: uppercase;
-  font-weight: 600;
-  color: var(--muted);
+  font-weight: 700;
+  color: var(--ink);
   transition: color .2s;
   text-decoration: none;
 }
+
 .nav-center a:hover,
-.nav-center a.active { color: var(--ink); }
+.nav-center a.active { color: var(--accent); }
 
 /* Spotify play button */
 .nav-cta {
