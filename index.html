@@ -350,51 +350,51 @@
 ============================================================ */
 @media (max-width: 768px) {
 
-  /* Force background stage to viewport width only */
-  .bg-stage {
-    width: 100vw;
-    max-width: 100%;
-    overflow: hidden;
-  }
-
+  /* Image: viewport width, natural height, centred vertically */
   .bg-slide {
-    background-position: center top;
-    background-size: cover;
-    width: 100%;
-    max-width: 100vw;
+    background-size: 100% auto;
+    background-position: center center;
+    background-repeat: no-repeat;
   }
 
-  /* Feather top AND bottom into black */
+  /* Feather top and bottom smoothly into --bg */
   .bg-overlay {
     background: linear-gradient(
       to bottom,
       #08080a 0%,
-      rgba(8,8,10,0.5) 12%,
-      rgba(8,8,10,0.15) 30%,
-      rgba(8,8,10,0.15) 60%,
-      rgba(8,8,10,0.7) 80%,
+      rgba(8,8,10,0.4) 18%,
+      rgba(8,8,10,0.1) 35%,
+      rgba(8,8,10,0.1) 65%,
+      rgba(8,8,10,0.4) 82%,
       #08080a 100%
     );
   }
 
-  /* Hero title: scale down but NEVER break mid-word */
+  /* Hero title: constrain width, allow normal word wrapping */
   .hero-wordmark {
-    font-size: clamp(36px, 15vw, 72px);
+    font-size: clamp(36px, 14vw, 70px);
     white-space: normal;
-    word-break: normal;       /* no mid-word breaks */
-    overflow-wrap: normal;    /* no mid-word breaks */
-    word-wrap: normal;
+    word-break: normal;
+    overflow-wrap: break-word;
     hyphens: none;
     text-align: center;
-    line-height: 0.9;
-    padding: 0 12px;
-    width: 100%;
+    line-height: 0.92;
+    max-width: 100%;
+    display: block;
+    padding: 0 16px;
+    box-sizing: border-box;
+    /* Kill the rotation in the float animation on mobile — that's what causes overflow */
+    animation: float-mobile 7s ease-in-out infinite;
   }
 
-  /* Keep sub-copy readable */
+  @keyframes float-mobile {
+    0%, 100% { transform: translateY(0); }
+    50%       { transform: translateY(-8px); }
+  }
+
   .hero-sub {
     font-size: 15px;
-    padding: 0 8px;
+    padding: 0 16px;
   }
 }
   </style>
