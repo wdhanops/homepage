@@ -562,56 +562,51 @@ function wireLink(id, url) {
     const ctaRow = document.getElementById('cta-row');
     ctaRow.innerHTML = '';
 
-    // Icon SVGs for buttons
-    const SPOTIFY_ICON = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.5 17.3a.75.75 0 0 1-1.03.25c-2.82-1.72-6.37-2.11-10.55-1.16a.75.75 0 1 1-.33-1.46c4.58-1.04 8.5-.6 11.66 1.34.36.22.47.69.25 1.03zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.23-1.99-8.16-2.56-11.98-1.4a.94.94 0 1 1-.55-1.8c4.37-1.32 9.8-.68 13.5 1.6.44.27.58.85.32 1.29zm.13-3.4C15.73 8.26 8.5 8.02 4.78 9.15a1.12 1.12 0 1 1-.65-2.15c4.28-1.3 12.26-1.05 16.55 1.5a1.12 1.12 0 1 1-1.15 1.93z"/></svg>`;
-    const BELL_ICON    = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3z"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>`;
+    // Icon SVG lookup — keyed by the string stored in Sanity
+    const ICON_SVGS = {
+      spotify: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.5 17.3a.75.75 0 0 1-1.03.25c-2.82-1.72-6.37-2.11-10.55-1.16a.75.75 0 1 1-.33-1.46c4.58-1.04 8.5-.6 11.66 1.34.36.22.47.69.25 1.03zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.23-1.99-8.16-2.56-11.98-1.4a.94.94 0 1 1-.55-1.8c4.37-1.32 9.8-.68 13.5 1.6.44.27.58.85.32 1.29zm.13-3.4C15.73 8.26 8.5 8.02 4.78 9.15a1.12 1.12 0 1 1-.65-2.15c4.28-1.3 12.26-1.05 16.55 1.5a1.12 1.12 0 1 1-1.15 1.93z"/></svg>`,
+      apple:   `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.36 12.6c-.02-2.3 1.88-3.4 1.96-3.46-1.07-1.56-2.73-1.78-3.32-1.8-1.41-.14-2.76.83-3.47.83-.72 0-1.82-.81-3-.79-1.54.02-2.96.9-3.75 2.27-1.6 2.78-.41 6.9 1.15 9.16.76 1.1 1.67 2.34 2.86 2.3 1.15-.05 1.58-.74 2.97-.74 1.38 0 1.77.74 2.98.72 1.23-.02 2.01-1.12 2.76-2.23.87-1.28 1.23-2.52 1.25-2.58-.03-.01-2.4-.92-2.42-3.65zM14.13 5.6c.63-.77 1.06-1.83.94-2.9-.91.04-2.02.61-2.67 1.37-.58.68-1.09 1.76-.95 2.8 1.02.08 2.05-.51 2.68-1.27z"/></svg>`,
+      youtube: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.2C0 8.08 0 12 0 12s0 3.92.5 5.8a3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14C24 15.92 24 12 24 12s0-3.92-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg>`,
+      tidal:   `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 3L8 7l4 4-4 4 4 4 4-4-4-4 4-4z"/></svg>`,
+      bell:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3z"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>`,
+      mail:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg>`,
+      ticket:  `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 9a2 2 0 0 1 0-4h20a2 2 0 0 1 0 4v6a2 2 0 0 1 0 4H2a2 2 0 0 1 0-4V9z"/><line x1="12" y1="5" x2="12" y2="19"/></svg>`,
+      play:    `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>`,
+      star:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+      link:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>`,
+      merch:   `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>`,
+    };
 
-    function makeBtn(b, isSubscribe) {
+    function makeBtn(b) {
       if (!b?.enabled) return null;
-      const a = document.createElement(isSubscribe ? 'button' : 'a');
-      const styleClass = b.style === 'outline' ? 'btn btn-ghost' : 'btn btn-primary';
-      a.className = styleClass;
-      if (!isSubscribe && b.link) { a.href = b.link; a.target = '_blank'; a.rel = 'noopener'; }
-      // Icon: guess from link content — Spotify icon if link contains 'spotify', bell otherwise
-      let iconHtml = '';
-      if (b.icon) {
-        iconHtml = (b.link || '').includes('spotify') ? SPOTIFY_ICON : BELL_ICON;
+      const isModal  = b.action === 'newsletter';
+      const el       = document.createElement(isModal ? 'button' : 'a');
+      el.className   = b.style === 'outline' ? 'btn btn-ghost' : 'btn btn-primary';
+      if (!isModal && b.link) { el.href = b.link; el.target = '_blank'; el.rel = 'noopener'; }
+      const iconSvg  = (b.icon && b.icon !== 'none' && ICON_SVGS[b.icon]) ? ICON_SVGS[b.icon] : '';
+      el.innerHTML   = iconSvg + (b.text || '');
+      if (isModal) {
+        el.addEventListener('click', () => document.getElementById('news-modal').classList.add('open'));
       }
-      a.innerHTML = iconHtml + (b.text || '');
-      return a;
+      return el;
     }
 
-    const btn1 = makeBtn(hs.btn1, false);
-    const btn2 = makeBtn(hs.btn2, hs.btn2?.text?.toLowerCase().includes('subscri'));
-    if (btn1) {
-      ctaRow.appendChild(btn1);
-      // If btn2 is meant to open the newsletter modal, wire it up
-      if (btn2 && (hs.btn2?.text?.toLowerCase().includes('subscri') || !hs.btn2?.link)) {
-        btn2.addEventListener('click', () => document.getElementById('news-modal').classList.add('open'));
-        ctaRow.appendChild(btn2);
-      } else if (btn2) {
-        ctaRow.appendChild(btn2);
-      }
-    } else if (btn2) {
-      ctaRow.appendChild(btn2);
-    }
+    const btn1 = makeBtn(hs.btn1);
+    const btn2 = makeBtn(hs.btn2);
+    if (btn1) ctaRow.appendChild(btn1);
+    if (btn2) ctaRow.appendChild(btn2);
 
     // Fallback: if NO buttons configured at all, show sensible defaults
     if (!ctaRow.children.length) {
       ctaRow.innerHTML = `
         <a class="btn btn-primary" href="https://nfan.link/wdhan" target="_blank" rel="noopener">
-          ${SPOTIFY_ICON} Pre-Save
+          ${ICON_SVGS.spotify} Pre-Save
         </a>
         <button class="btn btn-ghost" id="subscribe-btn">
-          ${BELL_ICON} Subscribe
+          ${ICON_SVGS.bell} Subscribe
         </button>`;
-    }
-
-    // Wire subscribe button (either the default one or btn2 if it's a subscribe button)
-    const subBtn = document.getElementById('subscribe-btn') || ctaRow.querySelector('button');
-    if (subBtn && !subBtn._wired) {
-      subBtn._wired = true;
-      subBtn.addEventListener('click', () => document.getElementById('news-modal').classList.add('open'));
+      document.getElementById('subscribe-btn').addEventListener('click',
+        () => document.getElementById('news-modal').classList.add('open'));
     }
 
     // ── Social + Streaming links ─────────────────────────
