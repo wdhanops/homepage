@@ -114,20 +114,16 @@
       key:       'tidal',
       label:     'Tidal',
       color:     '#000000',
-      // Replace with your Tidal artist follow URL once you have your artist ID:
-      // e.g. 'https://tidal.com/artist/YOUR_TIDAL_ID/follow'
-      followUrl: null,
-      canFollow: false,
+      followUrl: 'https://tidal.com/artist/41078195/follow',
+      canFollow: true,
       icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.012 3.992L8.008 7.996 4.004 3.992 0 7.996l4.004 4.004 4.004-4.004 4.004 4.004 4.004-4.004L20.02 11.996l-4.004 4.004-4.004-4.004-4.004 4.004-4.004-4.004L0 16.004l4.004 4.004 4.004-4.004 4.004 4.004 4.004-4.004 4.004 4.004L24 16.004l-4.004-4.004 4.004-4.004z"/></svg>`,
     },
     {
       key:       'deezer',
       label:     'Deezer',
       color:     '#EF5466',
-      // Replace with your Deezer artist URL once you have your artist ID:
-      // e.g. 'https://www.deezer.com/artist/YOUR_DEEZER_ID'
-      followUrl: null,
-      canFollow: false,
+      followUrl: 'https://www.deezer.com/artist/3797251',
+      canFollow: true,
       icon: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.944 17.773h3.944v2.25h-3.944zm-5.372 0h3.944v2.25H13.57zm-5.37 0h3.944v2.25H8.2zm-5.317 0H6.83v2.25H2.883zM13.57 14.036h3.944v2.25H13.57zm-5.37 0h3.944v2.25H8.2zm-5.317 0H6.83v2.25H2.883zm16.06-3.738h3.944v2.25h-3.944zm-5.373 0h3.944v2.25H13.57zm-5.37 0h3.944v2.25H8.2zm-5.317 0H6.83v2.25H2.883zm16.06-3.737h3.944v2.25h-3.944zm-5.373 0h3.944v2.25H13.57zm-5.37 0h3.944v2.25H8.2zM18.944 2.824h3.944v2.25h-3.944zm-5.374 0h3.944v2.25H13.57z"/></svg>`,
     },
   ];
