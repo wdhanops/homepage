@@ -8,6 +8,9 @@
   <title>WD-HAN</title>
   <meta name="description" content="WD-HAN — official site." />
 
+  <!-- Nav styles (shared) -->
+  <link rel="stylesheet" href="/assets/css/nav.css" />
+
   <!-- Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -16,7 +19,7 @@
   <style>
     @font-face {
       font-family: 'Splatink';
-      src: url('assets/fonts/Splatink.otf') format('opentype');
+      src: url('/assets/fonts/Splatink.otf') format('opentype');
       font-display: swap;
     }
 
@@ -76,33 +79,26 @@
     }
 
     /* ============================================================
-       GLOW ORBS
+       GLOW ORBS — static, no animation; subtle light bleed only
     ============================================================ */
     .glow-field {
       position: fixed; inset: 0; z-index: 2;
-      pointer-events: none; opacity: .42;
+      pointer-events: none; opacity: .38;
       mix-blend-mode: screen; contain: strict;
     }
     .glow {
-      position: absolute; border-radius: 50%; will-change: transform;
+      position: absolute; border-radius: 50%;
       background: radial-gradient(circle at 50% 50%,
         var(--accent) 0%,
         color-mix(in srgb, var(--accent) 55%, transparent) 36%,
         transparent 68%);
     }
-    @keyframes drift1 { 0%,100%{transform:translate(0,0) scale(1)} 33%{transform:translate(60px,40px) scale(1.15)} 66%{transform:translate(-30px,70px) scale(.9)} }
-    @keyframes drift2 { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-80px,-50px) scale(1.2)} }
-    @keyframes drift3 { 0%,100%{transform:translate(0,0) scale(1)} 40%{transform:translate(50px,-60px) scale(.85)} 75%{transform:translate(-40px,30px) scale(1.1)} }
-    @keyframes drift4 { 0%,100%{transform:translate(0,0) scale(1.05)} 50%{transform:translate(70px,60px) scale(.95)} }
-    @keyframes drift5 { 0%,100%{transform:translate(0,0) scale(1)} 45%{transform:translate(-60px,40px) scale(1.18)} }
-    @keyframes drift6 { 0%,100%{transform:translate(0,0) scale(.95)} 50%{transform:translate(40px,-70px) scale(1.1)} }
-    .b1{animation:drift1 16s var(--ease) infinite;width:340px;height:340px;top:6%;left:10%;}
-    .b2{animation:drift2 19s var(--ease) infinite;width:260px;height:260px;top:55%;left:78%;}
-    .b3{animation:drift3 22s var(--ease) infinite;width:400px;height:400px;top:28%;left:58%;}
-    .b4{animation:drift4 18s var(--ease) infinite;width:230px;height:230px;top:72%;left:18%;}
-    .b5{animation:drift5 21s var(--ease) infinite;width:300px;height:300px;top:4%;left:68%;}
-    .b6{animation:drift6 24s var(--ease) infinite;width:210px;height:210px;top:60%;left:44%;}
-    @media (prefers-reduced-motion: reduce) { .glow { animation: none !important; } }
+    .b1 { width:340px; height:340px; top:6%;  left:10%; }
+    .b2 { width:260px; height:260px; top:55%; left:78%; }
+    .b3 { width:400px; height:400px; top:28%; left:58%; }
+    .b4 { width:230px; height:230px; top:72%; left:18%; }
+    .b5 { width:300px; height:300px; top:4%;  left:68%; }
+    .b6 { width:210px; height:210px; top:60%; left:44%; }
 
     /* ============================================================
        PAGE SHELL
@@ -113,33 +109,6 @@
       display: flex; flex-direction: column;
       overflow: hidden;
     }
-
-    /* ============================================================
-       NAV
-    ============================================================ */
-    .nav {
-      flex: 0 0 auto;
-      display: grid; grid-template-columns: auto 1fr auto;
-      align-items: center; padding: 22px 36px; gap: 20px;
-      position: relative; z-index: 10;
-    }
-    .nav-logo { display: flex; align-items: center; }
-    .nav-logo svg { height: 36px; width: auto; fill: var(--ink); transition: fill .2s; filter: drop-shadow(0 2px 12px rgba(0,0,0,.4)); }
-    .nav-logo:hover svg { fill: var(--accent); }
-    .nav-center { display: flex; align-items: center; justify-content: center; gap: 28px; }
-    .nav-center a { font-size: 12px; letter-spacing: .18em; text-transform: uppercase; font-weight: 600; color: var(--muted); transition: color .2s; }
-    .nav-center a:hover { color: var(--ink); }
-    .nav-cta {
-      display: flex; align-items: center; justify-content: center;
-      width: 42px; height: 42px; border-radius: 50%;
-      background: var(--accent); color: var(--accent-ink);
-      border: none; transition: transform .18s var(--ease), box-shadow .2s;
-      flex-shrink: 0;
-    }
-    .nav-cta svg { width: 16px; height: 16px; fill: currentColor; margin-left: 2px; }
-    .nav-cta:hover { transform: scale(1.08); box-shadow: 0 8px 24px color-mix(in srgb, var(--accent) 50%, transparent); }
-    .nav-burger { display: none; background: none; border: none; color: var(--ink); padding: 4px; position: relative; z-index: 11; }
-    .nav-burger svg { width: 22px; height: 22px; stroke: currentColor; stroke-width: 2; stroke-linecap: round; fill: none; }
 
     /* ============================================================
        HERO
@@ -156,27 +125,15 @@
       background: radial-gradient(ellipse at center, color-mix(in srgb, var(--accent) 18%, transparent), transparent 70%);
       filter: blur(40px);
     }
-    .hero-kicker {
-      display: inline-flex; align-items: center; gap: 10px; margin-bottom: 22px;
-      font-family: "Space Mono", monospace;
-      font-size: 11px; letter-spacing: .34em; text-transform: uppercase; color: var(--accent);
-    }
-    .hero-kicker .dot {
-      width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
-      animation: pulse 1.8s var(--ease) infinite;
-    }
-    @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.3;transform:scale(.65)} }
 
     .hero-wordmark {
       font-family: var(--font-display);
       font-size: clamp(56px, 13vw, 148px);
       line-height: .88; letter-spacing: .02em; text-transform: uppercase;
       color: var(--ink); display: block;
-      animation: float 7s ease-in-out infinite;
       text-shadow: 0 4px 40px rgba(0,0,0,.5);
     }
     .hero-wordmark em { color: var(--accent); font-style: normal; }
-    @keyframes float { 0%,100%{transform:translateY(0) rotate(-.35deg)} 50%{transform:translateY(-10px) rotate(.35deg)} }
 
     .hero-sub {
       font-size: clamp(14px, 1.5vw, 17px); color: var(--muted);
@@ -253,25 +210,6 @@
     }
 
     /* ============================================================
-       MOBILE NAV OVERLAY
-    ============================================================ */
-    .nav-mobile {
-      display: none; position: fixed; inset: 0; z-index: 200;
-      background: rgba(8,8,10,.97); backdrop-filter: blur(12px);
-      flex-direction: column; align-items: center; justify-content: center;
-      gap: 28px; padding: 40px;
-    }
-    .nav-mobile.open { display: flex; }
-    .nav-mobile a {
-      font-family: var(--font-display);
-      font-size: clamp(36px, 10vw, 60px); text-transform: uppercase;
-      color: var(--ink); transition: color .2s;
-    }
-    .nav-mobile a:hover { color: var(--accent); }
-    .nav-mobile-close { position: absolute; top: 24px; right: 28px; background: none; border: none; color: var(--ink); padding: 4px; }
-    .nav-mobile-close svg { width: 24px; height: 24px; stroke: currentColor; stroke-width: 2; stroke-linecap: round; fill: none; }
-
-    /* ============================================================
        NEWSLETTER MODAL
     ============================================================ */
     .modal-scrim {
@@ -326,9 +264,6 @@
        RESPONSIVE
     ============================================================ */
     @media (max-width: 800px) {
-      .nav-left, .nav-center, .nav-right { display: none; }
-      .nav-burger { display: block; }
-      .nav-logo svg { height: 30px; }
       .foot-inner { grid-template-columns: 1fr 1fr; }
       .icon-cluster.listen { grid-column: 1; justify-content: flex-start; }
       .icon-cluster.social { grid-column: 2; justify-content: flex-end; }
@@ -337,66 +272,71 @@
       .cd-unit { min-width: 66px; padding: 11px 6px 8px; }
     }
     @media (max-width: 480px) {
-      .nav { padding: 16px 20px; }
       .foot { padding: 0 20px 18px; }
       .icon-btn { width: 36px; height: 36px; }
       .icon-btn svg { width: 15px; height: 15px; }
       .cta-row { gap: 10px; }
       .btn { padding: 13px 20px; font-size: 13px; }
     }
-    
-/* ============================================================
-   MOBILE FIXES
-============================================================ */
-@media (max-width: 768px) {
 
-  /* Force background stage to viewport width only */
-  .bg-stage {
-    width: 100vw;
-    max-width: 100%;
-    overflow: hidden;
-  }
+    /* ============================================================
+       MOBILE FIXES
+    ============================================================ */
+    @media (max-width: 768px) {
+      .bg-stage {
+        width: 100vw;
+        max-width: 100%;
+        overflow: hidden;
+      }
+      .bg-slide {
+        background-position: center top;
+        background-size: cover;
+        width: 100%;
+        max-width: 100vw;
+      }
+      .bg-overlay {
+        background: linear-gradient(
+          to bottom,
+          #08080a 0%,
+          rgba(8,8,10,0.5) 12%,
+          rgba(8,8,10,0.15) 30%,
+          rgba(8,8,10,0.15) 60%,
+          rgba(8,8,10,0.7) 80%,
+          #08080a 100%
+        );
+      }
+      .hero-wordmark {
+        font-size: clamp(36px, 15vw, 72px);
+        white-space: normal;
+        word-break: normal;
+        overflow-wrap: normal;
+        word-wrap: normal;
+        hyphens: none;
+        text-align: center;
+        line-height: 0.9;
+        padding: 0 12px;
+        width: 100%;
+      }
+      .hero-sub {
+        font-size: 15px;
+        padding: 0 8px;
+      }
+    }
 
-  .bg-slide {
-    background-position: center top;
-    background-size: cover;
-    width: 100%;
-    max-width: 100vw;
-  }
-
-  /* Feather top AND bottom into black */
-  .bg-overlay {
-    background: linear-gradient(
-      to bottom,
-      #08080a 0%,
-      rgba(8,8,10,0.5) 12%,
-      rgba(8,8,10,0.15) 30%,
-      rgba(8,8,10,0.15) 60%,
-      rgba(8,8,10,0.7) 80%,
-      #08080a 100%
-    );
-  }
-
-  /* Hero title: scale down but NEVER break mid-word */
-  .hero-wordmark {
-    font-size: clamp(36px, 15vw, 72px);
-    white-space: normal;
-    word-break: normal;       /* no mid-word breaks */
-    overflow-wrap: normal;    /* no mid-word breaks */
-    word-wrap: normal;
-    hyphens: none;
-    text-align: center;
-    line-height: 0.9;
-    padding: 0 12px;
-    width: 100%;
-  }
-
-  /* Keep sub-copy readable */
-  .hero-sub {
-    font-size: 15px;
-    padding: 0 8px;
-  }
-}
+    /* ============================================================
+       NAV OVERRIDES FOR HOMEPAGE
+       Make nav links full white, larger, bolder — matching other pages
+    ============================================================ */
+    .nav-center a {
+      color: var(--ink) !important;
+      font-size: 14px !important;
+      font-weight: 700 !important;
+      letter-spacing: .14em !important;
+    }
+    .nav-center a:hover,
+    .nav-center a.active {
+      color: var(--accent) !important;
+    }
   </style>
 </head>
 <body>
@@ -412,41 +352,17 @@
   <div class="glow b4"></div><div class="glow b5"></div><div class="glow b6"></div>
 </div>
 
+<!-- ── Shared nav (injected by nav.js) ── -->
+<div id="nav-mount"></div>
+
 <!-- ── Page shell ── -->
 <div class="page">
 
-  <!-- NAV -->
-  <nav class="nav">
-    <a href="/" class="nav-logo" aria-label="WD-HAN home">
-      <svg viewBox="0 0 400 370" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-        <g><path d="M175.919,182.501 C184.816,181.582 190.177,176.624 196.674,163.107 L206.221,143.586 C210.982,132.818 214.134,124.234 217.242,113.452 C224.768,86.799 230.381,75.392 246.422,52.998 C253.945,42.311 257.798,31.636 256.973,23.647 C255.38,8.212 243.454,-0.651 226.203,1.129 C215.671,2.216 209.132,13.536 208.627,31.756 C207.413,78.68 187.206,138.942 172.134,140.498 C164.507,141.285 158.385,135.31 156.961,121.509 C155.949,111.703 158.581,99.87 164.282,87.536 C172.439,70.544 178.561,48.073 177.605,38.812 C176.949,32.457 175.354,27.666 169.206,24.997 C163.84,22.798 160.484,24.062 156.532,26.672 C150.007,31.016 145.202,39.587 141.736,52.241 C138.973,62.803 137.592,74.324 136.332,83.447 C130.907,119.794 121.723,139.277 109.557,140.533 C104.472,141.058 101.825,136.743 100.756,126.392 C98.713,106.599 104.028,86.965 117.652,64.27 C124.573,53.095 128.314,41.33 127.471,33.159 C126.065,19.54 115.629,10.89 102.374,12.258 C84.578,14.095 77.41,33.554 81.196,70.235 C82.545,83.309 83.625,97.329 81.725,110.922 L76.74,142.635 C76.132,145.635 76.031,148.214 76.274,150.575 C77.83,165.647 92.31,177.916 106.655,176.436 C110.832,176.005 115.31,173.157 125.255,164.606 C130.29,160.049 133.44,156.787 136.728,156.631 C140.397,156.62 143.859,159.933 148.553,168.074 C154.981,178.789 164.297,183.7 175.919,182.501 z"/><path d="M247.679,168.304 C252.037,167.854 265.075,160.819 277.926,151.968 C288.891,144.413 301.109,136.545 305.969,133.842 C330.555,119.559 367.131,82.75 363.757,50.064 C362.183,34.81 347.809,21.796 336.81,13.021 C329.197,6.832 309.782,1.863 293.802,3.512 C286.72,4.243 279.331,5.556 274.522,6.97 C270.602,8.109 262.869,9.641 257.966,10.147 C246.163,11.365 242.054,16.01 243.141,26.542 C243.572,30.719 244.967,35.346 247.214,39.335 C249.336,43.888 250.675,47.971 251.05,51.603 C251.312,54.145 251.193,56.543 250.71,58.979 C244.541,89.896 247.462,77.299 239.421,107.859 C237.754,114.822 234.841,123.932 232.641,129.297 C229.816,137.48 229.458,139.352 229.814,142.803 C231.051,154.787 240.96,168.997 247.679,168.304 z M275.328,123.24 C266.793,124.121 261.184,119.561 260.303,111.026 C256.892,77.977 284.163,39.926 313.581,36.89 C322.66,35.953 327.086,39.717 328.06,49.16 C330.703,74.764 304.563,120.222 275.328,123.24 z"/></g>
-        <g><path d="M47.157,369.063 C58.597,367.883 62.688,357.734 60.476,336.306 C59.295,324.866 59.366,318.436 60.802,307.46 C63.744,284.399 65.554,282.377 87.163,280.147 C98.967,278.929 99.68,280.507 98.876,290.5 C97.615,299.623 94.114,306.591 91,315.538 C88.118,323.176 87.008,328.429 87.439,332.606 C88.264,340.596 98.574,349.809 106.019,349.04 C114.554,348.159 118.037,341.01 116.631,327.391 C114.082,302.695 119.611,276.247 127.601,275.423 C128.691,275.31 129.981,275.361 131.452,275.392 C132.742,275.443 133.831,275.33 135.103,275.199 C147.087,273.962 155.097,267.997 154.347,260.733 C153.673,254.196 149.084,250.632 140.963,250.186 C139.473,249.972 137.075,249.853 134.821,249.351 C132.185,248.706 130.801,247.748 130.67,246.476 C130.351,243.389 134.148,232.17 138.91,221.401 C151.056,196.84 154.064,188.638 153.464,182.827 C152.639,174.838 142.204,166.188 134.395,166.994 C131.671,167.275 128.659,168.32 126.505,170.561 C123.68,173.422 122.095,177.623 121.33,182.657 C117.022,210.263 112.251,235.164 111.085,239.872 C109.706,246.071 106.631,250.059 101.534,252.236 C96.944,253.995 91.114,254.413 84.759,255.069 C77.858,255.781 75.166,254.591 74.772,250.777 C74.229,245.511 78.445,234.799 85.981,222.459 C91.781,212.868 94.495,203.595 93.67,195.606 C92.508,184.347 81.703,173.9 72.261,174.875 C59.913,176.149 52.67,194.882 55.144,218.852 C55.912,226.297 57.507,236.41 55.845,245.207 C54.133,255.293 47.758,261.09 37.226,262.177 C22.517,263.695 8.352,270.479 5.427,275.92 C3.115,280.196 2.136,292.043 6.988,292.826 C13.731,294.149 32.01,289.877 41.428,286.886 C43.569,286.298 44.571,287.112 44.683,288.202 C44.815,289.473 42.758,299.779 36.092,316.984 C30.435,331.515 26.976,340.681 27.726,347.945 C28.738,357.751 39.893,369.813 47.157,369.063 z"/><path d="M148.184,350.378 C154.702,349.521 161.462,333.224 161.984,325.829 L164.568,304.641 C166.6,292.319 171.975,280.386 177.555,275.772 C180.129,274.039 185.846,272.531 193.654,271.725 L205.057,270.181 C209.778,269.694 210.999,270.852 211.881,274.065 C212.782,277.459 213.357,281.253 213.844,285.975 C214.632,293.601 213.903,304.321 214.315,308.316 C215.496,319.756 225.649,331.004 234.002,330.142 C241.447,329.373 250.737,314.467 249.762,305.024 C249.462,302.119 246.683,296.533 243.472,292.093 C241.92,289.5 238.365,285.279 238.008,281.829 C236.753,269.663 242.02,263.797 252.734,262.691 C264.719,261.454 275.441,251.538 274.522,242.641 C274.166,239.19 271.618,237.618 267.078,238.087 C265.807,238.218 264.192,238.568 260.816,239.651 C257.097,240.952 252.776,241.765 248.6,242.196 C241.699,242.908 240.497,241.931 239.823,235.394 C239.448,231.762 239.505,226.985 240.19,219.39 C241.576,209.704 239.993,203.26 240.896,196.01 C242.125,188.358 244.444,180.595 243.619,172.605 C242.532,162.073 230.612,155.044 217.356,156.413 C214.088,156.75 209.967,157.726 204.907,160.267 C197.581,163.959 187.128,172.93 188.046,181.827 C190.539,205.979 170.41,251 156.61,252.425 L147.205,253.762 C107.224,259.357 91.902,256.717 80.555,264.128 C69.207,271.539 81.769,291.898 89.759,291.074 C92.12,290.83 95.37,290.311 100.95,285.698 C109.066,278.987 133.399,276.476 147.713,276.467 C151.564,276.436 152.277,278.014 151.18,281.614 C148.843,289.197 138.627,304.015 134.294,306.481 C126.046,311.921 121.26,320.673 122.103,328.844 C122.947,337.016 136.944,351.721 148.184,350.378 z M210.084,245.988 C201.55,246.869 195.639,244.726 195.208,240.549 C194.346,232.196 204.719,215.343 211.075,214.687 C214.162,214.368 216.165,215.997 217.103,219.754 C218.148,222.766 218.379,226.78 218.735,230.23 C219.747,240.035 216.803,245.294 210.084,245.988 z"/><path d="M263.988,334.388 C269.617,333.807 274.083,327.29 277.367,314.655 C279.987,304.474 280.985,292.809 281.8,286.485 C285.213,257.32 295.452,226.716 301.989,226.042 C307.8,225.442 312.256,233.057 315.559,249.05 C318.142,261.629 319.077,276.031 319.715,282.205 C322.695,311.078 328.04,318.417 344.928,316.674 C356.005,315.531 364.404,306.222 364.726,293.342 C365.358,269.236 375.537,225.608 387.088,202.393 C395.245,185.401 397.169,179.147 396.288,170.612 C394.995,158.082 381.56,148.825 370.107,151.658 C360.432,153.942 356.348,160.603 356.415,170.139 L356.522,192.518 C356.169,229.993 350.652,260.109 343.933,260.803 C338.667,261.346 333.911,250.826 329.921,229.949 C326.925,213.374 325.414,195.178 324.833,189.549 C322.284,164.853 314.335,155.396 297.447,157.139 C280.741,158.863 272.146,175.166 274.695,199.862 C275.688,209.486 275.354,218.697 273.831,225.277 C270.641,238.82 259.902,266.356 251.289,282.477 L242.099,300.126 C239.412,306.093 238.553,310.219 238.946,314.032 C240.09,325.109 252.911,335.531 263.988,334.388 z"/></g>
-      </svg>
-    </a>
-
-    <div class="nav-center">
-      <a href="about.html">The Band</a>
-      <a href="music.html">Music</a>
-      <a href="videos.html">Videos</a>
-      <a href="shows.html" id="nav-tour-link" style="display:none">Tour</a>
-      <a href="https://shop.wdhan.com">Merch</a>
-    </div>
-
-    <a class="nav-cta" id="nav-spotify-cta" href="https://open.spotify.com/artist/2byXGURM0QAhEgdMIWGM5c" target="_blank" rel="noopener" aria-label="Listen on Spotify">
-      <svg viewBox="0 0 24 24"><path d="M6 4.5v15l13-7.5z"/></svg>
-    </a>
-
-    <button class="nav-burger" id="nav-burger-btn" aria-label="Open menu">
-      <svg viewBox="0 0 22 22"><line x1="2" y1="5" x2="20" y2="5"/><line x1="2" y1="11" x2="20" y2="11"/><line x1="2" y1="17" x2="20" y2="17"/></svg>
-    </button>
-  </nav>
+  <!-- Spacer so hero doesn't sit behind the injected nav -->
+  <div style="flex:0 0 80px"></div>
 
   <!-- HERO -->
   <main class="hero" role="main">
-    <div class="hero-kicker" id="hero-kicker">
-      <span class="dot"></span><span id="kicker-text">New Single</span>
-    </div>
-
     <span class="hero-wordmark" id="hero-wordmark">Wild<br><em>Things</em></span>
 
     <p class="hero-sub" id="hero-sub">
@@ -496,18 +412,6 @@
 
 </div><!-- /page -->
 
-<!-- ── Mobile nav ── -->
-<nav class="nav-mobile" id="nav-mobile" aria-label="Mobile navigation">
-  <button class="nav-mobile-close" id="nav-mobile-close" aria-label="Close menu">
-    <svg viewBox="0 0 24 24"><line x1="6" y1="6" x2="18" y2="18"/><line x1="18" y1="6" x2="6" y2="18"/></svg>
-  </button>
-  <a href="about.html">The Band</a>
-  <a href="music.html">Music</a>
-  <a href="videos.html">Videos</a>
-  <a href="shows.html" id="nav-tour-link-mobile" style="display:none">Tour</a>
-  <a href="https://shop.wdhan.com" target="_blank" rel="noopener">Merch</a>
-</nav>
-
 <!-- ── Newsletter Modal ── -->
 <div class="modal-scrim" id="news-modal" role="dialog" aria-modal="true" aria-label="Subscribe to newsletter">
   <div class="modal">
@@ -528,14 +432,15 @@
   </div>
 </div>
 
+<!-- ── Shared nav ── -->
+<script src="/assets/js/nav.js"></script>
+
 <script>
 // ════════════════════════════════════════════════════════
 // CONFIG
 // ════════════════════════════════════════════════════════
 const SANITY_PROJECT = 'oz4mxjaz';
 const SANITY_DATASET = 'production';
-const BIT_ARTIST     = 'wd-han';
-const BIT_APP_ID     = 'wdhan-website';
 
 function sanityUrl(q) {
   return `https://${SANITY_PROJECT}.apicdn.sanity.io/v2021-10-21/data/query/${SANITY_DATASET}?query=${encodeURIComponent(q)}`;
@@ -561,7 +466,6 @@ function wireLink(id, url) {
 
 // ════════════════════════════════════════════════════════
 // 1. HOMEPAGE SETTINGS — main color, hero text, countdown, buttons
-//    Source: siteSettings.homepageSettings
 // ════════════════════════════════════════════════════════
 (async function initHomepageSettings() {
   const q = `*[_type == "siteSettings"][0]{
@@ -574,12 +478,11 @@ function wireLink(id, url) {
     const doc  = data?.result || {};
     const hs   = doc.homepageSettings || {};
     const s    = doc.socials || {};
-    
+
     // ── Main Color ──────────────────────────────────────
     if (hs.mainColor) setAccent(hs.mainColor);
 
     // ── Hero wordmark ────────────────────────────────────
-    // Splits into first word plain + rest accented; override font/size/color if set
     const wordmarkEl = document.getElementById('hero-wordmark');
     if (hs.mainHeader?.text) {
       const words = hs.mainHeader.text.trim().split(/\s+/);
@@ -595,9 +498,7 @@ function wireLink(id, url) {
 
     // ── Sub header ───────────────────────────────────────
     const subEl = document.getElementById('hero-sub');
-    if (hs.subHeader?.text) {
-      subEl.textContent = hs.subHeader.text;
-    }
+    if (hs.subHeader?.text) subEl.textContent = hs.subHeader.text;
     if (hs.subHeader?.font)  subEl.style.fontFamily = `'${hs.subHeader.font}', sans-serif`;
     if (hs.subHeader?.size)  subEl.style.fontSize   = hs.subHeader.size + 'px';
     if (hs.subHeader?.color && isValidHex(hs.subHeader.color)) subEl.style.color = hs.subHeader.color;
@@ -615,7 +516,6 @@ function wireLink(id, url) {
     const ctaRow = document.getElementById('cta-row');
     ctaRow.innerHTML = '';
 
-    // Icon SVG lookup — keyed by the string stored in Sanity
     const ICON_SVGS = {
       spotify: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.5 17.3a.75.75 0 0 1-1.03.25c-2.82-1.72-6.37-2.11-10.55-1.16a.75.75 0 1 1-.33-1.46c4.58-1.04 8.5-.6 11.66 1.34.36.22.47.69.25 1.03zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.23-1.99-8.16-2.56-11.98-1.4a.94.94 0 1 1-.55-1.8c4.37-1.32 9.8-.68 13.5 1.6.44.27.58.85.32 1.29zm.13-3.4C15.73 8.26 8.5 8.02 4.78 9.15a1.12 1.12 0 1 1-.65-2.15c4.28-1.3 12.26-1.05 16.55 1.5a1.12 1.12 0 1 1-1.15 1.93z"/></svg>`,
       apple:   `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M16.36 12.6c-.02-2.3 1.88-3.4 1.96-3.46-1.07-1.56-2.73-1.78-3.32-1.8-1.41-.14-2.76.83-3.47.83-.72 0-1.82-.81-3-.79-1.54.02-2.96.9-3.75 2.27-1.6 2.78-.41 6.9 1.15 9.16.76 1.1 1.67 2.34 2.86 2.3 1.15-.05 1.58-.74 2.97-.74 1.38 0 1.77.74 2.98.72 1.23-.02 2.01-1.12 2.76-2.23.87-1.28 1.23-2.52 1.25-2.58-.03-.01-2.4-.92-2.42-3.65zM14.13 5.6c.63-.77 1.06-1.83.94-2.9-.91.04-2.02.61-2.67 1.37-.58.68-1.09 1.76-.95 2.8 1.02.08 2.05-.51 2.68-1.27z"/></svg>`,
@@ -649,7 +549,7 @@ function wireLink(id, url) {
     if (btn1) ctaRow.appendChild(btn1);
     if (btn2) ctaRow.appendChild(btn2);
 
-    // Fallback: if NO buttons configured at all, show sensible defaults
+    // Fallback if nothing configured
     if (!ctaRow.children.length) {
       ctaRow.innerHTML = `
         <a class="btn btn-primary" href="https://nfan.link/wdhan" target="_blank" rel="noopener">
@@ -663,25 +563,17 @@ function wireLink(id, url) {
     }
 
     // ── Social + Streaming links ─────────────────────────
-    // Listen cluster
     wireLink('listen-spotify',  s.spotify);
     wireLink('listen-apple',    s.appleMusic);
     wireLink('listen-ytmusic',  s.youtubeMusic);
     wireLink('listen-tidal',    s.tidal);
-    // Social cluster
     wireLink('social-instagram', s.instagram);
     wireLink('social-youtube',   s.youtube);
     wireLink('social-tiktok',    s.tiktok);
     wireLink('social-facebook',  s.facebook);
-    // Nav Spotify CTA
-    if (s.spotify) {
-      const navCta = document.getElementById('nav-spotify-cta');
-      if (navCta) navCta.href = s.spotify;
-    }
 
   } catch(e) {
     console.warn('Homepage settings fetch failed, using static fallbacks', e);
-    // Static fallback buttons
     const ctaRow = document.getElementById('cta-row');
     if (!ctaRow.children.length) {
       ctaRow.innerHTML = `
@@ -690,7 +582,6 @@ function wireLink(id, url) {
       document.getElementById('subscribe-btn').addEventListener('click',
         () => document.getElementById('news-modal').classList.add('open'));
     }
-    // Show fallback countdown
     document.getElementById('countdown-block').style.display = '';
     startCountdown('2026-06-24T04:00:00Z');
   }
@@ -698,7 +589,6 @@ function wireLink(id, url) {
 
 // ════════════════════════════════════════════════════════
 // 2. BACKGROUND SLIDESHOW
-//    Source: galleryImage where homepageBackground == true
 // ════════════════════════════════════════════════════════
 (async function initSlideshow() {
   const q = `*[_type == "galleryImage" && homepageBackground == true]{ "url": image.asset->url }`;
@@ -734,25 +624,7 @@ function wireLink(id, url) {
 })();
 
 // ════════════════════════════════════════════════════════
-// 3. BANDSINTOWN — show Tour nav link only if upcoming shows
-// ════════════════════════════════════════════════════════
-(async function initTourNav() {
-  try {
-    const res    = await fetch('https://admin-api.wdhan.com/bandsintown');
-    const events = await res.json();
-    if (Array.isArray(events) && events.length > 0) {
-      const desktop = document.getElementById('nav-tour-link');
-      const mobile  = document.getElementById('nav-tour-link-mobile');
-      if (desktop) desktop.style.display = '';
-      if (mobile)  mobile.style.display  = '';
-    }
-  } catch(e) {
-    console.warn('Bandsintown fetch failed — Tour link stays hidden', e);
-  }
-})();
-
-// ════════════════════════════════════════════════════════
-// 4. COUNTDOWN ENGINE
+// 3. COUNTDOWN ENGINE
 // ════════════════════════════════════════════════════════
 let _cdTimer;
 function startCountdown(isoTarget) {
@@ -770,16 +642,7 @@ function startCountdown(isoTarget) {
 }
 
 // ════════════════════════════════════════════════════════
-// 5. MOBILE NAV
-// ════════════════════════════════════════════════════════
-const mobileNav   = document.getElementById('nav-mobile');
-const mobileClose = document.getElementById('nav-mobile-close');
-document.getElementById('nav-burger-btn').addEventListener('click', () => mobileNav.classList.add('open'));
-mobileClose.addEventListener('click', () => mobileNav.classList.remove('open'));
-mobileNav.querySelectorAll('a').forEach(a => a.addEventListener('click', () => mobileNav.classList.remove('open')));
-
-// ════════════════════════════════════════════════════════
-// 6. NEWSLETTER MODAL + FORM
+// 4. NEWSLETTER MODAL + FORM
 // ════════════════════════════════════════════════════════
 const newsModal = document.getElementById('news-modal');
 document.getElementById('news-modal-close').addEventListener('click', () => newsModal.classList.remove('open'));
@@ -813,12 +676,11 @@ document.getElementById('news-form').addEventListener('submit', async function(e
 });
 
 // ════════════════════════════════════════════════════════
-// 7. KEYBOARD CLOSE
+// 5. KEYBOARD CLOSE
 // ════════════════════════════════════════════════════════
 window.addEventListener('keydown', e => {
   if (e.key === 'Escape') {
     newsModal.classList.remove('open');
-    mobileNav.classList.remove('open');
   }
 });
 </script>
