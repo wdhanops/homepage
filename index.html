@@ -656,21 +656,19 @@ document.getElementById('news-form').addEventListener('submit', async function(e
   btn.textContent = 'Signing up…';
   btn.disabled = true;
   try {
-    const body = new URLSearchParams({
-      'form_type': 'customer', 'utf8': '✓',
-      'contact[email]': email, 'contact[tags]': 'newsletter',
+    const res = await fetch('https://admin-api.wdhan.com/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
     });
-    await fetch('https://wd-han.myshopify.com/contact', {
-      method: 'POST', mode: 'no-cors',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: body.toString()
-    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Subscribe failed');
     this.querySelector('input[type="email"]').style.display = 'none';
     btn.style.display = 'none';
     this.querySelector('.news-legal').style.display = 'none';
     document.getElementById('news-ok').style.display = 'block';
   } catch(err) {
-    btn.textContent = 'Sign Me Up';
+    btn.textContent = 'Try again';
     btn.disabled = false;
   }
 });
