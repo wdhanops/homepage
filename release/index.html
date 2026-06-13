@@ -37,149 +37,230 @@
     ::selection{background:var(--accent);color:var(--accent-ink);}
     .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;}
 
-    /* ── Hero ── */
-    .release-hero{position:relative;z-index:2;padding:100px 0 0;overflow:hidden;}
-    .hero-blur-bg{
-      position:absolute;inset:0;z-index:0;
-      background-size:cover;background-position:center;
-      filter:blur(60px) brightness(.25) saturate(.7);
-      transform:scale(1.1);
+    /* ══════════════════════════════════════
+       CINEMATIC HERO — matches music/videos pages
+    ══════════════════════════════════════ */
+    .release-hero {
+      position: relative;
+      z-index: 2;
+      min-height: 72vh;
+      display: flex;
+      align-items: flex-end;
+      overflow: hidden;
+      border-bottom: 1px solid var(--line);
     }
-    .hero-blur-bg::after{
-      content:"";position:absolute;inset:0;
-      background:linear-gradient(to bottom,transparent 0%,var(--bg) 85%);
-    }
-    .hero-content{position:relative;z-index:2;padding:60px 0 0;}
-    .hero-grid{display:grid;grid-template-columns:340px 1fr;gap:52px;align-items:start;}
 
-    /* Artwork */
-    .release-artwork{
-      position:relative;border-radius:16px;overflow:hidden;
-      box-shadow:0 40px 80px rgba(0,0,0,.6);
-      aspect-ratio:1;background:var(--card);flex-shrink:0;
+    /* Full-bleed artwork background */
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background-size: cover;
+      background-position: center;
+      filter: brightness(.28) saturate(.75);
+      transition: background-image .5s;
     }
-    .release-artwork img{width:100%;height:100%;object-fit:cover;display:block;}
-    .artwork-ph{
-      width:100%;height:100%;
-      background:repeating-linear-gradient(45deg,color-mix(in srgb,var(--ink) 7%,transparent) 0 2px,transparent 2px 12px),color-mix(in srgb,var(--ink) 5%,transparent);
-      display:flex;align-items:center;justify-content:center;
+    /* Grain overlay */
+    .hero-bg::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+      opacity: .55;
+      pointer-events: none;
     }
-    .artwork-ph span{font-family:"Space Mono";font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);}
+    /* Bottom fade to page bg */
+    .hero-grad {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(to top, var(--bg) 0%, rgba(8,8,10,.55) 40%, rgba(8,8,10,.1) 70%, transparent 100%);
+    }
+    /* Left vignette */
+    .hero-grad-left {
+      position: absolute;
+      inset: 0;
+      z-index: 1;
+      background: linear-gradient(to right, rgba(8,8,10,.65) 0%, transparent 55%);
+    }
 
-    /* Meta */
-    .release-meta{padding-top:8px;}
-    .release-type-badge{
-      display:inline-block;font-family:"Space Mono";font-size:10px;letter-spacing:.28em;text-transform:uppercase;
-      color:var(--accent);margin-bottom:14px;
+    /* Content sits above all the bg layers */
+    .hero-content {
+      position: relative;
+      z-index: 3;
+      width: 100%;
+      padding: 140px 0 64px; /* top padding clears the nav */
     }
-    .release-title{
-      font-family:var(--font-display);font-size:clamp(42px,6vw,88px);
-      line-height:.9;text-transform:uppercase;letter-spacing:.01em;margin-bottom:28px;
+
+    /* Two-column layout: artwork card left, meta right */
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 52px;
+      align-items: flex-end;
+    }
+
+    /* ── Artwork card ── */
+    .release-artwork {
+      position: relative;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 32px 80px rgba(0,0,0,.7);
+      aspect-ratio: 1;
+      background: var(--card);
+      flex-shrink: 0;
+    }
+    .release-artwork img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .artwork-ph {
+      width: 100%; height: 100%;
+      background: repeating-linear-gradient(45deg,color-mix(in srgb,var(--ink) 7%,transparent) 0 2px,transparent 2px 12px),color-mix(in srgb,var(--ink) 5%,transparent);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .artwork-ph span { font-family:"Space Mono";font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--faint); }
+
+    /* ── Release meta (right col) ── */
+    .release-meta { padding-bottom: 4px; }
+
+    .hero-eyebrow {
+      font-family: "Space Mono";
+      font-size: 10px;
+      letter-spacing: .36em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .hero-eyebrow .dot { width:6px;height:6px;border-radius:50%;background:var(--accent); }
+
+    .release-title {
+      font-family: var(--font-display);
+      font-size: clamp(48px, 7vw, 100px);
+      line-height: .88;
+      text-transform: uppercase;
+      letter-spacing: .01em;
+      margin-bottom: 28px;
     }
 
     /* Spotify embed — singles only */
-    .spotify-embed{border-radius:12px;overflow:hidden;margin-bottom:28px;background:var(--card);}
-    .spotify-embed iframe{width:100%;border:none;display:block;}
-    .spotify-embed.album-embed iframe{height:352px;}
-    .spotify-embed.track-embed iframe{height:80px;}
+    .spotify-embed { border-radius: 12px; overflow: hidden; margin-bottom: 24px; background: var(--card); }
+    .spotify-embed iframe { width: 100%; border: none; display: block; }
+    .spotify-embed.track-embed iframe { height: 80px; }
 
-    /* Streaming links — text pill style (header) */
-    .streaming-section{margin-bottom:28px;}
-    .streaming-label{font-family:"Space Mono";font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--faint);margin-bottom:12px;}
-    .streaming-links{display:flex;flex-wrap:wrap;gap:8px;}
-    .slink{
-      display:inline-flex;align-items:center;gap:6px;
-      padding:9px 16px;border-radius:100px;border:1px solid var(--card-line);
-      font-family:"Space Mono";font-size:10px;letter-spacing:.12em;text-transform:uppercase;
-      color:var(--muted);transition:all .18s var(--ease);white-space:nowrap;
+    /* Streaming links */
+    .streaming-section { margin-bottom: 24px; }
+    .streaming-label {
+      font-family: "Space Mono";
+      font-size: 10px;
+      letter-spacing: .26em;
+      text-transform: uppercase;
+      color: var(--faint);
+      margin-bottom: 12px;
     }
-    .slink svg{width:14px;height:14px;flex-shrink:0;}
-    .slink:hover{border-color:var(--accent);color:var(--accent);}
-    .slink.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
-    .slink.primary:hover{background:color-mix(in srgb,var(--accent) 85%,white);}
-
-    .buy-link{
-      display:inline-flex;align-items:center;gap:8px;
-      font-family:"Space Mono";font-size:10px;letter-spacing:.18em;text-transform:uppercase;
-      padding:9px 16px;border-radius:100px;border:1px solid var(--line);color:var(--muted);
-      transition:all .18s var(--ease);
+    .streaming-links { display: flex; flex-wrap: wrap; gap: 8px; }
+    .slink {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 16px;
+      border-radius: 100px;
+      border: 1px solid var(--card-line);
+      font-family: "Space Mono";
+      font-size: 10px;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      transition: all .18s var(--ease);
+      white-space: nowrap;
     }
-    .buy-link:hover{border-color:var(--ink);color:var(--ink);}
-    .buy-link svg{width:14px;height:14px;}
+    .slink svg { width:14px;height:14px;flex-shrink:0; }
+    .slink:hover { border-color: var(--accent); color: var(--accent); }
+    .slink.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+    .slink.primary:hover { background: color-mix(in srgb,var(--accent) 85%,white); }
 
-    .release-description{color:var(--muted);line-height:1.7;font-size:16px;max-width:56ch;}
-    .release-description p + p{margin-top:1em;}
-
-    /* ── Sections ── */
-    .divider{height:1px;background:var(--line);margin:0;}
-    .content-section{position:relative;z-index:2;padding:72px 0;}
-    .content-section + .content-section{border-top:1px solid var(--line);}
-    .section-heading{
-      font-family:var(--font-display);font-size:clamp(32px,4vw,56px);
-      line-height:.92;text-transform:uppercase;margin-bottom:36px;
+    .buy-link {
+      display: inline-flex; align-items: center; gap: 8px;
+      font-family: "Space Mono"; font-size: 10px; letter-spacing: .18em; text-transform: uppercase;
+      padding: 9px 16px; border-radius: 100px; border: 1px solid var(--line); color: var(--muted);
+      transition: all .18s var(--ease);
     }
-    .section-heading em{color:var(--accent);font-style:normal;}
+    .buy-link:hover { border-color: var(--ink); color: var(--ink); }
+    .buy-link svg { width:14px;height:14px; }
 
-    /* ── Tracklist (EP / Album) ── */
-    .tracklist{display:flex;flex-direction:column;}
-    .track-row{
-      padding:0;border-radius:10px;
-      border-top:1px solid var(--line);
-      transition:background .18s var(--ease);
-      overflow:hidden;
+    .release-description { color: var(--muted); line-height: 1.7; font-size: 15px; max-width: 54ch; }
+    .release-description p + p { margin-top: 1em; }
+
+    /* ── Sections below hero ── */
+    .divider { height: 1px; background: var(--line); margin: 0; }
+    .content-section { position: relative; z-index: 2; padding: 72px 0; }
+    .content-section + .content-section { border-top: 1px solid var(--line); }
+    .section-heading {
+      font-family: var(--font-display);
+      font-size: clamp(32px,4vw,56px);
+      line-height: .92;
+      text-transform: uppercase;
+      margin-bottom: 36px;
     }
-    .track-row:first-child{border-top:none;}
+    .section-heading em { color: var(--accent); font-style: normal; }
 
-    /* Top strip: number, name, icons, duration */
-    .track-top{
-      display:grid;
-      grid-template-columns:32px 1fr auto auto;
-      gap:0 16px;
-      align-items:center;
-      padding:14px 10px;
-      cursor:pointer;
+    /* ── Tracklist ── */
+    .tracklist { display: flex; flex-direction: column; }
+    .track-row {
+      border-radius: 10px;
+      border-top: 1px solid var(--line);
+      transition: background .18s var(--ease);
+      overflow: hidden;
     }
-    .track-top:hover{background:var(--card);}
-    .track-row.expanded .track-top{background:var(--card);}
-
-    .track-num{font-family:"Space Mono";font-size:12px;color:var(--faint);text-align:center;flex-shrink:0;}
-    .track-info{min-width:0;}
-    .track-name{
-      font-weight:700;font-size:16px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-      color:var(--ink);display:block;
+    .track-row:first-child { border-top: none; }
+    .track-top {
+      display: grid;
+      grid-template-columns: 32px 1fr auto auto;
+      gap: 0 16px;
+      align-items: center;
+      padding: 14px 10px;
+      cursor: pointer;
     }
-    .track-name:hover{color:var(--accent);}
-    .track-credits{font-family:"Space Mono";font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-top:3px;}
-
-    /* Icon-only streaming links (right side of track rows) */
-    .track-icon-links{display:flex;gap:6px;align-items:center;flex-shrink:0;}
-    .tilink{
-      display:inline-flex;align-items:center;justify-content:center;
-      width:30px;height:30px;border-radius:50%;
-      border:1px solid var(--card-line);
-      color:var(--muted);
-      transition:all .18s var(--ease);
-      flex-shrink:0;
+    .track-top:hover { background: var(--card); }
+    .track-row.expanded .track-top { background: var(--card); }
+    .track-num { font-family:"Space Mono";font-size:12px;color:var(--faint);text-align:center;flex-shrink:0; }
+    .track-info { min-width: 0; }
+    .track-name {
+      font-weight: 700; font-size: 16px;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+      color: var(--ink); display: block;
     }
-    .tilink svg{width:14px;height:14px;flex-shrink:0;}
-    .tilink:hover{border-color:var(--accent);color:var(--accent);}
-    .tilink.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
-    .tilink.primary:hover{background:color-mix(in srgb,var(--accent) 85%,white);}
-
-    .track-dur{font-family:"Space Mono";font-size:12px;color:var(--faint);flex-shrink:0;}
-
-    /* Inline player panel */
-    .track-player{
-      max-height:0;overflow:hidden;
-      transition:max-height .4s var(--ease);
-      background:color-mix(in srgb,var(--accent-ink) 40%,var(--bg2));
+    .track-name:hover { color: var(--accent); }
+    .track-credits { font-family:"Space Mono";font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);margin-top:3px; }
+    .track-icon-links { display:flex;gap:6px;align-items:center;flex-shrink:0; }
+    .tilink {
+      display: inline-flex; align-items: center; justify-content: center;
+      width: 30px; height: 30px; border-radius: 50%;
+      border: 1px solid var(--card-line);
+      color: var(--muted);
+      transition: all .18s var(--ease);
+      flex-shrink: 0;
     }
-    .track-row.expanded .track-player{max-height:100px;}
-    .track-player iframe{width:100%;height:80px;border:none;display:block;}
+    .tilink svg { width:14px;height:14px;flex-shrink:0; }
+    .tilink:hover { border-color:var(--accent);color:var(--accent); }
+    .tilink.primary { background:var(--accent);color:var(--accent-ink);border-color:var(--accent); }
+    .tilink.primary:hover { background:color-mix(in srgb,var(--accent) 85%,white); }
+    .track-dur { font-family:"Space Mono";font-size:12px;color:var(--faint);flex-shrink:0; }
+    .track-player {
+      max-height: 0; overflow: hidden;
+      transition: max-height .4s var(--ease);
+      background: color-mix(in srgb,var(--accent-ink) 40%,var(--bg2));
+    }
+    .track-row.expanded .track-player { max-height: 100px; }
+    .track-player iframe { width:100%;height:80px;border:none;display:block; }
 
     /* ── Videos ── */
-    /* Hero video (first / full-width) */
-    .video-hero{
+    .video-hero {
       border:1px solid var(--card-line);border-radius:14px;overflow:hidden;
       background:var(--bg2);cursor:pointer;margin-bottom:18px;
       transition:border-color .25s,box-shadow .25s;
@@ -197,14 +278,8 @@
     .video-hero .vcat{font-family:"Space Mono";font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:6px;}
     .video-hero .vtitle{font-family:var(--font-display);font-size:clamp(22px,3vw,36px);text-transform:uppercase;line-height:.95;}
     .video-hero .vtag{display:inline-block;margin-top:8px;font-family:"Space Mono";font-size:9px;letter-spacing:.14em;text-transform:uppercase;background:var(--card);border:1px solid var(--card-line);color:var(--faint);padding:3px 8px;border-radius:100px;}
-
-    /* Grid for subsequent videos */
     .videos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
-    .vcard{
-      border:1px solid var(--card-line);border-radius:14px;overflow:hidden;
-      background:var(--bg2);cursor:pointer;
-      transition:transform .25s var(--ease),border-color .25s,box-shadow .25s;
-    }
+    .vcard{border:1px solid var(--card-line);border-radius:14px;overflow:hidden;background:var(--bg2);cursor:pointer;transition:transform .25s var(--ease),border-color .25s,box-shadow .25s;}
     .vcard:hover{transform:translateY(-4px);border-color:var(--accent);box-shadow:0 16px 40px rgba(0,0,0,.4);}
     .vthumb{position:relative;padding-top:56.25%;overflow:hidden;background:var(--card);}
     .vthumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .5s var(--ease),filter .3s;filter:brightness(.85);}
@@ -220,12 +295,7 @@
     .vtag{display:inline-block;margin-top:6px;font-family:"Space Mono";font-size:9px;letter-spacing:.14em;text-transform:uppercase;background:var(--card);border:1px solid var(--card-line);color:var(--faint);padding:3px 8px;border-radius:100px;}
 
     /* ── Lightbox ── */
-    .lightbox{
-      position:fixed;inset:0;z-index:200;
-      background:rgba(0,0,0,.95);backdrop-filter:blur(12px);
-      display:flex;flex-direction:column;align-items:center;justify-content:center;
-      padding:20px;opacity:0;pointer-events:none;transition:opacity .3s var(--ease);
-    }
+    .lightbox{position:fixed;inset:0;z-index:200;background:rgba(0,0,0,.95);backdrop-filter:blur(12px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:20px;opacity:0;pointer-events:none;transition:opacity .3s var(--ease);}
     .lightbox.open{opacity:1;pointer-events:auto;}
     .lb-inner{position:relative;width:100%;max-width:960px;transform:scale(.97);transition:transform .35s var(--ease);}
     .lightbox.open .lb-inner{transform:none;}
@@ -253,11 +323,7 @@
     .foot-wordmark{font-family:var(--font-display);font-size:22px;letter-spacing:.04em;}
     .foot-copy{font-family:"Space Mono";font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint);}
     .foot-links{display:flex;gap:24px;}
-    .foot-links a{
-      font-family:"Space Mono";font-size:11px;letter-spacing:.18em;text-transform:uppercase;
-      color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:1px;
-      transition:color .2s,border-color .2s;
-    }
+    .foot-links a{font-family:"Space Mono";font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--line);padding-bottom:1px;transition:color .2s,border-color .2s;}
     .foot-links a:hover{color:var(--accent);border-color:var(--accent);}
 
     /* ── Reveal ── */
@@ -266,15 +332,16 @@
 
     /* ── Responsive ── */
     @media(max-width:900px){
-      .hero-grid{grid-template-columns:1fr;gap:32px;}
-      .release-artwork{max-width:280px;}
+      .hero-grid{grid-template-columns:1fr;gap:32px;align-items:flex-start;}
+      .release-artwork{max-width:240px;}
       .track-top{grid-template-columns:28px 1fr auto;}
       .track-icon-links{display:none;}
     }
     @media(max-width:560px){
       .wrap{padding:0 18px;}
-      .release-title{font-size:clamp(36px,12vw,64px);}
+      .release-title{font-size:clamp(40px,13vw,72px);}
       .videos-grid{grid-template-columns:1fr;}
+      .hero-content{padding:120px 0 48px;}
     }
   </style>
 </head>
@@ -283,15 +350,20 @@
 <div id="nav-mount"></div>
 
 <div id="page-content">
-  <!-- Skeleton hero -->
-  <div class="release-hero" style="padding-top:120px;padding-bottom:60px;">
-    <div class="wrap">
-      <div class="hero-grid">
-        <div class="sk" style="aspect-ratio:1;border-radius:16px;"></div>
-        <div style="display:flex;flex-direction:column;gap:16px;padding-top:8px;">
-          <div class="sk" style="height:14px;width:80px;border-radius:6px;"></div>
-          <div class="sk" style="height:60px;width:70%;border-radius:8px;"></div>
-          <div class="sk" style="height:80px;width:100%;border-radius:12px;margin-top:8px;"></div>
+  <!-- Skeleton hero — cinematic shell -->
+  <div class="release-hero">
+    <div class="hero-bg" style="background:var(--bg2);filter:none;"></div>
+    <div class="hero-grad"></div>
+    <div class="hero-grad-left"></div>
+    <div class="hero-content">
+      <div class="wrap">
+        <div class="hero-grid">
+          <div class="sk" style="aspect-ratio:1;border-radius:14px;"></div>
+          <div style="display:flex;flex-direction:column;gap:16px;padding-bottom:4px;">
+            <div class="sk" style="height:12px;width:60px;border-radius:6px;"></div>
+            <div class="sk" style="height:72px;width:75%;border-radius:8px;"></div>
+            <div class="sk" style="height:80px;width:100%;border-radius:12px;margin-top:4px;"></div>
+          </div>
         </div>
       </div>
     </div>
@@ -351,7 +423,6 @@
   }
   function ytThumb(id) { return `https://img.youtube.com/vi/${id}/maxresdefault.jpg`; }
 
-  // Release types that are "single-like" — no tracklist, show spotify embed in header
   function isSingleLike(releaseType) {
     return releaseType === 'single' || releaseType === 'remix';
   }
@@ -359,7 +430,6 @@
   const CAT_LABELS = {'music-video':'Music Video','live':'Live','bts':'Behind the Scenes','lyric-video':'Lyric Video','interview':'Interview','other':'Other'};
   function catLabel(c) { return CAT_LABELS[c] || (c ? c.charAt(0).toUpperCase()+c.slice(1).replace(/-/g,' ') : 'Video'); }
 
-  // Priority order for video categories
   const CAT_PRIORITY = {'music-video':0,'lyric-video':1,'live':2,'bts':3,'interview':4,'other':5};
   function catPriority(c) { return CAT_PRIORITY[c] ?? 10; }
 
@@ -375,7 +445,6 @@
     deezer:      `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.81 11.81h2.7v1.35h-2.7zm0 2.7h2.7v1.35h-2.7zm0-5.4h2.7v1.35h-2.7zm-3.6 5.4h2.7v1.35h-2.7zm0 2.7h2.7V18.6h-2.7zm0-5.4h2.7v1.35h-2.7zm0-2.7h2.7v1.35h-2.7zm-3.6 8.1h2.7V18.6h-2.7zm0-2.7h2.7v1.35h-2.7zm0-2.7h2.7v1.35h-2.7zm-3.6 5.4h2.7V18.6H8.01zm0-2.7h2.7v1.35H8.01zm-3.6 2.7h2.7V18.6H4.41zm0-2.7h2.7v1.35H4.41z"/></svg>`,
   };
 
-  // Render pill-style streaming links (header area)
   function renderStreamingLinks(links) {
     if (!links) return '';
     const order = ['spotify','appleMusic','youtube','youtubeMusic','tidal','amazonMusic','deezer','soundcloud','bandcamp'];
@@ -385,7 +454,6 @@
     ).join('');
   }
 
-  // Render icon-only circular links (track rows)
   function renderTrackIconLinks(links) {
     if (!links) return '';
     const order = ['spotify','appleMusic','youtube','youtubeMusic','tidal','amazonMusic','deezer','soundcloud','bandcamp'];
@@ -419,14 +487,6 @@
   document.getElementById('lb-close').addEventListener('click', closeLightbox);
   document.getElementById('lightbox').addEventListener('click', e => { if (e.target === document.getElementById('lightbox')) closeLightbox(); });
   window.addEventListener('keydown', e => { if (e.key === 'Escape') closeLightbox(); });
-
-  /* ── Inline track player toggle ── */
-  function toggleTrackPlayer(row) {
-    const wasOpen = row.classList.contains('expanded');
-    // Close all other open tracks
-    document.querySelectorAll('.track-row.expanded').forEach(r => r.classList.remove('expanded'));
-    if (!wasOpen) row.classList.add('expanded');
-  }
 
   /* ── Get slug from URL ── */
   const slug = new URLSearchParams(window.location.search).get('slug');
@@ -470,7 +530,6 @@
       release.videos = release.videos
         .map(v => ({ ...v, _vid: v.embedId || ytId(v.youtubeUrl) }))
         .filter(v => v._vid)
-        // Sort: music-video first, lyric-video second, then everything else
         .sort((a, b) => catPriority(a.category) - catPriority(b.category));
     }
 
@@ -483,18 +542,17 @@
       r.seoDesc || `${r.title} by WD-HAN. Stream and listen now.`;
 
     const typeLabel  = r.releaseType ? r.releaseType.charAt(0).toUpperCase() + r.releaseType.slice(1) : 'Release';
-    const artUrl     = r.artworkUrl  ? `${r.artworkUrl}?w=700&auto=format&fit=crop` : null;
+    const artUrl     = r.artworkUrl  ? `${r.artworkUrl}?w=800&auto=format&fit=crop` : null;
+    const artUrlBg   = r.artworkUrl  ? `${r.artworkUrl}?w=1600&auto=format` : null;
     const singleLike = isSingleLike(r.releaseType);
 
-    // Spotify embed — only shown in header for singles/remixes
     const spSrc = (() => {
-      if (!singleLike) return null; // EP/Album: no embed in header
+      if (!singleLike) return null;
       const s = spotifyId(r.streamingLinks?.spotify);
       if (!s) return null;
       return `https://open.spotify.com/embed/${s.type}/${s.id}?utm_source=generator&theme=0`;
     })();
 
-    // Per-track Spotify embed URL builder
     function trackSpotifySrc(trackLinks, fallbackLinks) {
       const url = trackLinks?.spotify || fallbackLinks?.spotify;
       if (!url) return null;
@@ -507,17 +565,23 @@
 
     const html = `
       <div class="release-hero">
-        ${artUrl ? `<div class="hero-blur-bg" style="background-image:url('${artUrl}')"></div>` : ''}
+        ${artUrlBg ? `<div class="hero-bg" style="background-image:url('${artUrlBg}')"></div>` : '<div class="hero-bg"></div>'}
+        <div class="hero-grad"></div>
+        <div class="hero-grad-left"></div>
         <div class="hero-content">
           <div class="wrap">
             <div class="hero-grid">
+
               <div class="release-artwork reveal">
                 ${artUrl
                   ? `<img src="${artUrl}" alt="${esc(r.title)}" loading="eager">`
                   : `<div class="artwork-ph"><span>${esc(r.title)}</span></div>`}
               </div>
+
               <div class="release-meta reveal">
-                <div class="release-type-badge">${esc(typeLabel)}</div>
+                <div class="hero-eyebrow">
+                  <span class="dot"></span>${esc(typeLabel)}
+                </div>
                 <h1 class="release-title">${esc(r.title)}</h1>
 
                 ${spSrc ? `
@@ -537,8 +601,10 @@
                     </a>` : ''}
                   </div>
                 </div>
+
                 ${descHtml ? `<div class="release-description">${descHtml}</div>` : ''}
               </div>
+
             </div>
           </div>
         </div>
@@ -546,7 +612,7 @@
 
       <div class="divider"></div>
 
-      ${/* TRACKLIST — EP and ALBUM only */ !singleLike && r.tracks?.length ? `
+      ${!singleLike && r.tracks?.length ? `
       <section class="content-section">
         <div class="wrap">
           <h2 class="section-heading reveal">Track<em>list</em></h2>
@@ -555,22 +621,16 @@
               const tSlug    = t.slug || '';
               const spSrcT   = trackSpotifySrc(t.streamingLinks, r.streamingLinks);
               const hasPlayer = !!spSrcT;
-
-              // Effective streaming links: track-level preferred, fall back to release
               const effectiveLinks = (() => {
                 const tl = t.streamingLinks;
                 const rl = r.streamingLinks;
                 if (!tl && !rl) return null;
                 if (!tl) return rl;
-                // Merge: track-level overrides where present
-                const merged = Object.assign({}, rl, tl);
-                return merged;
+                return Object.assign({}, rl, tl);
               })();
-
               const nameEl = tSlug
                 ? `<a class="track-name" href="/track/?slug=${esc(tSlug)}">${esc(t.title)}</a>`
                 : `<span class="track-name">${esc(t.title)}</span>`;
-
               return `
                 <div class="track-row" data-has-player="${hasPlayer}" data-spotify-src="${esc(spSrcT || '')}">
                   <div class="track-top">
@@ -602,36 +662,25 @@
     document.getElementById('foot').style.display = '';
     setTimeout(observe, 80);
 
-    // Wire up video click handlers
     document.querySelectorAll('[data-vid]').forEach(card => {
       card.addEventListener('click', () => {
         openLightbox(card.dataset.vid, card.dataset.title, card.dataset.cat);
       });
     });
 
-    // Wire up track row click for inline player (EP/Album only)
     document.querySelectorAll('.track-row[data-has-player="true"] .track-top').forEach(top => {
       top.addEventListener('click', () => {
         const row = top.closest('.track-row');
         const wasExpanded = row.classList.contains('expanded');
-
-        // Close all
         document.querySelectorAll('.track-row.expanded').forEach(r => {
           r.classList.remove('expanded');
-          // Clear src to stop playback
           const iframe = r.querySelector('.track-player iframe');
           if (iframe) iframe.src = '';
         });
-
         if (!wasExpanded) {
           row.classList.add('expanded');
-          // Lazy load the iframe src on first open
           const iframe = row.querySelector('.track-player iframe');
-          if (iframe && !iframe.src) {
-            iframe.src = iframe.dataset.src;
-          } else if (iframe && iframe.src !== iframe.dataset.src) {
-            iframe.src = iframe.dataset.src;
-          }
+          if (iframe) iframe.src = iframe.dataset.src;
         }
       });
     });
@@ -640,13 +689,11 @@
   function renderVideos(videos) {
     if (!videos.length) return '';
     const [first, ...rest] = videos;
-
     const heroThumb    = ytThumb(first._vid);
     const heroFallback = `https://img.youtube.com/vi/${first._vid}/hqdefault.jpg`;
     const heroCat      = catLabel(first.category);
     const heroTag      = first.relatedTrack?.title
       ? `<span class="vtag">${esc(first.relatedTrack.title)}</span>` : '';
-
     const heroHtml = `
       <div class="video-hero reveal" data-vid="${esc(first._vid)}" data-title="${esc(first.title)}" data-cat="${esc(heroCat)}">
         <div class="vthumb">
@@ -659,9 +706,7 @@
           ${heroTag}
         </div>
       </div>`;
-
     if (!rest.length) return heroHtml;
-
     const restHtml = rest.map(v => {
       const thumb    = ytThumb(v._vid);
       const fallback = `https://img.youtube.com/vi/${v._vid}/hqdefault.jpg`;
@@ -681,7 +726,6 @@
           </div>
         </div>`;
     }).join('');
-
     return `${heroHtml}<div class="videos-grid">${restHtml}</div>`;
   }
 
