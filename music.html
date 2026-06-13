@@ -70,7 +70,7 @@
     @media(prefers-reduced-motion:reduce){.glow{animation:none!important;}}
 
     /* ══════════════════════════════════════
-       PAGE HERO — cinematic full-bleed (matches videos.html)
+       PAGE HERO
     ══════════════════════════════════════ */
     .page-hero{
       position:relative;z-index:2;
@@ -126,7 +126,7 @@
     .hero-stats{display:flex;gap:40px;}
 
     /* ══════════════════════════════════════
-       FILTER BAR + SEARCH (identical to videos.html)
+       FILTER BAR + SEARCH
     ══════════════════════════════════════ */
     .filter-bar{
       position:sticky;top:80px;z-index:30;
@@ -205,56 +205,99 @@
     @keyframes shimmer{0%,100%{opacity:.3;}50%{opacity:.7;}}
     .sk{background:var(--card-line);border-radius:8px;animation:shimmer 1.6s ease-in-out infinite;}
 
-    /* ═══ SINGLES — horizontal track rows ═══ */
-    .singles-list{display:flex;flex-direction:column;gap:0;}
-    .single-row{
+    /* ══════════════════════════════════════
+       LATEST RELEASE — full-width feature card
+    ══════════════════════════════════════ */
+    .feature-section{margin-bottom:64px;}
+    .feature-label{display:flex;align-items:baseline;gap:18px;margin-bottom:28px;}
+    .feature-label h2{
+      font-family:var(--font-display);
+      font-size:clamp(32px,4.5vw,60px);
+      line-height:.92;text-transform:uppercase;
+    }
+
+    .feature-card{
       display:grid;
-      grid-template-columns:68px 1fr auto;
-      gap:0 20px;align-items:center;
-      padding:14px 12px;border-radius:12px;
-      transition:background .18s var(--ease);
+      grid-template-columns:340px 1fr;
+      border:1px solid var(--card-line);border-radius:20px;overflow:hidden;
+      background:var(--card);
+      transition:border-color .25s,box-shadow .25s;
+      min-height:280px;
     }
-    .single-row:hover{background:var(--card);}
-    .single-row + .single-row{border-top:1px solid var(--line);}
+    .feature-card:hover{
+      border-color:var(--accent);
+      box-shadow:0 24px 60px rgba(0,0,0,.45);
+    }
+    .feature-art{
+      position:relative;overflow:hidden;display:block;flex-shrink:0;
+    }
+    .feature-art img{
+      width:100%;height:100%;object-fit:cover;
+      transition:transform .5s var(--ease);
+      display:block;
+    }
+    .feature-card:hover .feature-art img{transform:scale(1.04);}
+    .feature-art-ph{
+      width:100%;height:100%;min-height:280px;
+      background:
+        repeating-linear-gradient(45deg,color-mix(in srgb,var(--ink) 7%,transparent) 0 2px,transparent 2px 12px),
+        color-mix(in srgb,var(--ink) 5%,transparent);
+      display:flex;align-items:center;justify-content:center;
+    }
+    .feature-type-badge{
+      position:absolute;top:14px;left:14px;
+      font-family:"Space Mono";font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+      background:rgba(8,8,10,.75);backdrop-filter:blur(6px);
+      color:var(--ink);padding:5px 10px;border-radius:100px;border:1px solid var(--line);
+    }
+    .feature-new-badge{
+      position:absolute;top:14px;right:14px;
+      font-family:"Space Mono";font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+      background:var(--accent);color:var(--accent-ink);
+      padding:5px 10px;border-radius:100px;
+    }
+    .feature-body{
+      padding:36px 40px;
+      display:flex;flex-direction:column;justify-content:center;gap:0;
+    }
+    .feature-eyebrow{
+      font-family:"Space Mono";font-size:10px;letter-spacing:.28em;text-transform:uppercase;
+      color:var(--accent);margin-bottom:14px;
+    }
+    .feature-title{
+      font-family:var(--font-display);
+      font-size:clamp(36px,5vw,72px);
+      line-height:.9;text-transform:uppercase;letter-spacing:.01em;
+      color:var(--ink);transition:color .18s;
+      display:block;margin-bottom:16px;
+    }
+    .feature-title:hover{color:var(--accent);}
+    .feature-meta{
+      font-family:"Space Mono";font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+      color:var(--faint);margin-bottom:28px;
+    }
+    .feature-links{display:flex;gap:10px;flex-wrap:wrap;}
 
-    .single-art{
-      width:68px;height:68px;border-radius:8px;overflow:hidden;flex-shrink:0;
-      position:relative;background:var(--card);display:block;
+    /* skeleton for feature card */
+    .sk-feature-card{
+      display:grid;grid-template-columns:340px 1fr;
+      border:1px solid var(--card-line);border-radius:20px;overflow:hidden;
+      background:var(--card);min-height:280px;
     }
-    .single-art img{width:100%;height:100%;object-fit:cover;transition:opacity .2s;}
-    .single-art .play-overlay{
-      position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-      background:rgba(0,0,0,.5);opacity:0;transition:opacity .18s;border-radius:8px;
-    }
-    .single-row:hover .play-overlay{opacity:1;}
-    .play-overlay svg{width:22px;height:22px;fill:white;}
+    .sk-feature-art{min-height:280px;}
+    .sk-feature-body{padding:36px 40px;display:flex;flex-direction:column;gap:14px;justify-content:center;}
+    .sk-feature-title{height:52px;border-radius:8px;width:70%;}
+    .sk-feature-sub{height:14px;border-radius:6px;width:40%;}
+    .sk-feature-links{display:flex;gap:10px;}
 
-    .single-info{min-width:0;padding:2px 0;}
-    .single-title{
-      font-weight:700;font-size:17px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-      color:var(--ink);transition:color .18s;display:block;
+    /* ══════════════════════════════════════
+       SINGLES — 4-column card grid
+    ══════════════════════════════════════ */
+    .singles-grid{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:20px;
     }
-    .single-title:hover{color:var(--accent);}
-    .single-meta{display:flex;align-items:center;gap:10px;margin-top:4px;flex-wrap:wrap;}
-    .single-year{font-family:"Space Mono";font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--faint);}
-    .single-duration{font-family:"Space Mono";font-size:11px;color:var(--faint);}
-    .single-type-badge{
-      font-family:"Space Mono";font-size:9px;letter-spacing:.18em;text-transform:uppercase;
-      color:var(--accent);padding:3px 8px;border-radius:100px;border:1px solid color-mix(in srgb,var(--accent) 40%,transparent);
-    }
-
-    .single-links{display:flex;align-items:center;gap:8px;flex-shrink:0;}
-    .slink{
-      display:flex;align-items:center;gap:6px;
-      padding:7px 13px;border-radius:100px;
-      border:1px solid var(--card-line);
-      font-family:"Space Mono";font-size:10px;letter-spacing:.12em;text-transform:uppercase;
-      color:var(--muted);transition:all .18s var(--ease);white-space:nowrap;
-    }
-    .slink svg{width:14px;height:14px;flex-shrink:0;}
-    .slink:hover{border-color:var(--accent);color:var(--accent);}
-    .slink.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
-    .slink.primary:hover{background:color-mix(in srgb,var(--accent) 85%,white);transform:scale(1.03);}
 
     /* ═══ ALBUMS & EPs — card grid ═══ */
     .albums-grid{
@@ -271,6 +314,14 @@
       transform:translateY(-5px);border-color:var(--accent);
       box-shadow:0 20px 50px rgba(0,0,0,.4);
     }
+    /* singles-grid cards are slightly more compact */
+    .singles-grid .album-card{border-radius:14px;}
+    .singles-grid .album-body{padding:14px 16px;}
+    .singles-grid .album-title{font-size:16px;}
+    .singles-grid .album-sub{margin-bottom:12px;}
+    .singles-grid .album-links{padding:0 16px 14px;}
+    .singles-grid .album-links .slink{padding:6px 10px;font-size:9px;}
+
     .album-art{position:relative;aspect-ratio:1;overflow:hidden;display:block;}
     .album-art img{
       width:100%;height:100%;object-fit:cover;
@@ -306,6 +357,8 @@
     .album-card:hover .album-play-btn{opacity:1;transform:none;}
     .album-play-btn.active{opacity:1;transform:none;background:white;color:#000;}
     .album-play-btn svg{width:18px;height:18px;}
+    .singles-grid .album-play-btn{width:36px;height:36px;}
+    .singles-grid .album-play-btn svg{width:14px;height:14px;}
     .album-body{padding:20px 22px;}
     .album-title{
       font-weight:700;font-size:19px;line-height:1.2;margin-bottom:4px;
@@ -325,21 +378,26 @@
     }
     .album-links{display:flex;gap:8px;flex-wrap:wrap;padding:0 22px 20px;}
 
-    /* ── Skeleton rows/cards ── */
-    .sk-single-row{
-      display:grid;grid-template-columns:68px 1fr 140px;gap:20px;align-items:center;padding:14px 12px;
+    /* ── Streaming link pills ── */
+    .slink{
+      display:flex;align-items:center;gap:6px;
+      padding:7px 13px;border-radius:100px;
+      border:1px solid var(--card-line);
+      font-family:"Space Mono";font-size:10px;letter-spacing:.12em;text-transform:uppercase;
+      color:var(--muted);transition:all .18s var(--ease);white-space:nowrap;
     }
-    .sk-single-row + .sk-single-row{border-top:1px solid var(--line);}
-    .sk-thumb{width:68px;height:68px;border-radius:8px;}
-    .sk-lines{display:flex;flex-direction:column;gap:8px;}
-    .sk-line{height:13px;border-radius:6px;}
-    .sk-line.w80{width:80%;}
-    .sk-line.w50{width:50%;}
-    .sk-btns{display:flex;gap:8px;justify-content:flex-end;}
-    .sk-btn{width:80px;height:30px;border-radius:100px;}
+    .slink svg{width:14px;height:14px;flex-shrink:0;}
+    .slink:hover{border-color:var(--accent);color:var(--accent);}
+    .slink.primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent);}
+    .slink.primary:hover{background:color-mix(in srgb,var(--accent) 85%,white);transform:scale(1.03);}
+
+    /* ── Skeleton cards ── */
     .sk-album-card{border:1px solid var(--card-line);border-radius:18px;overflow:hidden;background:var(--card);}
     .sk-album-art{aspect-ratio:1;}
     .sk-album-body{padding:20px 22px;display:flex;flex-direction:column;gap:10px;}
+    .sk-line{height:13px;border-radius:6px;}
+    .sk-line.w80{width:80%;}
+    .sk-line.w50{width:50%;}
 
     /* ── Empty / no results ── */
     .empty{
@@ -367,8 +425,18 @@
     .foot-back:hover{color:var(--accent);border-color:var(--accent);}
 
     /* ── Responsive ── */
+    @media(max-width:1100px){
+      .singles-grid{grid-template-columns:repeat(3,1fr);}
+      .feature-card{grid-template-columns:280px 1fr;}
+      .sk-feature-card{grid-template-columns:280px 1fr;}
+    }
     @media(max-width:900px){
-      .single-links .slink:not(.primary){display:none;}
+      .singles-grid{grid-template-columns:repeat(3,1fr);}
+      .feature-card{grid-template-columns:1fr;grid-template-rows:auto 1fr;}
+      .sk-feature-card{grid-template-columns:1fr;}
+      .feature-art{min-height:260px;}
+      .sk-feature-art{min-height:200px;}
+      .feature-body{padding:28px 28px;}
       .hero-stats{gap:24px;}
       .search-input{width:160px;}
       .search-input:focus{width:200px;}
@@ -376,16 +444,17 @@
     }
     @media(max-width:640px){
       .wrap{padding:0 18px;}
-      .single-row{grid-template-columns:56px 1fr;}
-      .single-links{display:none;}
-      .single-art{width:56px;height:56px;}
+      .singles-grid{grid-template-columns:repeat(2,1fr);gap:14px;}
       .albums-grid{grid-template-columns:1fr 1fr;}
       .filter-bar-inner{flex-wrap:wrap;gap:8px;}
       .search-wrap{width:100%;}
       .search-input{width:100%;}
       .search-input:focus{width:100%;}
+      .feature-body{padding:20px 20px 24px;}
+      .feature-title{font-size:clamp(28px,8vw,52px);}
     }
     @media(max-width:420px){
+      .singles-grid{grid-template-columns:repeat(2,1fr);}
       .albums-grid{grid-template-columns:1fr;}
     }
 
@@ -396,7 +465,6 @@
 </head>
 <body>
 
-<!-- nav.js injects the nav here -->
 <div id="nav-mount"></div>
 
 <div class="glow-field" aria-hidden="true">
@@ -405,7 +473,7 @@
 </div>
 
 <!-- ══════════════════════════════════════
-     PAGE HERO — cinematic full-bleed
+     PAGE HERO
 ══════════════════════════════════════ -->
 <div class="page-hero" id="page-hero">
   <div class="hero-bg" id="hero-bg"></div>
@@ -455,28 +523,38 @@
 <main class="music-main">
   <div class="wrap">
 
+    <!-- Latest Release feature card -->
+    <div class="feature-section" id="feature-section">
+      <div class="feature-label reveal">
+        <h2>Latest Release</h2>
+      </div>
+      <div id="feature-card-wrap">
+        <!-- skeleton -->
+        <div class="sk-feature-card">
+          <div class="sk sk-feature-art"></div>
+          <div class="sk-feature-body">
+            <div class="sk sk-feature-title"></div>
+            <div class="sk sk-feature-sub"></div>
+            <div class="sk-feature-links">
+              <div class="sk" style="width:100px;height:34px;border-radius:100px;"></div>
+              <div class="sk" style="width:80px;height:34px;border-radius:100px;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- Singles section -->
     <div class="music-section" id="section-singles">
       <div class="section-label reveal">
         <h2>Singles</h2>
         <span class="count" id="singles-count"></span>
       </div>
-      <div id="singles-list">
-        <div class="sk-single-row">
-          <div class="sk sk-thumb"></div>
-          <div class="sk-lines"><div class="sk sk-line w80"></div><div class="sk sk-line w50"></div></div>
-          <div class="sk-btns"><div class="sk sk-btn"></div><div class="sk sk-btn"></div></div>
-        </div>
-        <div class="sk-single-row">
-          <div class="sk sk-thumb"></div>
-          <div class="sk-lines"><div class="sk sk-line w80"></div><div class="sk sk-line w50"></div></div>
-          <div class="sk-btns"><div class="sk sk-btn"></div><div class="sk sk-btn"></div></div>
-        </div>
-        <div class="sk-single-row">
-          <div class="sk sk-thumb"></div>
-          <div class="sk-lines"><div class="sk sk-line w80"></div><div class="sk sk-line w50"></div></div>
-          <div class="sk-btns"><div class="sk sk-btn"></div><div class="sk sk-btn"></div></div>
-        </div>
+      <div class="singles-grid" id="singles-grid">
+        <div class="sk-album-card"><div class="sk sk-album-art"></div><div class="sk-album-body"><div class="sk sk-line w80"></div><div class="sk sk-line w50"></div></div></div>
+        <div class="sk-album-card"><div class="sk sk-album-art"></div><div class="sk-album-body"><div class="sk sk-line w80"></div><div class="sk sk-line w50"></div></div></div>
+        <div class="sk-album-card"><div class="sk sk-album-art"></div><div class="sk-album-body"><div class="sk sk-line w80"></div><div class="sk sk-line w50"></div></div></div>
+        <div class="sk-album-card"><div class="sk sk-album-art"></div><div class="sk-album-body"><div class="sk sk-line w80"></div><div class="sk sk-line w50"></div></div></div>
       </div>
     </div>
 
@@ -537,7 +615,6 @@
   function esc(str) {
     return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
-
   function spotifyEmbed(url) {
     if (!url) return null;
     const m = url.match(/spotify\.com\/(track|album|playlist)\/([A-Za-z0-9]+)/);
@@ -587,7 +664,6 @@
   let activeFilter = 'all';
   let searchQuery  = '';
 
-  /* ── Filter helpers ── */
   const TYPE_MAP = {
     single: ['single'],
     ep:     ['ep'],
@@ -612,7 +688,6 @@
     return list;
   }
 
-  /* ── Filter pill clicks ── */
   function applyFilter(type) {
     activeFilter = type;
     document.querySelectorAll('.filter-pill').forEach(p =>
@@ -620,7 +695,6 @@
     updateView();
   }
 
-  /* ── Search ── */
   function setupSearch() {
     const input = document.getElementById('search-input');
     const wrap  = document.getElementById('search-wrap');
@@ -641,30 +715,27 @@
     });
   }
 
-  /* ── Update view based on filter + search state ── */
   function updateView() {
     const isFiltered = activeFilter !== 'all' || searchQuery.length > 0;
 
     if (isFiltered) {
-      // Show unified filtered grid, hide sectioned layout
-      document.getElementById('section-singles').style.display = 'none';
-      document.getElementById('section-albums').style.display  = 'none';
-      document.getElementById('section-remixes').style.display = 'none';
-      document.getElementById('filtered-view').style.display   = '';
+      document.getElementById('feature-section').style.display  = 'none';
+      document.getElementById('section-singles').style.display  = 'none';
+      document.getElementById('section-albums').style.display   = 'none';
+      document.getElementById('section-remixes').style.display  = 'none';
+      document.getElementById('filtered-view').style.display    = '';
       renderFilteredGrid(getFiltered());
     } else {
-      // Show normal sectioned layout
-      document.getElementById('filtered-view').style.display   = 'none';
-      document.getElementById('section-singles').style.display = '';
-      document.getElementById('section-albums').style.display  = '';
-      // Remixes only shown if they exist
+      document.getElementById('filtered-view').style.display    = 'none';
+      document.getElementById('feature-section').style.display  = '';
+      document.getElementById('section-singles').style.display  = '';
+      document.getElementById('section-albums').style.display   = '';
       const remixes = allReleases.filter(r => (r.releaseType || '').toLowerCase() === 'remix');
-      document.getElementById('section-remixes').style.display = remixes.length ? '' : 'none';
+      document.getElementById('section-remixes').style.display  = remixes.length ? '' : 'none';
     }
     observe();
   }
 
-  /* ── Render filtered/search grid (card view for everything) ── */
   function renderFilteredGrid(releases) {
     const grid = document.getElementById('filtered-grid');
     if (!releases.length) {
@@ -738,39 +809,45 @@
   }
   window.toggleAlbumEmbed = toggleAlbumEmbed;
 
-  /* ═══ SINGLES RENDERER ═══ */
+  /* ══ FEATURE CARD RENDERER ══ */
+  function renderFeatureCard(rel) {
+    const wrap = document.getElementById('feature-card-wrap');
+    if (!rel) { document.getElementById('feature-section').style.display = 'none'; return; }
+    const year      = rel.releaseDate ? new Date(rel.releaseDate).getFullYear() : '';
+    const typeLabel = (rel.releaseType || 'release').toUpperCase();
+    const artUrl    = rel.artworkUrl ? sanityImg(rel.artworkUrl, 800) : null;
+    const trackCount = rel.trackCount || 0;
+    const slug      = rel.slug?.current || '';
+    const relUrl    = `/release/?slug=${esc(slug)}`;
+    wrap.innerHTML = `
+      <div class="feature-card reveal">
+        <a class="feature-art" href="${relUrl}" aria-label="View ${esc(rel.title)}">
+          ${artUrl
+            ? `<img src="${esc(artUrl)}" alt="${esc(rel.title)}" loading="lazy">`
+            : `<div class="feature-art-ph"></div>`}
+          <span class="feature-type-badge">${typeLabel}</span>
+          <span class="feature-new-badge">New</span>
+        </a>
+        <div class="feature-body">
+          <div class="feature-eyebrow">Latest Release</div>
+          <a class="feature-title" href="${relUrl}">${esc(rel.title)}</a>
+          <div class="feature-meta">${year}${trackCount ? ` · ${trackCount} track${trackCount !== 1 ? 's' : ''}` : ''}</div>
+          <div class="feature-links">${streamingLinks(rel.streamingLinks, 'feature')}</div>
+        </div>
+      </div>`;
+  }
+
+  /* ═══ SINGLES RENDERER — 4-col card grid ═══ */
   function renderSingles(singles) {
-    const container = document.getElementById('singles-list');
-    const countEl   = document.getElementById('singles-count');
+    const grid    = document.getElementById('singles-grid');
+    const countEl = document.getElementById('singles-count');
     if (!singles.length) {
-      container.innerHTML = '<div class="empty">No singles yet.</div>';
+      grid.innerHTML = '<div class="empty" style="grid-column:1/-1;">No singles yet.</div>';
       document.getElementById('section-singles').style.display = 'none';
       return;
     }
     countEl.textContent = `${singles.length} tracks`;
-    container.innerHTML = singles.map(rel => {
-      const year   = rel.releaseDate ? new Date(rel.releaseDate).getFullYear() : '';
-      const artUrl = rel.artworkUrl  ? sanityImg(rel.artworkUrl, 200) : null;
-      const dur    = rel.tracks?.[0]?.duration || '';
-      const slug   = rel.slug?.current || '';
-      return `
-        <div class="single-row reveal">
-          <a class="single-art" href="/release/?slug=${esc(slug)}" aria-label="View ${esc(rel.title)}">
-            ${artUrl
-              ? `<img src="${esc(artUrl)}" alt="${esc(rel.title)}" loading="lazy">`
-              : `<div style="width:100%;height:100%;background:var(--card-line);border-radius:8px;"></div>`}
-            <div class="play-overlay"><svg viewBox="0 0 24 24"><path d="M6 4.5v15l13-7.5z"/></svg></div>
-          </a>
-          <div class="single-info">
-            <a class="single-title" href="/release/?slug=${esc(slug)}">${esc(rel.title)}</a>
-            <div class="single-meta">
-              <span class="single-year">${year}</span>
-              ${dur ? `<span class="single-duration">${esc(dur)}</span>` : ''}
-            </div>
-          </div>
-          <div class="single-links">${streamingLinks(rel.streamingLinks, 'album')}</div>
-        </div>`;
-    }).join('');
+    grid.innerHTML = singles.map((rel, idx) => buildAlbumCard(rel, `s-${idx}`)).join('');
   }
 
   /* ═══ ALBUMS RENDERER ═══ */
@@ -783,7 +860,7 @@
       return;
     }
     countEl.textContent = `${albums.length} releases`;
-    grid.innerHTML = albums.map((rel, idx) => buildAlbumCard(rel, idx)).join('');
+    grid.innerHTML = albums.map((rel, idx) => buildAlbumCard(rel, `a-${idx}`)).join('');
   }
 
   /* ═══ REMIXES RENDERER ═══ */
@@ -813,14 +890,17 @@
       releases = result;
     } catch(err) {
       console.warn('Sanity fetch failed', err);
-      document.getElementById('singles-list').innerHTML = '<div class="empty">Unable to load music. Please try again.</div>';
-      document.getElementById('albums-grid').innerHTML  = '<div class="empty">Unable to load music. Please try again.</div>';
+      document.getElementById('feature-card-wrap').innerHTML = '';
+      document.getElementById('feature-section').style.display = 'none';
+      document.getElementById('singles-grid').innerHTML = '<div class="empty" style="grid-column:1/-1;">Unable to load music. Please try again.</div>';
+      document.getElementById('albums-grid').innerHTML  = '<div class="empty" style="grid-column:1/-1;">Unable to load music. Please try again.</div>';
       return;
     }
 
     if (!releases?.length) {
-      document.getElementById('singles-list').innerHTML = '<div class="empty">No releases found.</div>';
-      document.getElementById('albums-grid').innerHTML  = '<div class="empty">No releases found.</div>';
+      document.getElementById('feature-section').style.display = 'none';
+      document.getElementById('singles-grid').innerHTML = '<div class="empty" style="grid-column:1/-1;">No releases found.</div>';
+      document.getElementById('albums-grid').innerHTML  = '<div class="empty" style="grid-column:1/-1;">No releases found.</div>';
       return;
     }
 
@@ -838,12 +918,15 @@
     document.getElementById('stat-releases').innerHTML = `<strong>${releases.length}</strong>Releases`;
     document.getElementById('stat-tracks').innerHTML   = `<strong>${totalTracks}</strong>Tracks`;
 
+    // Feature card: prefer featured:true, fallback to most recent (first in sorted list)
+    const featuredRelease = releases.find(r => r.featured) || releases[0];
+    renderFeatureCard(featuredRelease);
+
     // Segment
     const singles = releases.filter(r => (r.releaseType || '').toLowerCase() === 'single');
     const albums  = releases.filter(r => ['album','ep'].includes((r.releaseType || '').toLowerCase()));
     const remixes = releases.filter(r => (r.releaseType || '').toLowerCase() === 'remix');
 
-    // Show remix pill only if remixes exist
     if (!remixes.length) {
       const remixPill = document.querySelector('.filter-pill[data-type="remix"]');
       if (remixPill) remixPill.style.display = 'none';
@@ -853,7 +936,6 @@
     renderAlbums(albums);
     renderRemixes(remixes);
 
-    // Wire filter pills
     document.querySelectorAll('.filter-pill').forEach(pill => {
       pill.addEventListener('click', () => applyFilter(pill.dataset.type));
     });
