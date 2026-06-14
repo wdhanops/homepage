@@ -623,10 +623,13 @@ document.getElementById('sub-submit').addEventListener('click', async () => {
   if (!email || !email.includes('@')) { msg.textContent = 'Please enter a valid email.'; msg.className = 'modal-msg err'; return; }
   msg.textContent = 'Subscribing...'; msg.className = 'modal-msg';
   try {
-    const fd = new FormData();
-    fd.append('contact[email]', email);
-    fd.append('contact[tags]', 'newsletter');
-    await fetch('https://wd-han.myshopify.com/contact', { method: 'POST', body: fd, mode: 'no-cors' });
+    const res = await fetch('https://admin-api.wdhan.com/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Subscribe failed');
     msg.textContent = "You're in! 🎉"; msg.className = 'modal-msg ok';
     document.getElementById('sub-email').value = '';
     setTimeout(() => document.getElementById('sub-modal').classList.remove('open'), 2000);
