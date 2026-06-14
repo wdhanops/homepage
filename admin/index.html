@@ -1312,10 +1312,14 @@ const SECTION_DEFS = {
     stateKey: null, // always shown if links exist
     buildBody(body, hub) {
       body.innerHTML = '<div id="hs-custom-links-list"></div><button class="add-link-btn" id="hs-add-link-btn">+ Add link</button>';
-      renderCustomLinksList(hub.customLinks || []);
-      document.getElementById('hs-add-link-btn').addEventListener('click', () => {
+      // Use the reference we already have to body — don't rely on getElementById
+      // which can fail if another section's body hasn't rendered its IDs yet
+      const addBtn  = body.querySelector('#hs-add-link-btn');
+      const listEl  = body.querySelector('#hs-custom-links-list');
+      renderCustomLinksList(hub.customLinks || [], listEl);
+      addBtn.addEventListener('click', () => {
         customLinksData.push({ label: '', url: '', icon: 'link' });
-        renderCustomLinksList(customLinksData);
+        renderCustomLinksList(customLinksData, listEl);
       });
     },
     readData() { return { customLinks: customLinksData.filter(l => l.label || l.url) }; }
@@ -1459,9 +1463,9 @@ function buildSectionList() {
 // ── CUSTOM LINKS LIST ──────────────────────────────────
 let openIconDropdown = null;
 
-function renderCustomLinksList(links) {
+function renderCustomLinksList(links, listEl) {
   customLinksData = links;
-  const list = document.getElementById('hs-custom-links-list');
+  const list = listEl || document.getElementById('hs-custom-links-list');
   if (!list) return;
   list.innerHTML = '';
 
@@ -1491,7 +1495,7 @@ function renderCustomLinksList(links) {
         customLinksData[i].icon = opt.val;
         dropdown.classList.add('hidden');
         openIconDropdown = null;
-        renderCustomLinksList(customLinksData);
+        renderCustomLinksList(customLinksData, list);
       });
       dropdown.appendChild(o);
     });
@@ -1517,7 +1521,7 @@ function renderCustomLinksList(links) {
     rmBtn.textContent = '✕';
     rmBtn.addEventListener('click', () => {
       customLinksData.splice(i, 1);
-      renderCustomLinksList(customLinksData);
+      renderCustomLinksList(customLinksData, list);
     });
 
     item.appendChild(iconWrap);
