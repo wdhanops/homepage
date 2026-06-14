@@ -54,19 +54,11 @@
       position: absolute; inset: 0;
       background-size: cover;
       background-position: center top;
-      opacity: 0;
-      transition: opacity 1.2s ease;
+      opacity: 0.35;
     }
-    .bg-img.active { opacity: 1; }
     .bg-overlay {
       position: absolute; inset: 0;
-      background: linear-gradient(
-        to bottom,
-        rgba(8,8,10,0.55) 0%,
-        rgba(8,8,10,0.35) 30%,
-        rgba(8,8,10,0.70) 70%,
-        rgba(8,8,10,0.92) 100%
-      );
+      background: rgba(8,8,10,0.78);
     }
     .bg-grain {
       position: absolute; inset: 0;
@@ -231,8 +223,9 @@
     }
     .icon-btn svg { width: 20px; height: 20px; }
     .icon-btn:hover {
-      background: var(--surface-h);
-      border-color: rgba(245,241,230,0.2);
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
       transform: scale(1.08);
     }
 
@@ -405,7 +398,6 @@
 <!-- Background -->
 <div class="bg-wrap">
   <div class="bg-img" id="bg-img-a"></div>
-  <div class="bg-img" id="bg-img-b"></div>
   <div class="bg-overlay"></div>
   <div class="bg-grain"></div>
 </div>
@@ -513,22 +505,10 @@ const SOCIAL_PLATFORMS = [
 ];
 
 // ── BACKGROUND ─────────────────────────────────────────────────
-let bgImgs = [], bgIdx = 0;
 const bgA = document.getElementById('bg-img-a');
-const bgB = document.getElementById('bg-img-b');
-let activeBg = bgA;
 
 function setBg(url) {
-  activeBg.style.backgroundImage = `url(${url})`;
-  activeBg.classList.add('active');
-}
-function cycleBg() {
-  if (bgImgs.length < 2) return;
-  bgIdx = (bgIdx + 1) % bgImgs.length;
-  const next = activeBg === bgA ? bgB : bgA;
-  next.style.backgroundImage = `url(${bgImgs[bgIdx]})`;
-  next.classList.add('active');
-  setTimeout(() => { activeBg.classList.remove('active'); activeBg = next; }, 1200);
+  bgA.style.backgroundImage = `url(${url})`;
 }
 
 // ── RENDER HELPERS ─────────────────────────────────────────────
@@ -583,7 +563,8 @@ async function init() {
       "avatarUrl": bandLogo.asset->url,
       socials,
       streamingLinks,
-      "bgImages": *[_type == "galleryImage" && homepageBackground == true]{
+      "accentColor": homepageSettings.mainColor,
+      "bgImages": *[_type == "galleryImage" && homepageBackground == true][0]{
         "url": image.asset->url
       }
     }`)).then(r => r.json()),
@@ -603,15 +584,13 @@ async function init() {
   const shows    = Array.isArray(showsRes.value) ? showsRes.value : [];
   const hub      = hubRes.value?.result || {};
 
-  // ── Background ──
-  const bgs = settings.bgImages || [];
-  if (bgs.length) {
-    bgImgs = bgs.map(b => b.url).filter(Boolean);
-    if (bgImgs.length) {
-      setBg(bgImgs[0]);
-      if (bgImgs.length > 1) setInterval(cycleBg, 10000);
-    }
+  // ── Accent color from Sanity ──
+  if (settings.accentColor) {
+    document.documentElement.style.setProperty('--accent', settings.accentColor);
   }
+
+  // ── Background — first image only ──
+  if (settings.bgImages?.url) setBg(settings.bgImages.url);
 
   // ── Header ──
   const headerEl  = document.getElementById('hub-header');
