@@ -210,23 +210,17 @@
       object-fit: cover; flex-shrink: 0;
       border-radius: var(--radius) 0 0 var(--radius);
     }
-    .link-thumb-placeholder {
-      width: 100px; height: 64px; flex-shrink: 0;
-      background: var(--surface);
-      display: flex; align-items: center; justify-content: center;
-      border-radius: var(--radius) 0 0 var(--radius);
-    }
     .link-item.has-thumb .link-text { padding: 0 4px; }
     .link-item.has-thumb .link-arrow { padding-right: 16px; }
 
-    /* social row */
-    .social-row {
+    /* ── ICON ROW (social + stream) ─────────────────────────── */
+    .icon-row {
       display: flex; gap: 10px; justify-content: center;
       flex-wrap: wrap;
       width: 100%; max-width: 420px;
       animation: fadeUp 0.6s ease both;
     }
-    .social-btn {
+    .icon-btn {
       width: 48px; height: 48px;
       border-radius: 50%;
       background: var(--surface);
@@ -235,8 +229,8 @@
       text-decoration: none; color: var(--text);
       transition: background 0.18s, border-color 0.18s, transform 0.18s;
     }
-    .social-btn svg { width: 20px; height: 20px; }
-    .social-btn:hover {
+    .icon-btn svg { width: 20px; height: 20px; }
+    .icon-btn:hover {
       background: var(--surface-h);
       border-color: rgba(245,241,230,0.2);
       transform: scale(1.08);
@@ -359,19 +353,17 @@
 <!-- Page -->
 <div class="page" id="page">
 
-  <!-- Header -->
-  <div class="hub-header" id="hub-header">
-    <div class="hub-avatar-placeholder" id="avatar-wrap">
-      <!-- avatar loaded by JS -->
+  <!-- Header (populated by JS based on settings) -->
+  <div class="hub-header" id="hub-header" style="display:none">
+    <div class="hub-avatar-placeholder" id="avatar-wrap" style="display:none">
       <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="rgba(245,241,230,0.2)" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
     </div>
-    <div class="hub-name" id="hub-name">WD-HAN</div>
-    <div class="hub-tagline" id="hub-tagline"></div>
+    <div class="hub-name" id="hub-name" style="display:none">WD-HAN</div>
+    <div class="hub-tagline" id="hub-tagline" style="display:none"></div>
   </div>
 
-  <!-- Link stack -->
+  <!-- Link stack (populated by JS) -->
   <div class="link-stack" id="link-stack">
-    <!-- Skeletons while loading -->
     <div class="skeleton"></div>
     <div class="skeleton" style="height:48px;opacity:0.6"></div>
     <div class="skeleton" style="opacity:0.7"></div>
@@ -390,46 +382,65 @@ const SANITY_DATASET = 'production';
 function sanityUrl(query) {
   return `https://${SANITY_PROJECT}.api.sanity.io/v2021-10-21/data/query/${SANITY_DATASET}?query=${encodeURIComponent(query)}`;
 }
-
 function esc(s) {
   return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 // ── SVG ICONS ──────────────────────────────────────────────────
 const ICONS = {
-  spotify: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.622.622 0 01-.857.207c-2.348-1.435-5.304-1.76-8.785-.964a.622.622 0 01-.277-1.215c3.809-.87 7.077-.496 9.712 1.115a.623.623 0 01.207.857zm1.223-2.722a.78.78 0 01-1.072.257C13.956 12.4 10.5 11.9 7.554 12.762a.78.78 0 01-.45-1.492c3.332-.997 7.273-.494 10.037 1.16a.782.782 0 01.668 1.272zm.105-2.835c-3.223-1.914-8.54-2.09-11.618-1.156a.935.935 0 11-.542-1.79c3.533-1.072 9.404-.865 13.115 1.338a.935.935 0 01-.955 1.608z"/></svg>`,
-  appleMusic: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.994 6.124a9.23 9.23 0 00-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 00-1.877-.726 10.496 10.496 0 00-1.564-.15c-.04-.003-.083-.01-.124-.013H5.986c-.152.01-.303.017-.455.026C4.786.07 4.043.15 3.34.428 2.067.93 1.148 1.824.635 3.083a4.9 4.9 0 00-.346 1.766c-.02.483-.024.967-.04 1.451V18.7c.02.5.09.975.215 1.444.37 1.377 1.22 2.362 2.552 2.914.765.313 1.57.395 2.405.406.077.002.154.008.23.008h13.005c.553-.015 1.098-.082 1.63-.24 1.307-.43 2.18-1.29 2.635-2.58.196-.57.276-1.165.29-1.76.02-.44.013-.883.013-1.325V7.178c-.004-.354-.01-.706-.03-1.054zm-4.94 4.7a.87.87 0 01-.496-.127L10.04 6.73a.44.44 0 01-.204-.373c0-.202.105-.383.266-.49l.06-.036 9.1-3.4a.454.454 0 01.595.43v7.532a.447.447 0 01-.358.43h-.446zm-5.16 5.696c0 1.32-1.055 2.39-2.354 2.39-1.3 0-2.354-1.07-2.354-2.39 0-1.32 1.054-2.39 2.354-2.39 1.3 0 2.354 1.07 2.354 2.39z"/></svg>`,
-  youtube: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`,
-  instagram: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>`,
-  tiktok: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.95a8.28 8.28 0 004.84 1.55V7.07a4.85 4.85 0 01-1.07-.38z"/></svg>`,
-  facebook: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`,
-  twitter: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.631L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>`,
-  bandcamp: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 18.75l7.437-13.5H24l-7.438 13.5z"/></svg>`,
-  link: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>`,
-  music: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
-  ticket: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 000 6v2a2 2 0 002 2h16a2 2 0 002-2v-2a3 3 0 000-6V7a2 2 0 00-2-2H4a2 2 0 00-2 2v2z"/></svg>`,
-  shirt: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.38 3.46 16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.57a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.57a2 2 0 00-1.34-2.23z"/></svg>`,
-  mail: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7"/></svg>`,
-  play: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>`,
-  arrow: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`,
+  spotify:      `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.622.622 0 01-.857.207c-2.348-1.435-5.304-1.76-8.785-.964a.622.622 0 01-.277-1.215c3.809-.87 7.077-.496 9.712 1.115a.623.623 0 01.207.857zm1.223-2.722a.78.78 0 01-1.072.257C13.956 12.4 10.5 11.9 7.554 12.762a.78.78 0 01-.45-1.492c3.332-.997 7.273-.494 10.037 1.16a.782.782 0 01.668 1.272zm.105-2.835c-3.223-1.914-8.54-2.09-11.618-1.156a.935.935 0 11-.542-1.79c3.533-1.072 9.404-.865 13.115 1.338a.935.935 0 01-.955 1.608z"/></svg>`,
+  appleMusic:   `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.994 6.124a9.23 9.23 0 00-.24-2.19c-.317-1.31-1.062-2.31-2.18-3.043a5.022 5.022 0 00-1.877-.726 10.496 10.496 0 00-1.564-.15c-.04-.003-.083-.01-.124-.013H5.986c-.152.01-.303.017-.455.026C4.786.07 4.043.15 3.34.428 2.067.93 1.148 1.824.635 3.083a4.9 4.9 0 00-.346 1.766c-.02.483-.024.967-.04 1.451V18.7c.02.5.09.975.215 1.444.37 1.377 1.22 2.362 2.552 2.914.765.313 1.57.395 2.405.406.077.002.154.008.23.008h13.005c.553-.015 1.098-.082 1.63-.24 1.307-.43 2.18-1.29 2.635-2.58.196-.57.276-1.165.29-1.76.02-.44.013-.883.013-1.325V7.178c-.004-.354-.01-.706-.03-1.054zm-4.94 4.7a.87.87 0 01-.496-.127L10.04 6.73a.44.44 0 01-.204-.373c0-.202.105-.383.266-.49l.06-.036 9.1-3.4a.454.454 0 01.595.43v7.532a.447.447 0 01-.358.43h-.446zm-5.16 5.696c0 1.32-1.055 2.39-2.354 2.39-1.3 0-2.354-1.07-2.354-2.39 0-1.32 1.054-2.39 2.354-2.39 1.3 0 2.354 1.07 2.354 2.39z"/></svg>`,
+  youtube:      `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>`,
+  youtubeMusic: `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm-1 14.5v-9l6 4.5-6 4.5z"/></svg>`,
+  tidal:        `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.012 3.992L8.008 7.996 4.004 3.992 0 7.996l4.004 4.004 4.004-4.004 4.004 4.004 4.004-4.004L20.02 11.996l3.98-4.004-4.004-3.996-3.98 4L12.012 3.992zM8.008 12.004l-4.004 4L8.008 20l4.004-3.996-4.004-3.996v-.004z"/></svg>`,
+  amazonMusic:  `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M13.958 10.09c0 1.232.029 2.256-.591 3.351-.502.891-1.301 1.438-2.186 1.438-1.214 0-1.922-.924-1.922-2.292 0-2.692 2.415-3.182 4.699-3.182v.685zm3.186 7.705a.661.661 0 01-.76.074c-1.066-.886-1.257-1.296-1.843-2.142-1.763 1.799-3.012 2.338-5.296 2.338-2.707 0-4.813-1.671-4.813-5.011 0-2.61 1.415-4.385 3.431-5.255 1.748-.774 4.188-.912 6.051-1.125v-.419c0-.77.06-1.682-.393-2.348-.397-.597-1.157-.844-1.832-.844-1.244 0-2.354.638-2.626 1.96-.056.296-.273.588-.574.604l-3.214-.348c-.27-.06-.569-.28-.491-.695.74-3.887 4.244-5.061 7.385-5.061 1.607 0 3.707.428 4.972 1.645 1.607 1.502 1.453 3.508 1.453 5.693v5.158c0 1.551.644 2.232 1.249 3.071.212.297.258.653-.01.875-.676.564-1.878 1.607-2.539 2.192l-.141-.342z"/></svg>`,
+  soundcloud:   `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M1.175 12.225c-.015-.067-.02-.137-.02-.208C1.155 10.455 2.41 9.2 3.97 9.2c.165 0 .328.015.49.045C4.91 8.035 6.2 7.2 7.68 7.2c.41 0 .804.075 1.162.21C9.555 5.98 10.91 5.2 12.45 5.2c2.296 0 4.12 1.824 4.12 4.12 0 .07-.003.14-.007.208H16.6A2.4 2.4 0 0119 11.928v.047A2.4 2.4 0 0116.6 14.4H2.4A2.4 2.4 0 010 12a2.4 2.4 0 011.175-2.077V12.225z"/></svg>`,
+  bandcamp:     `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 18.75l7.437-13.5H24l-7.438 13.5z"/></svg>`,
+  deezer:       `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.81 11.293l.69-1.2h1.38l-.69 1.2h-1.38zm0 2.4l.69-1.2h1.38l-.69 1.2h-1.38zm-3.45-4.8l.69-1.2h1.38l-.69 1.2h-1.38zm0 2.4l.69-1.2h1.38l-.69 1.2h-1.38zm0 2.4l.69-1.2h1.38l-.69 1.2h-1.38zm-3.45-4.8l.69-1.2h1.38l-.69 1.2h-1.38zm0 2.4l.69-1.2h1.38l-.69 1.2h-1.38zm0 2.4l.69-1.2h1.38l-.69 1.2h-1.38zm-3.45-2.4l.69-1.2h1.38l-.69 1.2h-1.38zm0 2.4l.69-1.2h1.38l-.69 1.2h-1.38zm-3.45 0l.69-1.2h1.38l-.69 1.2H5.01z"/></svg>`,
+  instagram:    `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>`,
+  tiktok:       `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.95a8.28 8.28 0 004.84 1.55V7.07a4.85 4.85 0 01-1.07-.38z"/></svg>`,
+  facebook:     `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`,
+  twitter:      `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.631L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>`,
+  music:        `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+  ticket:       `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 000 6v2a2 2 0 002 2h16a2 2 0 002-2v-2a3 3 0 000-6V7a2 2 0 00-2-2H4a2 2 0 00-2 2v2z"/></svg>`,
+  shirt:        `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.38 3.46 16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.57a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.57a2 2 0 00-1.34-2.23z"/></svg>`,
+  mail:         `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7"/></svg>`,
+  play:         `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>`,
+  link:         `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>`,
+  arrow:        `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>`,
+  star:         `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
 };
 
-function icon(name) {
-  return `<div class="link-icon">${ICONS[name] || ICONS.link}</div>`;
-}
-function arrowIcon() {
-  return `<div class="link-arrow">${ICONS.arrow}</div>`;
-}
+// Streaming platforms config (key matches siteSettings.socials / Sanity streamingLinks)
+const STREAM_PLATFORMS = [
+  { key: 'spotify',      icon: 'spotify',      label: 'Spotify' },
+  { key: 'appleMusic',   icon: 'appleMusic',   label: 'Apple Music' },
+  { key: 'youtubeMusic', icon: 'youtubeMusic', label: 'YouTube Music' },
+  { key: 'tidal',        icon: 'tidal',        label: 'Tidal' },
+  { key: 'amazonMusic',  icon: 'amazonMusic',  label: 'Amazon Music' },
+  { key: 'soundcloud',   icon: 'soundcloud',   label: 'SoundCloud' },
+  { key: 'deezer',       icon: 'deezer',       label: 'Deezer' },
+  { key: 'bandcamp',     icon: 'bandcamp',     label: 'Bandcamp' },
+];
+
+const SOCIAL_PLATFORMS = [
+  { key: 'instagram', icon: 'instagram' },
+  { key: 'tiktok',    icon: 'tiktok' },
+  { key: 'youtube',   icon: 'youtube' },
+  { key: 'facebook',  icon: 'facebook' },
+  { key: 'twitter',   icon: 'twitter' },
+];
 
 // ── BACKGROUND ─────────────────────────────────────────────────
-let bgImgs = [], bgIdx = 0, bgA = document.getElementById('bg-img-a'), bgB = document.getElementById('bg-img-b');
+let bgImgs = [], bgIdx = 0;
+const bgA = document.getElementById('bg-img-a');
+const bgB = document.getElementById('bg-img-b');
 let activeBg = bgA;
 
 function setBg(url) {
   activeBg.style.backgroundImage = `url(${url})`;
   activeBg.classList.add('active');
 }
-
 function cycleBg() {
   if (bgImgs.length < 2) return;
   bgIdx = (bgIdx + 1) % bgImgs.length;
@@ -439,7 +450,7 @@ function cycleBg() {
   setTimeout(() => { activeBg.classList.remove('active'); activeBg = next; }, 1200);
 }
 
-// ── RENDER ─────────────────────────────────────────────────────
+// ── RENDER HELPERS ─────────────────────────────────────────────
 function makeLink({ href, label, sub, iconName, featured, thumb, onClick }) {
   const el = document.createElement('a');
   el.className = 'link-item' + (featured ? ' featured' : '') + (thumb ? ' has-thumb' : '');
@@ -451,10 +462,10 @@ function makeLink({ href, label, sub, iconName, featured, thumb, onClick }) {
     inner += `<img class="link-thumb" src="${esc(thumb)}" alt="" loading="lazy" onerror="this.style.display='none'">`;
     inner += `<div class="link-text"><div class="link-label">${esc(label)}</div>${sub ? `<div class="link-sub">${esc(sub)}</div>` : ''}</div>`;
   } else {
-    inner += icon(iconName || 'link');
+    inner += `<div class="link-icon">${ICONS[iconName] || ICONS.link}</div>`;
     inner += `<div class="link-text"><div class="link-label">${esc(label)}</div>${sub ? `<div class="link-sub">${esc(sub)}</div>` : ''}</div>`;
   }
-  inner += arrowIcon();
+  inner += `<div class="link-arrow">${ICONS.arrow}</div>`;
   el.innerHTML = inner;
   return el;
 }
@@ -466,37 +477,31 @@ function makeLabel(text) {
   return el;
 }
 
-function makeSocialRow(socials) {
+function makeIconRow(items) {
+  // items: [{ href, icon, label }]
   const row = document.createElement('div');
-  row.className = 'social-row';
-  const platforms = [
-    { key: 'instagram', icon: 'instagram' },
-    { key: 'tiktok', icon: 'tiktok' },
-    { key: 'youtube', icon: 'youtube' },
-    { key: 'facebook', icon: 'facebook' },
-    { key: 'twitter', icon: 'twitter' },
-  ];
-  platforms.forEach(({ key, icon: iKey }) => {
-    const url = socials?.[key];
-    if (!url) return;
+  row.className = 'icon-row';
+  items.forEach(({ href, icon, label }) => {
+    if (!href) return;
     const a = document.createElement('a');
-    a.className = 'social-btn';
-    a.href = url; a.target = '_blank'; a.rel = 'noopener';
-    a.setAttribute('aria-label', key);
-    a.innerHTML = ICONS[iKey];
+    a.className = 'icon-btn';
+    a.href = href; a.target = '_blank'; a.rel = 'noopener';
+    a.setAttribute('aria-label', label);
+    a.innerHTML = ICONS[icon] || ICONS.link;
     row.appendChild(a);
   });
+  if (!row.children.length) return null;
   return row;
 }
 
 // ── MAIN ───────────────────────────────────────────────────────
 async function init() {
-  // Fetch everything in parallel
-  const [settingsRes, releasesRes, videosRes, showsRes] = await Promise.allSettled([
+  const [settingsRes, releasesRes, videosRes, showsRes, hubRes] = await Promise.allSettled([
     fetch(sanityUrl(`*[_type == "siteSettings"][0]{
       bandName, tagline, bio,
       "avatarUrl": bandLogo.asset->url,
       socials,
+      streamingLinks,
       "bgImages": *[_type == "galleryImage" && homepageBackground == true]{
         "url": image.asset->url
       }
@@ -507,14 +512,15 @@ async function init() {
     fetch(sanityUrl(`*[_type == "video"] | order(publishDate desc)[0]{
       title, embedId, category
     }`)).then(r => r.json()),
-    fetch('https://rest.bandsintown.com/artists/wd-han/events?app_id=wdhan-website')
-      .then(r => r.json()).catch(() => [])
+    fetch('https://admin-api.wdhan.com/bandsintown').then(r => r.json()).catch(() => []),
+    fetch(sanityUrl(`*[_type == "bandHubSettings"][0]`)).then(r => r.json()),
   ]);
 
   const settings = settingsRes.value?.result || {};
   const release  = releasesRes.value?.result || null;
   const video    = videosRes.value?.result || null;
   const shows    = Array.isArray(showsRes.value) ? showsRes.value : [];
+  const hub      = hubRes.value?.result || {};
 
   // ── Background ──
   const bgs = settings.bgImages || [];
@@ -527,84 +533,202 @@ async function init() {
   }
 
   // ── Header ──
-  document.getElementById('hub-name').textContent = settings.bandName || 'WD-HAN';
-  if (settings.tagline || settings.bio) {
-    document.getElementById('hub-tagline').textContent = settings.tagline || settings.bio || '';
-  }
-  if (settings.avatarUrl) {
-    const wrap = document.getElementById('avatar-wrap');
-    wrap.innerHTML = `<img class="hub-avatar" src="${esc(settings.avatarUrl)}" alt="WD-HAN" />`;
-    wrap.className = '';
+  const headerEl  = document.getElementById('hub-header');
+  const avatarEl  = document.getElementById('avatar-wrap');
+  const nameEl    = document.getElementById('hub-name');
+  const taglineEl = document.getElementById('hub-tagline');
+
+  const showLogo    = hub.showLogo    !== false;
+  const showName    = hub.showName    !== false;
+  const showTagline = hub.showTagline !== false;
+
+  const displayName    = hub.headerName    || settings.bandName || 'WD-HAN';
+  const displayTagline = hub.headerTagline || settings.tagline  || settings.bio || '';
+  const avatarUrl      = settings.avatarUrl;
+
+  let headerVisible = false;
+
+  if (showLogo && avatarUrl) {
+    avatarEl.innerHTML = `<img class="hub-avatar" src="${esc(avatarUrl)}" alt="${esc(displayName)}" />`;
+    avatarEl.className = '';
+    avatarEl.style.display = '';
+    headerVisible = true;
+  } else if (showLogo) {
+    avatarEl.style.display = 'flex';
+    headerVisible = true;
+  } else {
+    avatarEl.style.display = 'none';
   }
 
-  // ── Build stack ──
+  if (showName) {
+    nameEl.textContent  = displayName;
+    nameEl.style.display = '';
+    headerVisible = true;
+  } else {
+    nameEl.style.display = 'none';
+  }
+
+  if (showTagline && displayTagline) {
+    taglineEl.textContent  = displayTagline;
+    taglineEl.style.display = '';
+    headerVisible = true;
+  } else {
+    taglineEl.style.display = 'none';
+  }
+
+  if (headerVisible) headerEl.style.display = '';
+
+  // ── Build ordered section list ──
+  // Default order if none saved
+  const DEFAULT_ORDER = [
+    'featuredRelease', 'music', 'shows', 'stream',
+    'video', 'merch', 'subscribe', 'socials', 'customLinks'
+  ];
+
+  const sectionOrder = (hub.sectionOrder && hub.sectionOrder.length)
+    ? hub.sectionOrder
+    : DEFAULT_ORDER;
+
   const stack = document.getElementById('link-stack');
   stack.innerHTML = '';
   let delay = 0;
 
   function addEl(el) {
+    if (!el) return;
     el.style.animationDelay = `${delay}s`;
     delay += 0.05;
     stack.appendChild(el);
   }
 
-  // Featured release (Pre-Save / Listen Now)
-  if (release?.streamingLinks?.spotify || release) {
-    const isUpcoming = release?.releaseType === 'single' && !release?.streamingLinks?.spotify;
-    addEl(makeLink({
-      href: release?.streamingLinks?.spotify || '#',
-      label: isUpcoming ? `Pre-Save — ${release.title}` : `Listen — ${release.title}`,
-      sub: isUpcoming ? 'Save it on Spotify before release' : 'Stream now on Spotify',
-      iconName: 'spotify',
-      featured: true,
-    }));
-  } else {
-    addEl(makeLink({ href: 'https://open.spotify.com/artist/2byXGURM0QAhEgdMIWGM5c', label: 'Listen on Spotify', iconName: 'spotify', featured: true }));
-  }
+  // Section renderers
+  const renderers = {
+    featuredRelease() {
+      if (hub.showRelease === false) return;
+      if (release?.streamingLinks?.spotify || release) {
+        const isUpcoming = !release?.streamingLinks?.spotify;
+        addEl(makeLink({
+          href: release?.streamingLinks?.spotify || 'https://open.spotify.com/artist/2byXGURM0QAhEgdMIWGM5c',
+          label: isUpcoming ? `Pre-Save — ${release.title}` : `Listen — ${release.title}`,
+          sub: isUpcoming ? 'Save it on Spotify before release' : 'Stream now on Spotify',
+          iconName: 'spotify',
+          featured: true,
+        }));
+      } else {
+        addEl(makeLink({ href: 'https://open.spotify.com/artist/2byXGURM0QAhEgdMIWGM5c', label: 'Listen on Spotify', iconName: 'spotify', featured: true }));
+      }
+    },
 
-  // Music
-  addEl(makeLink({ href: '/music.html', label: 'All Music', sub: 'Discography & streaming links', iconName: 'music' }));
+    music() {
+      if (hub.showMusic === false) return;
+      addEl(makeLink({
+        href: '/music.html',
+        label: hub.musicLabel || 'View our full catalog',
+        sub: 'Discography & streaming links',
+        iconName: 'music',
+      }));
+    },
 
-  // Shows
-  if (shows.length > 0) {
-    addEl(makeLabel('SHOWS'));
-    const next = shows[0];
-    const dateStr = next.datetime ? new Date(next.datetime).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
-    const venue = next.venue?.name || '';
-    addEl(makeLink({
-      href: next.url || '/shows.html',
-      label: `${dateStr}${venue ? ' — ' + venue : ''}`,
-      sub: next.venue?.city ? `${next.venue.city}, ${next.venue.country || ''}`.trim().replace(/,$/, '') : 'Get tickets',
-      iconName: 'ticket',
-    }));
-    if (shows.length > 1) {
-      addEl(makeLink({ href: '/shows.html', label: `View all ${shows.length} shows`, iconName: 'ticket' }));
-    }
-  }
+    shows() {
+      if (hub.showShows === false) return;
+      if (!shows.length) return;
+      addEl(makeLabel('SHOWS'));
+      const next = shows[0];
+      const dateStr = next.datetime
+        ? new Date(next.datetime).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        : '';
+      const venue = next.venue?.name || '';
+      addEl(makeLink({
+        href: next.url || '/shows.html',
+        label: `${dateStr}${venue ? ' — ' + venue : ''}`,
+        sub: next.venue?.city ? `${next.venue.city}, ${next.venue.country || ''}`.trim().replace(/,$/, '') : 'Get tickets',
+        iconName: 'ticket',
+      }));
+      if (shows.length > 1) {
+        addEl(makeLink({ href: '/shows.html', label: `View all ${shows.length} shows`, iconName: 'ticket' }));
+      }
+    },
 
-  // Latest video
-  if (video?.embedId) {
-    addEl(makeLabel('LATEST VIDEO'));
-    addEl(makeLink({
-      href: `https://www.youtube.com/watch?v=${video.embedId}`,
-      label: video.title || 'Watch on YouTube',
-      sub: video.category || 'YouTube',
-      thumb: `https://img.youtube.com/vi/${video.embedId}/mqdefault.jpg`,
-    }));
-  }
+    stream() {
+      if (hub.showStream === false) return;
+      // Build list of visible platforms
+      const hiddenStream = hub.hiddenStreamPlatforms || [];
+      const streamLinks  = settings.streamingLinks || settings.socials || {};
+      const items = STREAM_PLATFORMS
+        .filter(p => !hiddenStream.includes(p.key))
+        .map(p => ({
+          href:  streamLinks[p.key] || null,
+          icon:  p.icon,
+          label: p.label,
+        }))
+        .filter(p => p.href);
+      if (!items.length) return;
+      addEl(makeLabel('STREAM'));
+      const row = makeIconRow(items);
+      addEl(row);
+    },
 
-  // Merch
-  addEl(makeLabel('MERCH & MORE'));
-  addEl(makeLink({ href: 'https://wd-han.myshopify.com', label: 'Merch Store', sub: 'Tees, vinyl & more', iconName: 'shirt' }));
+    video() {
+      if (hub.showVideo === false) return;
+      if (!video?.embedId) return;
+      addEl(makeLabel('LATEST VIDEO'));
+      addEl(makeLink({
+        href: `https://www.youtube.com/watch?v=${video.embedId}`,
+        label: video.title || 'Watch on YouTube',
+        sub: video.category || 'YouTube',
+        thumb: `https://img.youtube.com/vi/${video.embedId}/mqdefault.jpg`,
+      }));
+    },
 
-  // Newsletter
-  addEl(makeLink({ label: 'Join the Mailing List', sub: 'New music & exclusive updates', iconName: 'mail', onClick: openModal }));
+    merch() {
+      if (hub.showMerch === false) return;
+      addEl(makeLabel('MERCH & MORE'));
+      addEl(makeLink({
+        href: hub.merchUrl || 'https://wd-han.myshopify.com',
+        label: hub.merchLabel || 'Merch Store',
+        sub: 'Tees, vinyl & more',
+        iconName: 'shirt',
+      }));
+    },
 
-  // Socials
-  if (settings.socials && Object.values(settings.socials).some(Boolean)) {
-    addEl(makeLabel('FOLLOW'));
-    addEl(makeSocialRow(settings.socials));
-  }
+    subscribe() {
+      if (hub.showSubscribe === false) return;
+      addEl(makeLink({
+        label: hub.subscribeLabel || 'Join the Mailing List',
+        sub: 'New music & exclusive updates',
+        iconName: 'mail',
+        onClick: openModal,
+      }));
+    },
+
+    socials() {
+      if (hub.showSocials === false) return;
+      const socials = settings.socials || {};
+      const items = SOCIAL_PLATFORMS
+        .map(p => ({ href: socials[p.key], icon: p.icon, label: p.key }))
+        .filter(p => p.href);
+      if (!items.length) return;
+      addEl(makeLabel('FOLLOW'));
+      const row = makeIconRow(items);
+      addEl(row);
+    },
+
+    customLinks() {
+      const links = hub.customLinks || [];
+      links.forEach(cl => {
+        if (!cl.label && !cl.url) return;
+        addEl(makeLink({
+          href: cl.url || '#',
+          label: cl.label || cl.url,
+          iconName: cl.icon || 'link',
+        }));
+      });
+    },
+  };
+
+  // Render in saved order, fall back for unknown keys
+  sectionOrder.forEach(key => {
+    if (renderers[key]) renderers[key]();
+  });
 }
 
 // ── MODAL ──────────────────────────────────────────────────────
@@ -620,8 +744,12 @@ document.getElementById('sub-modal').addEventListener('click', (e) => {
 document.getElementById('sub-submit').addEventListener('click', async () => {
   const email = document.getElementById('sub-email').value.trim();
   const msg   = document.getElementById('sub-msg');
-  if (!email || !email.includes('@')) { msg.textContent = 'Please enter a valid email.'; msg.className = 'modal-msg err'; return; }
-  msg.textContent = 'Subscribing...'; msg.className = 'modal-msg';
+  if (!email || !email.includes('@')) {
+    msg.textContent = 'Please enter a valid email.';
+    msg.className = 'modal-msg err';
+    return;
+  }
+  msg.textContent = 'Subscribing…'; msg.className = 'modal-msg';
   try {
     const res = await fetch('https://admin-api.wdhan.com/subscribe', {
       method: 'POST',
@@ -629,11 +757,14 @@ document.getElementById('sub-submit').addEventListener('click', async () => {
       body: JSON.stringify({ email }),
     });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Subscribe failed');
-    msg.textContent = "You're in! 🎉"; msg.className = 'modal-msg ok';
-    document.getElementById('sub-email').value = '';
-    setTimeout(() => document.getElementById('sub-modal').classList.remove('open'), 2000);
-  } catch {
+    if (data.success) {
+      msg.textContent = "You're in! 🎉"; msg.className = 'modal-msg ok';
+      document.getElementById('sub-email').value = '';
+      setTimeout(() => document.getElementById('sub-modal').classList.remove('open'), 2000);
+    } else {
+      throw new Error(data.error || 'Subscribe failed');
+    }
+  } catch (err) {
     msg.textContent = 'Something went wrong — try again.'; msg.className = 'modal-msg err';
   }
 });
