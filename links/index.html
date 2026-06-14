@@ -264,6 +264,80 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
+    /* ── CUSTOM LINK EMBEDS ─────────────────────────────────── */
+    .embed-card {
+      width: 100%; max-width: 420px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      animation: fadeUp 0.6s ease both;
+    }
+    /* Video embed */
+    .video-embed {
+      position: relative;
+      background: #000;
+      border-radius: var(--radius);
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .video-thumb {
+      width: 100%; aspect-ratio: 16/9;
+      object-fit: cover; display: block;
+      transition: opacity 0.2s;
+    }
+    .video-embed:hover .video-thumb { opacity: 0.75; }
+    .video-play-ring {
+      position: absolute; inset: 0;
+      display: flex; align-items: center; justify-content: center;
+      pointer-events: none;
+    }
+    .video-play-btn {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: rgba(8,8,10,0.7);
+      border: 2px solid rgba(245,241,230,0.6);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .video-embed:hover .video-play-btn {
+      background: var(--accent);
+      border-color: var(--accent);
+    }
+    .video-play-btn svg { width: 20px; height: 20px; color: #fff; margin-left: 3px; }
+    .video-caption {
+      font-size: 0.75rem; color: var(--muted);
+      padding: 6px 2px 0;
+      line-height: 1.4;
+    }
+    .video-lightbox {
+      position: fixed; inset: 0; z-index: 200;
+      background: rgba(0,0,0,0.92);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+      opacity: 0; pointer-events: none; transition: opacity 0.2s;
+    }
+    .video-lightbox.open { opacity: 1; pointer-events: all; }
+    .video-lightbox-inner {
+      width: 100%; max-width: 720px;
+      aspect-ratio: 16/9; position: relative;
+    }
+    .video-lightbox-inner iframe {
+      width: 100%; height: 100%; border: none; border-radius: 8px;
+    }
+    .video-lightbox-close {
+      position: absolute; top: -40px; right: 0;
+      background: none; border: none; color: #fff;
+      font-size: 1.5rem; cursor: pointer; line-height: 1;
+    }
+    /* Song/Spotify embed */
+    .song-embed iframe {
+      border-radius: var(--radius);
+      width: 100%;
+      border: none;
+    }
+    .song-caption {
+      font-size: 0.75rem; color: var(--muted);
+      padding: 6px 2px 0; line-height: 1.4;
+    }
+
     /* ── NEWSLETTER MODAL ───────────────────────────────────── */
     .modal-overlay {
       position: fixed; inset: 0; z-index: 100;
@@ -347,6 +421,13 @@
     <input type="email" id="sub-email" placeholder="your@email.com" autocomplete="email" />
     <button class="modal-submit" id="sub-submit">Subscribe</button>
     <div class="modal-msg" id="sub-msg"></div>
+  </div>
+</div>
+
+<!-- Video lightbox -->
+<div class="video-lightbox" id="video-lightbox">
+  <div class="video-lightbox-inner" id="video-lightbox-inner">
+    <button class="video-lightbox-close" id="video-lightbox-close">✕</button>
   </div>
 </div>
 
@@ -712,24 +793,118 @@ async function init() {
       addEl(row);
     },
 
-    customLinks() {
-      const links = hub.customLinks || [];
-      links.forEach(cl => {
-        if (!cl.label && !cl.url) return;
-        addEl(makeLink({
-          href: cl.url || '#',
-          label: cl.label || cl.url,
-          iconName: cl.icon || 'link',
-        }));
-      });
-    },
+    // Custom links are handled inline below via sectionOrder
+    customLinks() {},
   };
 
-  // Render in saved order, fall back for unknown keys
+  // Build a map of custom links by id for fast lookup
+  const customLinksMap = hub.customLinksMap || {};
+  // Also support legacy ordered array
+  const customLinksOrdered = hub.customLinksOrdered || [];
+  // Merge: keyed map is authoritative, ordered list as fallback
+  const clById = { ...customLinksMap };
+  customLinksOrdered.forEach(cl => { if (cl.id && !clById[cl.id]) clById[cl.id] = cl; });
+
+  // Render in saved order
   sectionOrder.forEach(key => {
-    if (renderers[key]) renderers[key]();
+    if (key.startsWith('customLink:')) {
+      const id   = key.slice('customLink:'.length);
+      const data = clById[id];
+      if (!data) return;
+      renderCustomLinkItem(data, addEl, delay);
+    } else if (renderers[key]) {
+      renderers[key]();
+    }
   });
 }
+
+function renderCustomLinkItem(data, addEl, _delay) {
+  const type = data.type || 'link';
+
+  if (type === 'link') {
+    addEl(makeLink({
+      href: data.url || '#',
+      label: data.label || data.url || '',
+      iconName: data.icon || 'link',
+    }));
+    return;
+  }
+
+  if (type === 'video' && data.videoId) {
+    const wrap = document.createElement('div');
+    wrap.className = 'embed-card';
+    wrap.style.animationDelay = `${_delay}s`;
+    wrap.innerHTML = `
+      <div class="video-embed" data-vid="${esc(data.videoId)}">
+        <img class="video-thumb"
+          src="https://img.youtube.com/vi/${esc(data.videoId)}/mqdefault.jpg"
+          alt="${esc(data.caption || '')}"
+          onerror="this.src='https://img.youtube.com/vi/${esc(data.videoId)}/hqdefault.jpg'">
+        <div class="video-play-ring">
+          <div class="video-play-btn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>
+          </div>
+        </div>
+      </div>
+      ${data.caption ? `<div class="video-caption">${esc(data.caption)}</div>` : ''}`;
+
+    wrap.querySelector('.video-embed').addEventListener('click', () => {
+      openVideoLightbox(data.videoId);
+    });
+    const stack = document.getElementById('link-stack');
+    wrap.style.animationDelay = `0s`;
+    stack.appendChild(wrap);
+    return;
+  }
+
+  if (type === 'song' && data.embedUri) {
+    // embedUri is "track/ID" or "album/ID" or "playlist/ID"
+    const compact = data.embedUri.startsWith('track/');
+    const height  = compact ? 152 : 232;
+    const wrap = document.createElement('div');
+    wrap.className = 'embed-card';
+    wrap.innerHTML = `
+      <div class="song-embed">
+        <iframe
+          src="https://open.spotify.com/embed/${esc(data.embedUri)}?utm_source=generator&theme=0"
+          height="${height}"
+          allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+          loading="lazy">
+        </iframe>
+      </div>
+      ${data.caption ? `<div class="song-caption">${esc(data.caption)}</div>` : ''}`;
+    const stack = document.getElementById('link-stack');
+    stack.appendChild(wrap);
+  }
+}
+
+// ── VIDEO LIGHTBOX ─────────────────────────────────────────────
+function openVideoLightbox(videoId) {
+  const lb    = document.getElementById('video-lightbox');
+  const inner = document.getElementById('video-lightbox-inner');
+  // Remove any previous iframe
+  const old = inner.querySelector('iframe');
+  if (old) old.remove();
+  const iframe = document.createElement('iframe');
+  iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+  iframe.allow = 'autoplay; encrypted-media; fullscreen';
+  inner.appendChild(iframe);
+  lb.classList.add('open');
+}
+document.getElementById('video-lightbox-close').addEventListener('click', () => {
+  const lb    = document.getElementById('video-lightbox');
+  const inner = document.getElementById('video-lightbox-inner');
+  const iframe = inner.querySelector('iframe');
+  if (iframe) iframe.remove();
+  lb.classList.remove('open');
+});
+document.getElementById('video-lightbox').addEventListener('click', (e) => {
+  if (e.target === e.currentTarget) {
+    const iframe = document.getElementById('video-lightbox-inner').querySelector('iframe');
+    if (iframe) iframe.remove();
+    e.currentTarget.classList.remove('open');
+  }
+});
 
 // ── MODAL ──────────────────────────────────────────────────────
 function openModal() {
