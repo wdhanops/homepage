@@ -2,8 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-   <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg" />
-  <link rel="apple-touch-icon" href="/assets/img/favicon.svg" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>WD-HAN Admin</title>
   <link rel="icon" type="image/svg+xml" href="/assets/img/favicon.svg" />
@@ -41,7 +39,7 @@
       -webkit-font-smoothing: antialiased;
     }
 
-    /* ── AUTH ──────────────────────────────────────────── */
+    /* ── AUTH ── */
     #auth-screen {
       min-height: 100vh; display: flex; flex-direction: column;
       align-items: center; justify-content: center; padding: 20px;
@@ -125,7 +123,7 @@
     .field textarea { resize: vertical; min-height: 80px; }
     .field input:focus, .field textarea:focus, .field select:focus,
     .field-input:focus, .field-select:focus { border-color: var(--accent); }
-    .field-hint, .field-hint-inline { font-size: 0.72rem; color: var(--faint); margin-top: 4px; line-height: 1.4; }
+    .field-hint { font-size: 0.72rem; color: var(--faint); margin-top: 4px; line-height: 1.4; }
 
     /* ── TOGGLE ── */
     .toggle-row {
@@ -147,7 +145,6 @@
     }
     .toggle input:checked + .toggle-slider { background: var(--accent); border-color: var(--accent); }
     .toggle input:checked + .toggle-slider::before { transform: translateX(20px); background: #fff; }
-    .toggle.mini { transform: scale(0.82); transform-origin: left center; }
 
     /* ── BUTTONS ── */
     .btn-row { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
@@ -164,7 +161,151 @@
     .save-status.err { color: var(--red); }
     .save-status.loading { color: var(--muted); }
 
-    /* ── RELEASE LIST ── */
+    /* ════════════════════════════════════════════════════
+       BAND HUB — SECTION LIST
+    ════════════════════════════════════════════════════ */
+    .hub-sections {
+      display: flex; flex-direction: column; gap: 8px;
+      margin-bottom: 20px;
+    }
+
+    /* Individual draggable section card */
+    .hub-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color 0.15s, box-shadow 0.15s;
+    }
+    .hub-section.dragging {
+      opacity: 0.5;
+      border-color: var(--accent);
+    }
+    .hub-section.drag-over {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 2px rgba(255,59,46,0.2);
+    }
+
+    /* Section header row */
+    .hs-header {
+      display: flex; align-items: center; gap: 12px;
+      padding: 14px 16px;
+      cursor: default;
+      user-select: none;
+    }
+    .hs-drag {
+      color: var(--faint); cursor: grab; flex-shrink: 0;
+      display: flex; align-items: center; padding: 2px 4px;
+      border-radius: 4px; transition: color 0.15s, background 0.15s;
+    }
+    .hs-drag:hover { color: var(--muted); background: var(--surface2); }
+    .hs-drag:active { cursor: grabbing; }
+    .hs-drag svg { width: 16px; height: 16px; }
+
+    .hs-label { flex: 1; font-size: 0.9rem; font-weight: 500; }
+    .hs-sub { font-size: 0.72rem; color: var(--muted); margin-top: 1px; }
+
+    /* Expand chevron */
+    .hs-expand {
+      background: none; border: none; color: var(--muted); cursor: pointer;
+      padding: 4px; border-radius: 4px; transition: color 0.15s, transform 0.2s;
+      display: flex; align-items: center;
+    }
+    .hs-expand svg { width: 16px; height: 16px; }
+    .hs-expand.open { transform: rotate(180deg); }
+
+    /* Section body (expandable) */
+    .hs-body {
+      display: none;
+      padding: 0 16px 16px 16px;
+      border-top: 1px solid var(--border);
+    }
+    .hs-body.open { display: block; }
+    .hs-body .field { margin-top: 14px; margin-bottom: 0; }
+    .hs-body .field + .field { margin-top: 10px; }
+    .hs-body .field label { margin-bottom: 5px; }
+    .hs-body .field input[type="text"],
+    .hs-body .field input[type="url"] {
+      padding: 9px 12px; font-size: 0.85rem;
+    }
+
+    /* Platform toggle rows inside section body */
+    .hs-platform-list { display: flex; flex-direction: column; gap: 0; margin-top: 14px; }
+    .hs-platform-row {
+      display: flex; align-items: center; gap: 10px;
+      padding: 9px 0; border-bottom: 1px solid var(--border);
+    }
+    .hs-platform-row:last-child { border-bottom: none; }
+    .hs-platform-icon {
+      width: 28px; height: 28px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 50%; color: var(--text);
+    }
+    .hs-platform-icon svg { width: 14px; height: 14px; }
+    .hs-platform-name { flex: 1; font-size: 0.83rem; }
+    .toggle.sm { width: 38px; height: 20px; }
+    .toggle.sm .toggle-slider::before { width: 14px; height: 14px; top: 2px; left: 2px; }
+    .toggle.sm input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+    /* ── CUSTOM LINKS IN HUB ── */
+    .custom-link-item {
+      display: flex; gap: 8px; align-items: center;
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+    }
+    .custom-link-item:last-child { border-bottom: none; }
+    .cl-drag { color: var(--faint); cursor: grab; flex-shrink: 0; }
+    .cl-drag:active { cursor: grabbing; }
+    .cl-drag svg { width: 14px; height: 14px; }
+    .cl-inputs { display: flex; flex: 1; gap: 8px; flex-wrap: wrap; }
+    .cl-inputs input {
+      flex: 1; min-width: 100px; padding: 8px 10px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 6px; color: var(--text); font-family: var(--font-body);
+      font-size: 0.82rem; outline: none; transition: border-color 0.15s;
+    }
+    .cl-inputs input:focus { border-color: var(--accent); }
+    .cl-icon-select {
+      width: 44px; height: 36px; padding: 0; flex-shrink: 0;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 6px; color: var(--muted); cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      position: relative;
+    }
+    .cl-icon-select svg { width: 16px; height: 16px; pointer-events: none; }
+    .cl-icon-dropdown {
+      position: absolute; top: calc(100% + 4px); right: 0; z-index: 20;
+      background: var(--surface); border: 1px solid var(--border2);
+      border-radius: 8px; padding: 8px;
+      display: flex; flex-wrap: wrap; gap: 4px;
+      width: 220px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    }
+    .cl-icon-dropdown.hidden { display: none; }
+    .cl-icon-opt {
+      width: 32px; height: 32px; border-radius: 6px; cursor: pointer;
+      border: 1px solid var(--border); background: var(--surface2);
+      display: flex; align-items: center; justify-content: center;
+      color: var(--muted); transition: all 0.12s;
+      position: relative;
+    }
+    .cl-icon-opt svg { width: 14px; height: 14px; pointer-events: none; }
+    .cl-icon-opt:hover { border-color: var(--border2); color: var(--text); }
+    .cl-icon-opt.active { border-color: var(--accent); color: var(--accent); background: rgba(255,59,46,0.1); }
+    .cl-rm {
+      padding: 8px 10px; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 6px; color: var(--muted); cursor: pointer; font-size: 0.78rem;
+      flex-shrink: 0; transition: color 0.15s, border-color 0.15s;
+    }
+    .cl-rm:hover { color: var(--red); border-color: var(--red); }
+
+    .add-link-btn {
+      margin-top: 12px; font-size: 0.82rem; color: var(--accent);
+      background: none; border: none; cursor: pointer; padding: 0;
+    }
+    .add-link-btn:hover { opacity: 0.75; }
+
+    /* ── RELEASE LIST (unchanged from original) ── */
     .release-list { display: flex; flex-direction: column; gap: 10px; }
     .release-row {
       display: flex; align-items: center; gap: 14px;
@@ -181,7 +322,7 @@
     .rel-status.live { background: rgba(76,175,114,0.15); color: var(--green); }
     .rel-status.draft { background: var(--surface2); color: var(--muted); }
 
-    /* ── EDITOR ── */
+    /* ── EDITOR (release) ── */
     .editor-panel { display: none; margin-top: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; }
     .editor-panel.open { display: block; }
     .editor-head { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
@@ -192,7 +333,7 @@
     .editor-head-close:hover { color: var(--text); }
     .editor-head-close svg { width: 18px; height: 18px; }
 
-    /* ── PLATFORMS ── */
+    /* ── PLATFORMS (release editor) ── */
     .platform-grid { display: flex; flex-direction: column; gap: 8px; }
     .platform-row { display: flex; align-items: center; gap: 10px; }
     .platform-icon { width: 32px; height: 32px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; }
@@ -200,24 +341,10 @@
     .platform-label { width: 110px; font-size: 0.8rem; font-weight: 500; flex-shrink: 0; }
     .platform-row input { flex: 1; padding: 9px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: var(--font-body); font-size: 0.78rem; outline: none; transition: border-color 0.15s, opacity 0.15s; }
     .platform-row input:focus { border-color: var(--accent); }
-
-    /* ── SLUG ── */
     .slug-preview { font-size: 0.75rem; color: var(--muted); margin-top: 4px; }
     .slug-preview span { color: var(--accent); }
 
-    /* ── CUSTOM LINKS ── */
-    .custom-links { display: flex; flex-direction: column; gap: 8px; }
-    .cl-row { display: flex; gap: 8px; align-items: center; }
-    .cl-row input { flex: 1; padding: 9px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--text); font-family: var(--font-body); font-size: 0.82rem; outline: none; transition: border-color 0.15s; }
-    .cl-row input:focus { border-color: var(--accent); }
-    .cl-rm { padding: 9px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; color: var(--muted); cursor: pointer; font-size: 0.8rem; flex-shrink: 0; transition: color 0.15s, border-color 0.15s; }
-    .cl-rm:hover { color: var(--red); border-color: var(--red); }
-    .add-link-btn { margin-top: 8px; font-size: 0.82rem; color: var(--accent); background: none; border: none; cursor: pointer; padding: 0; }
-    .add-link-btn:hover { opacity: 0.75; }
-
-    /* ── HOMEPAGE TAB ─────────────────────────────────── */
-
-    /* Color picker */
+    /* ── HOMEPAGE TAB (unchanged) ── */
     .color-picker-row { display: flex; align-items: flex-end; gap: 20px; flex-wrap: wrap; margin-top: 4px; }
     .color-swatch-wrap { position: relative; width: 64px; height: 64px; border-radius: 12px; overflow: hidden; border: 1px solid var(--border2); cursor: pointer; flex-shrink: 0; }
     .color-swatch-wrap input[type="color"] { position: absolute; inset: -10px; width: calc(100% + 20px); height: calc(100% + 20px); opacity: 0; cursor: pointer; z-index: 2; }
@@ -231,8 +358,6 @@
     #dot-btn { background: var(--accent); color: #fff; border: none; }
     #dot-link { background: transparent; color: var(--accent); border: 1.5px solid var(--accent); }
     #dot-orb { width: 28px; height: 28px; padding: 0; border-radius: 50%; border: none; opacity: 0.75; }
-
-    /* Hero text */
     .field-section { margin-bottom: 4px; }
     .field-section-label { font-size: 0.7rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
     .field-row { display: flex; gap: 14px; align-items: flex-end; flex-wrap: wrap; margin-bottom: 12px; }
@@ -246,18 +371,12 @@
     .color-mini-wrap input[type="color"] { width: 36px; height: 36px; border: 1px solid var(--border); border-radius: 6px; cursor: pointer; background: none; padding: 2px; flex-shrink: 0; }
     .color-mini-wrap .field-input { width: 86px; }
     .field-divider { height: 1px; background: var(--border); margin: 20px 0; }
-
-    /* Hero preview */
     .hero-preview-label { font-size: 0.7rem; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 6px; margin-top: 14px; }
     .hero-preview { font-family: 'Splatink', 'Anton', sans-serif; font-size: 2.4rem; color: #f5f1e6; line-height: 1.1; letter-spacing: 0.02em; padding: 14px 18px; background: var(--surface2); border-radius: 8px; border: 1px solid var(--border); transition: all 0.2s; word-break: break-word; }
     .hero-preview.sub { font-family: 'DM Sans', sans-serif; font-size: 1rem; letter-spacing: 0.04em; }
-
-    /* Countdown */
     .countdown-live { display: flex; align-items: center; gap: 10px; margin-top: 12px; padding: 10px 14px; background: var(--surface2); border-radius: 8px; border: 1px solid var(--border); }
     .countdown-live-label { font-size: 0.75rem; color: var(--muted); }
     .countdown-live-val { font-family: 'Courier New', monospace; font-size: 0.9rem; color: var(--accent); }
-
-    /* CTA buttons */
     .btn-settings-block { margin-bottom: 4px; }
     .btn-settings-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
     .btn-settings-label { font-size: 0.85rem; font-weight: 600; }
@@ -270,59 +389,34 @@
     .cta-preview.outline { background: transparent; color: var(--accent); border: 2px solid var(--accent); }
     .cta-preview svg { width: 15px; height: 15px; fill: currentColor; flex-shrink: 0; }
     .cta-preview svg.stroke-icon { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
-
-    /* Icon picker */
     .icon-picker { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
-    .icon-opt {
-      width: 38px; height: 38px; border-radius: 8px; cursor: pointer;
-      border: 1.5px solid var(--border); background: var(--surface2);
-      display: flex; align-items: center; justify-content: center;
-      color: var(--muted); transition: all 0.15s;
-      position: relative;
-    }
+    .icon-opt { width: 38px; height: 38px; border-radius: 8px; cursor: pointer; border: 1.5px solid var(--border); background: var(--surface2); display: flex; align-items: center; justify-content: center; color: var(--muted); transition: all 0.15s; position: relative; }
     .icon-opt svg { width: 16px; height: 16px; fill: currentColor; pointer-events: none; }
     .icon-opt svg.stroke-icon { fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     .icon-opt[data-val="none"] { font-size: 0.7rem; letter-spacing: 0; color: var(--muted); font-family: var(--font-body); }
     .icon-opt:hover { border-color: var(--border2); color: var(--text); }
     .icon-opt.active { border-color: var(--accent); color: var(--accent); background: rgba(255,59,46,0.08); }
-    .icon-opt .icon-tip {
-      position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%);
-      font-size: 0.65rem; white-space: nowrap; color: var(--text);
-      background: var(--surface); border: 1px solid var(--border2);
-      border-radius: 4px; padding: 3px 7px;
-      opacity: 0; pointer-events: none; transition: opacity 0.15s;
-    }
+    .icon-opt .icon-tip { position: absolute; bottom: calc(100% + 6px); left: 50%; transform: translateX(-50%); font-size: 0.65rem; white-space: nowrap; color: var(--text); background: var(--surface); border: 1px solid var(--border2); border-radius: 4px; padding: 3px 7px; opacity: 0; pointer-events: none; transition: opacity 0.15s; }
     .icon-opt:hover .icon-tip { opacity: 1; }
-
-    /* Action selector */
     .action-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 2px; }
-    .action-opt {
-      padding: 7px 14px; border-radius: 6px; font-size: 0.78rem;
-      font-family: var(--font-body); font-weight: 500; cursor: pointer;
-      border: 1px solid var(--border); background: var(--surface2);
-      color: var(--muted); transition: all 0.15s; white-space: nowrap;
-    }
+    .action-opt { padding: 7px 14px; border-radius: 6px; font-size: 0.78rem; font-family: var(--font-body); font-weight: 500; cursor: pointer; border: 1px solid var(--border); background: var(--surface2); color: var(--muted); transition: all 0.15s; white-space: nowrap; }
     .action-opt:hover { border-color: var(--border2); color: var(--text); }
     .action-opt.active { border-color: var(--accent); color: var(--accent); background: rgba(255,59,46,0.08); }
     .url-field-wrap { margin-top: 10px; transition: opacity 0.2s; }
     .url-field-wrap.hidden { opacity: 0.3; pointer-events: none; }
-
-    /* HP save row */
     .save-row { display: flex; justify-content: flex-end; align-items: center; gap: 16px; margin-top: 8px; margin-bottom: 40px; }
 
-    /* ── RESPONSIVE ── */
     @media (max-width: 600px) {
       .topbar { padding: 0 16px; }
       .tab-panel { padding: 20px 16px; }
       .card { padding: 16px; }
       .platform-label { width: 80px; font-size: 0.72rem; }
-      .color-picker-row { gap: 12px; }
     }
   </style>
 </head>
 <body>
 
-<!-- ── AUTH ──────────────────────────────────────────────── -->
+<!-- ── AUTH ── -->
 <div id="auth-screen">
   <div class="auth-logo">WD-HAN</div>
   <div class="auth-sub">Admin Panel</div>
@@ -334,7 +428,7 @@
   </div>
 </div>
 
-<!-- ── APP ───────────────────────────────────────────────── -->
+<!-- ── APP ── -->
 <div id="app">
   <div class="topbar">
     <div class="topbar-logo">WD-HAN</div>
@@ -352,19 +446,18 @@
     <button class="tab-btn" data-tab="releases">Release Pages</button>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════
-       HOMEPAGE TAB
-  ══════════════════════════════════════════════════════ -->
+  <!-- ══════════════════════════════════════════════════
+       HOMEPAGE TAB (unchanged from previous version)
+  ══════════════════════════════════════════════════ -->
   <div class="tab-panel active" id="tab-homepage">
     <div class="panel-head">
       <div class="panel-title">Homepage</div>
       <div class="panel-sub">wdhan.com — global site settings</div>
     </div>
 
-    <!-- Main Color -->
     <div class="card">
       <div class="card-title">Main Color</div>
-      <div class="card-sub">Applied to accent elements across the whole site — buttons, links, orbs, nav highlights, and this admin panel.</div>
+      <div class="card-sub">Applied to accent elements across the whole site.</div>
       <div class="color-picker-row">
         <div class="color-swatch-wrap">
           <input type="color" id="hp-main-color" value="#ff3b2e" />
@@ -385,11 +478,9 @@
       </div>
     </div>
 
-    <!-- Hero Text -->
     <div class="card">
       <div class="card-title">Hero Text</div>
       <div class="card-sub">Main header and sub-header shown on the homepage.</div>
-
       <div class="field-section">
         <div class="field-section-label">Main Header</div>
         <div class="field-row">
@@ -426,9 +517,7 @@
         <div class="hero-preview-label">Preview</div>
         <div class="hero-preview" id="hp-main-header-preview">Wild Things</div>
       </div>
-
       <div class="field-divider"></div>
-
       <div class="field-section">
         <div class="field-section-label">Sub Header</div>
         <div class="field-row">
@@ -467,15 +556,11 @@
       </div>
     </div>
 
-    <!-- Countdown -->
     <div class="card">
       <div class="card-title">Countdown</div>
       <div class="card-sub">Displays a live countdown timer on the homepage hero.</div>
       <div class="toggle-row" style="margin-bottom:16px">
-        <div class="toggle-info">
-          <div class="tl">Show Countdown</div>
-          <div class="ts">Toggle the countdown timer on or off</div>
-        </div>
+        <div class="toggle-info"><div class="tl">Show Countdown</div><div class="ts">Toggle the countdown timer on or off</div></div>
         <label class="toggle"><input type="checkbox" id="hp-countdown-enabled" /><span class="toggle-slider"></span></label>
       </div>
       <div class="field-row" style="margin-top:4px">
@@ -491,12 +576,9 @@
       </div>
     </div>
 
-    <!-- Buttons -->
     <div class="card">
       <div class="card-title">Hero Buttons</div>
       <div class="card-sub">Up to 2 call-to-action buttons on the homepage hero.</div>
-
-      <!-- Button 1 -->
       <div class="btn-settings-block">
         <div class="btn-settings-header">
           <span class="btn-settings-label">Button 1</span>
@@ -518,7 +600,7 @@
           </div>
           <div class="field-group" style="flex:1;min-width:200px">
             <label class="field-label">Icon</label>
-            <div class="icon-picker" id="hp-btn1-icon-picker"><!-- built by JS --></div>
+            <div class="icon-picker" id="hp-btn1-icon-picker"></div>
           </div>
         </div>
         <div class="field-group" style="margin-top:12px">
@@ -535,10 +617,7 @@
           <button class="cta-preview filled" id="hp-btn1-preview">Pre-Save</button>
         </div>
       </div>
-
       <div class="field-divider"></div>
-
-      <!-- Button 2 -->
       <div class="btn-settings-block">
         <div class="btn-settings-header">
           <span class="btn-settings-label">Button 2</span>
@@ -560,7 +639,7 @@
           </div>
           <div class="field-group" style="flex:1;min-width:200px">
             <label class="field-label">Icon</label>
-            <div class="icon-picker" id="hp-btn2-icon-picker"><!-- built by JS --></div>
+            <div class="icon-picker" id="hp-btn2-icon-picker"></div>
           </div>
         </div>
         <div class="field-group" style="margin-top:12px">
@@ -585,80 +664,71 @@
     </div>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════
-       BAND HUB TAB
-  ══════════════════════════════════════════════════════ -->
+  <!-- ══════════════════════════════════════════════════
+       BAND HUB TAB — rebuilt with draggable sections
+  ══════════════════════════════════════════════════ -->
   <div class="tab-panel" id="tab-hub">
     <div class="panel-head">
       <div class="panel-title">Band Hub</div>
-      <div class="panel-sub">wdhan.com/links</div>
+      <div class="panel-sub">wdhan.com/links — drag sections to reorder</div>
     </div>
 
-    <div class="card">
-      <div class="card-title">Page Sections</div>
+    <!-- Page Header card -->
+    <div class="card" style="margin-bottom:16px">
+      <div class="card-title">Page Header</div>
+
       <div class="toggle-row">
-        <div class="toggle-info"><div class="tl">Featured Release</div><div class="ts">Shows Pre-Save or Listen Now button at the top</div></div>
-        <label class="toggle"><input type="checkbox" id="hub-show-release" checked /><span class="toggle-slider"></span></label>
+        <div class="toggle-info"><div class="tl">Show Logo</div><div class="ts">Circular avatar / band logo image</div></div>
+        <label class="toggle"><input type="checkbox" id="hub-show-logo" checked /><span class="toggle-slider"></span></label>
       </div>
       <div class="toggle-row">
-        <div class="toggle-info"><div class="tl">All Music link</div><div class="ts">Link to /music.html</div></div>
-        <label class="toggle"><input type="checkbox" id="hub-show-music" checked /><span class="toggle-slider"></span></label>
+        <div class="toggle-info"><div class="tl">Show Band Name</div><div class="ts">Large display-font header</div></div>
+        <label class="toggle"><input type="checkbox" id="hub-show-name" checked /><span class="toggle-slider"></span></label>
       </div>
-      <div class="toggle-row">
-        <div class="toggle-info"><div class="tl">Shows / Tour</div><div class="ts">Pulls live from Bandsintown — auto-hides when no shows</div></div>
-        <label class="toggle"><input type="checkbox" id="hub-show-shows" checked /><span class="toggle-slider"></span></label>
+      <div class="toggle-row" style="border-bottom:none">
+        <div class="toggle-info"><div class="tl">Show Tagline</div><div class="ts">Short description beneath the name</div></div>
+        <label class="toggle"><input type="checkbox" id="hub-show-tagline" checked /><span class="toggle-slider"></span></label>
       </div>
-      <div class="toggle-row">
-        <div class="toggle-info"><div class="tl">Latest Video</div><div class="ts">Pulls most recent video from Sanity</div></div>
-        <label class="toggle"><input type="checkbox" id="hub-show-video" checked /><span class="toggle-slider"></span></label>
-      </div>
-      <div class="toggle-row">
-        <div class="toggle-info"><div class="tl">Merch Store</div><div class="ts">Links to Shopify store</div></div>
-        <label class="toggle"><input type="checkbox" id="hub-show-merch" checked /><span class="toggle-slider"></span></label>
-      </div>
-      <div class="toggle-row">
-        <div class="toggle-info"><div class="tl">Newsletter Signup</div><div class="ts">Email subscribe via Shopify</div></div>
-        <label class="toggle"><input type="checkbox" id="hub-show-subscribe" checked /><span class="toggle-slider"></span></label>
-      </div>
-      <div class="toggle-row">
-        <div class="toggle-info"><div class="tl">Social Links</div><div class="ts">Pulls from Sanity Site Settings</div></div>
-        <label class="toggle"><input type="checkbox" id="hub-show-socials" checked /><span class="toggle-slider"></span></label>
+
+      <div style="margin-top:16px;display:flex;flex-direction:column;gap:10px">
+        <div class="field" style="margin-bottom:0">
+          <label>Band Name Override</label>
+          <input type="text" id="hub-header-name" placeholder="Defaults to band name in Sanity" />
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label>Tagline Override</label>
+          <input type="text" id="hub-header-tagline" placeholder="Defaults to tagline in Sanity" />
+        </div>
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title">Custom Links</div>
-      <div class="custom-links" id="custom-links-list"></div>
-      <button class="add-link-btn" id="add-link-btn">+ Add custom link</button>
-    </div>
+    <!-- Draggable sections -->
+    <p style="font-size:0.75rem;color:var(--muted);margin-bottom:10px;line-height:1.5">
+      Drag ⠿ to reorder sections. Expand each to edit labels, settings, and platform toggles.
+    </p>
+    <div class="hub-sections" id="hub-sections"><!-- built by JS --></div>
 
     <div class="btn-row">
-      <button class="btn btn-primary" id="hub-save-btn">Save Changes</button>
+      <button class="btn btn-primary" id="hub-save-btn">Save Band Hub</button>
       <a class="btn btn-ghost" href="/links" target="_blank">Preview ↗</a>
     </div>
     <div class="save-status" id="hub-status"></div>
-    <p style="font-size:0.75rem;color:var(--muted);margin-top:16px;line-height:1.5">
-      Toggle states are saved to Sanity's <code style="font-size:0.7rem;background:var(--surface2);padding:1px 5px;border-radius:4px">bandHubSettings</code> document. Changes go live instantly.
-    </p>
   </div>
 
-  <!-- ══════════════════════════════════════════════════════
+  <!-- ══════════════════════════════════════════════════
        RELEASES TAB
-  ══════════════════════════════════════════════════════ -->
+  ══════════════════════════════════════════════════ -->
   <div class="tab-panel" id="tab-releases">
     <div class="panel-head">
       <div class="panel-title">Release Pages</div>
       <div class="panel-sub">wdhan.com/s/?slug=…</div>
     </div>
-
     <p style="font-size:0.85rem;color:var(--muted);margin-bottom:20px;line-height:1.6">
       Each release can have a short link page for ads and campaigns. Select a release to create or edit its page.
     </p>
-
     <div class="release-list" id="release-list">
       <div style="color:var(--muted);font-size:0.85rem">Loading releases…</div>
     </div>
-
     <div class="editor-panel" id="editor-panel">
       <div class="editor-head">
         <img id="editor-art" src="" alt="" />
@@ -670,29 +740,21 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18M6 6l12 12"/></svg>
         </button>
       </div>
-
       <div class="field">
         <label>Page URL slug</label>
         <input type="text" id="ed-slug" placeholder="e.g. wild-things" />
         <div class="slug-preview">wdhan.com/s/?slug=<span id="slug-preview-val">…</span></div>
         <div class="field-hint">Lowercase, hyphens instead of spaces.</div>
       </div>
-
       <div class="field">
         <label>Accent Colour</label>
         <div style="display:flex;gap:10px;align-items:center">
-          <input type="color" id="ed-accent-color" value="#ff3b2e"
-            style="width:44px;height:44px;padding:2px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer" />
-          <input type="text" id="ed-accent-color-hex" value="#ff3b2e"
-            style="width:110px;padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-body);font-size:0.9rem;outline:none;transition:border-color 0.15s" />
-          <button id="ed-accent-reset"
-            style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:var(--font-body);font-size:0.78rem;cursor:pointer">
-            Reset
-          </button>
+          <input type="color" id="ed-accent-color" value="#ff3b2e" style="width:44px;height:44px;padding:2px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;cursor:pointer" />
+          <input type="text" id="ed-accent-color-hex" value="#ff3b2e" style="width:110px;padding:11px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-body);font-size:0.9rem;outline:none;transition:border-color 0.15s" />
+          <button id="ed-accent-reset" style="padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--muted);font-family:var(--font-body);font-size:0.78rem;cursor:pointer">Reset</button>
         </div>
-        <div class="field-hint">Default is the site main color. Pick a custom colour per release.</div>
+        <div class="field-hint">Default is the site main color.</div>
       </div>
-
       <div class="card" style="margin-bottom:16px">
         <div class="card-title">Page Status</div>
         <div class="toggle-row">
@@ -700,7 +762,6 @@
           <label class="toggle"><input type="checkbox" id="ed-active" checked /><span class="toggle-slider"></span></label>
         </div>
       </div>
-
       <div class="card" style="margin-bottom:16px">
         <div class="card-title">Sections</div>
         <div class="toggle-row">
@@ -712,25 +773,20 @@
           <label class="toggle"><input type="checkbox" id="ed-show-streaming" checked /><span class="toggle-slider"></span></label>
         </div>
         <div class="toggle-row">
-          <div class="toggle-info"><div class="tl">Mailing List Signup</div><div class="ts">Email subscribe via Shopify</div></div>
+          <div class="toggle-info"><div class="tl">Mailing List Signup</div><div class="ts">Email subscribe</div></div>
           <label class="toggle"><input type="checkbox" id="ed-show-subscribe" checked /><span class="toggle-slider"></span></label>
         </div>
       </div>
-
       <div class="field">
         <label>Video URL (optional override)</label>
         <input type="url" id="ed-video-url" placeholder="https://www.youtube.com/watch?v=..." />
-        <div class="field-hint">Leave blank to use the video already linked to this release in Sanity Studio.</div>
+        <div class="field-hint">Leave blank to use the video linked to this release in Sanity Studio.</div>
       </div>
-
       <div class="card" style="margin-bottom:16px">
         <div class="card-title">Streaming Links</div>
-        <p style="font-size:0.75rem;color:var(--muted);margin-bottom:14px;line-height:1.5">
-          Links pulled from Sanity. Edit to update the release record directly. Toggle to show or hide each platform on the short-link page.
-        </p>
+        <p style="font-size:0.75rem;color:var(--muted);margin-bottom:14px;line-height:1.5">Links pulled from Sanity. Toggle to show/hide each platform on the short-link page.</p>
         <div class="platform-grid" id="streaming-overrides"></div>
       </div>
-
       <div class="btn-row">
         <button class="btn btn-primary" id="ed-save-btn">Save Page</button>
         <a class="btn btn-ghost" id="ed-preview-btn" href="#" target="_blank">Preview ↗</a>
@@ -750,7 +806,7 @@ const ADMIN_HASH = 'bb53fd32697a28411ef37bd5733d56fd3fc9c3ae7283465834915b308abd
 const WORKER_URL = 'https://admin-api.wdhan.com/mutate';
 
 // ════════════════════════════════════════════════════════
-// ICONS & PLATFORMS
+// ICONS
 // ════════════════════════════════════════════════════════
 const ICONS = {
   spotify:    `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.477 2 2 6.477 2 12s4.477 10 10 10 10-4.477 10-10S17.523 2 12 2zm4.586 14.424a.622.622 0 01-.857.207c-2.348-1.435-5.304-1.76-8.785-.964a.622.622 0 01-.277-1.215c3.809-.87 7.077-.496 9.712 1.115a.623.623 0 01.207.857zm1.223-2.722a.78.78 0 01-1.072.257C13.956 12.4 10.5 11.9 7.554 12.762a.78.78 0 01-.45-1.492c3.332-.997 7.273-.494 10.037 1.16a.782.782 0 01.668 1.272zm.105-2.835c-3.223-1.914-8.54-2.09-11.618-1.156a.935.935 0 11-.542-1.79c3.533-1.072 9.404-.865 13.115 1.338a.935.935 0 01-.955 1.608z"/></svg>`,
@@ -759,6 +815,19 @@ const ICONS = {
   tidal:      `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12.012 3.992L8.008 7.996 4.004 3.992 0 7.996l4.004 4.004 4.004-4.004 4.004 4.004 4.004-4.004L20.02 11.996l3.98-4.004-4.004-3.996-3.98 4L12.012 3.992zM8.008 12.004l-4.004 4L8.008 20l4.004-3.996-4.004-3.996v-.004z"/></svg>`,
   bandcamp:   `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M0 18.75l7.437-13.5H24l-7.438 13.5z"/></svg>`,
   music:      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>`,
+  ticket:     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 9a3 3 0 000 6v2a2 2 0 002 2h16a2 2 0 002-2v-2a3 3 0 000-6V7a2 2 0 00-2-2H4a2 2 0 00-2 2v2z"/></svg>`,
+  mail:       `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect width="20" height="16" x="2" y="4" rx="2"/><path d="m22 7-8.97 5.7a1.94 1.94 0 01-2.06 0L2 7"/></svg>`,
+  shirt:      `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.38 3.46 16 2a4 4 0 01-8 0L3.62 3.46a2 2 0 00-1.34 2.23l.58 3.57a1 1 0 00.99.84H6v10c0 1.1.9 2 2 2h8a2 2 0 002-2V10h2.15a1 1 0 00.99-.84l.58-3.57a2 2 0 00-1.34-2.23z"/></svg>`,
+  link:       `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 007.54.54l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.54-.54l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>`,
+  play:       `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M6 4.5v15l13-7.5z"/></svg>`,
+  star:       `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>`,
+  bell:       `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 17H2a3 3 0 003-3V9a7 7 0 0114 0v5a3 3 0 003 3z"/><path d="M10.3 21a1.94 1.94 0 003.4 0"/></svg>`,
+  instagram:  `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>`,
+  tiktok:     `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.95a8.28 8.28 0 004.84 1.55V7.07a4.85 4.85 0 01-1.07-.38z"/></svg>`,
+  facebook:   `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>`,
+  twitter:    `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.259 5.631L18.244 2.25zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z"/></svg>`,
+  drag:       `<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="9" cy="6" r="1.5"/><circle cx="15" cy="6" r="1.5"/><circle cx="9" cy="12" r="1.5"/><circle cx="15" cy="12" r="1.5"/><circle cx="9" cy="18" r="1.5"/><circle cx="15" cy="18" r="1.5"/></svg>`,
+  chevron:    `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg>`,
 };
 
 const PLATFORMS = [
@@ -771,19 +840,46 @@ const PLATFORMS = [
   { key: 'bandcamp',    label: 'Bandcamp',      icon: 'bandcamp' },
 ];
 
+const STREAM_PLATFORMS = [
+  { key: 'spotify',      label: 'Spotify',       icon: 'spotify' },
+  { key: 'appleMusic',   label: 'Apple Music',   icon: 'appleMusic' },
+  { key: 'youtubeMusic', label: 'YouTube Music', icon: 'youtube' },
+  { key: 'tidal',        label: 'Tidal',         icon: 'tidal' },
+  { key: 'amazonMusic',  label: 'Amazon Music',  icon: 'music' },
+  { key: 'soundcloud',   label: 'SoundCloud',    icon: 'music' },
+  { key: 'deezer',       label: 'Deezer',        icon: 'music' },
+  { key: 'bandcamp',     label: 'Bandcamp',      icon: 'bandcamp' },
+];
+
+// Icons available for custom link icon picker
+const CL_ICON_OPTIONS = [
+  { val: 'link',      svg: ICONS.link },
+  { val: 'music',     svg: ICONS.music },
+  { val: 'play',      svg: ICONS.play },
+  { val: 'spotify',   svg: ICONS.spotify },
+  { val: 'youtube',   svg: ICONS.youtube },
+  { val: 'ticket',    svg: ICONS.ticket },
+  { val: 'shirt',     svg: ICONS.shirt },
+  { val: 'mail',      svg: ICONS.mail },
+  { val: 'bell',      svg: ICONS.bell },
+  { val: 'star',      svg: ICONS.star },
+  { val: 'instagram', svg: ICONS.instagram },
+  { val: 'tiktok',    svg: ICONS.tiktok },
+];
+
 const BTN_ICONS = [
   { val: 'none',    label: 'None',        svg: `<span style="font-size:0.7rem;color:var(--muted)">None</span>` },
-  { val: 'spotify', label: 'Spotify',     svg: `<svg viewBox="0 0 24 24"><path d="M12 0C5.4 0 0 5.4 0 12s5.4 12 12 12 12-5.4 12-12S18.66 0 12 0zm5.5 17.3a.75.75 0 0 1-1.03.25c-2.82-1.72-6.37-2.11-10.55-1.16a.75.75 0 1 1-.33-1.46c4.58-1.04 8.5-.6 11.66 1.34.36.22.47.69.25 1.03zm1.47-3.27a.94.94 0 0 1-1.29.31c-3.23-1.99-8.16-2.56-11.98-1.4a.94.94 0 1 1-.55-1.8c4.37-1.32 9.8-.68 13.5 1.6.44.27.58.85.32 1.29zm.13-3.4C15.73 8.26 8.5 8.02 4.78 9.15a1.12 1.12 0 1 1-.65-2.15c4.28-1.3 12.26-1.05 16.55 1.5a1.12 1.12 0 1 1-1.15 1.93z"/></svg>` },
-  { val: 'apple',   label: 'Apple Music', svg: `<svg viewBox="0 0 24 24"><path d="M16.36 12.6c-.02-2.3 1.88-3.4 1.96-3.46-1.07-1.56-2.73-1.78-3.32-1.8-1.41-.14-2.76.83-3.47.83-.72 0-1.82-.81-3-.79-1.54.02-2.96.9-3.75 2.27-1.6 2.78-.41 6.9 1.15 9.16.76 1.1 1.67 2.34 2.86 2.3 1.15-.05 1.58-.74 2.97-.74 1.38 0 1.77.74 2.98.72 1.23-.02 2.01-1.12 2.76-2.23.87-1.28 1.23-2.52 1.25-2.58-.03-.01-2.4-.92-2.42-3.65zM14.13 5.6c.63-.77 1.06-1.83.94-2.9-.91.04-2.02.61-2.67 1.37-.58.68-1.09 1.76-.95 2.8 1.02.08 2.05-.51 2.68-1.27z"/></svg>` },
-  { val: 'youtube', label: 'YouTube',     svg: `<svg viewBox="0 0 24 24"><path d="M23.5 6.2a3.02 3.02 0 0 0-2.12-2.14C19.5 3.55 12 3.55 12 3.55s-7.5 0-9.38.51A3.02 3.02 0 0 0 .5 6.2C0 8.08 0 12 0 12s0 3.92.5 5.8a3.02 3.02 0 0 0 2.12 2.14c1.88.51 9.38.51 9.38.51s7.5 0 9.38-.51a3.02 3.02 0 0 0 2.12-2.14C24 15.92 24 12 24 12s0-3.92-.5-5.8zM9.6 15.6V8.4l6.2 3.6-6.2 3.6z"/></svg>` },
-  { val: 'tidal',   label: 'Tidal',       svg: `<svg viewBox="0 0 24 24"><path d="M12 3L8 7l4 4-4 4 4 4 4-4-4-4 4-4z"/></svg>` },
-  { val: 'bell',    label: 'Subscribe',   svg: `<svg class="stroke-icon" viewBox="0 0 24 24"><path d="M22 17H2a3 3 0 0 0 3-3V9a7 7 0 0 1 14 0v5a3 3 0 0 0 3 3z"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>` },
-  { val: 'mail',    label: 'Email',       svg: `<svg class="stroke-icon" viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m2 7 10 7 10-7"/></svg>` },
-  { val: 'ticket',  label: 'Ticket',      svg: `<svg class="stroke-icon" viewBox="0 0 24 24"><path d="M2 9a2 2 0 0 1 0-4h20a2 2 0 0 1 0 4v6a2 2 0 0 1 0 4H2a2 2 0 0 1 0-4V9z"/><line x1="12" y1="5" x2="12" y2="19"/></svg>` },
-  { val: 'play',    label: 'Play',        svg: `<svg viewBox="0 0 24 24"><path d="M6 4.5v15l13-7.5z"/></svg>` },
-  { val: 'star',    label: 'Favourite',   svg: `<svg class="stroke-icon" viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>` },
-  { val: 'link',    label: 'Link',        svg: `<svg class="stroke-icon" viewBox="0 0 24 24"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>` },
-  { val: 'merch',   label: 'Merch',       svg: `<svg class="stroke-icon" viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>` },
+  { val: 'spotify', label: 'Spotify',     svg: ICONS.spotify },
+  { val: 'apple',   label: 'Apple Music', svg: ICONS.appleMusic },
+  { val: 'youtube', label: 'YouTube',     svg: ICONS.youtube },
+  { val: 'tidal',   label: 'Tidal',       svg: ICONS.tidal },
+  { val: 'bell',    label: 'Subscribe',   svg: ICONS.bell },
+  { val: 'mail',    label: 'Email',       svg: ICONS.mail },
+  { val: 'ticket',  label: 'Ticket',      svg: ICONS.ticket },
+  { val: 'play',    label: 'Play',        svg: ICONS.play },
+  { val: 'star',    label: 'Favourite',   svg: ICONS.star },
+  { val: 'link',    label: 'Link',        svg: ICONS.link },
+  { val: 'merch',   label: 'Merch',       svg: ICONS.shirt },
 ];
 
 // ════════════════════════════════════════════════════════
@@ -792,9 +888,7 @@ const BTN_ICONS = [
 function sanityUrl(q) {
   return `https://${SANITY_PROJECT}.apicdn.sanity.io/v2021-10-21/data/query/${SANITY_DATASET}?query=${encodeURIComponent(q)}`;
 }
-function esc(s) {
-  return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-}
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 function isValidHex(h) { return /^#[0-9A-Fa-f]{6}$/.test(h); }
 function setToggle(id, val) { const el = document.getElementById(id); if (el) el.checked = !!val; }
 
@@ -802,7 +896,6 @@ function setToggle(id, val) { const el = document.getElementById(id); if (el) el
 // AUTH
 // ════════════════════════════════════════════════════════
 function checkAuth() { return sessionStorage.getItem('wdhan_admin_auth') === 'ok'; }
-
 document.getElementById('pw-btn').addEventListener('click', tryLogin);
 document.getElementById('pw-input').addEventListener('keydown', e => { if (e.key === 'Enter') tryLogin(); });
 
@@ -820,12 +913,10 @@ async function tryLogin() {
     document.getElementById('pw-input').value = '';
   }
 }
-
 document.getElementById('logout-btn').addEventListener('click', () => {
   sessionStorage.removeItem('wdhan_admin_auth');
   location.reload();
 });
-
 if (checkAuth()) {
   document.getElementById('auth-screen').style.display = 'none';
   document.getElementById('app').classList.add('visible');
@@ -845,7 +936,7 @@ document.querySelectorAll('.tab-btn').forEach(btn => {
 });
 
 // ════════════════════════════════════════════════════════
-// SANITY WRITE — via Worker with action routing
+// WORKER / SANITY WRITE
 // ════════════════════════════════════════════════════════
 async function workerPost(payload) {
   const res = await fetch(WORKER_URL, {
@@ -859,47 +950,33 @@ async function workerPost(payload) {
   }
   return res.json();
 }
-
-// Raw mutation array (legacy path — still used by Hub and Release editors)
-function sanityMutate(mutations) {
-  return workerPost({ mutations });
-}
+function sanityMutate(mutations) { return workerPost({ mutations }); }
 
 // ════════════════════════════════════════════════════════
 // INIT
 // ════════════════════════════════════════════════════════
 function initApp() {
   initHomepage();
-  loadHubSettings();
+  initHub();
   loadReleases();
-  initCustomLinks();
 }
 
 // ════════════════════════════════════════════════════════
-// ACCENT COLOR — live update entire admin UI
+// ACCENT COLOR
 // ════════════════════════════════════════════════════════
 function applyAccentColor(hex) {
   if (!isValidHex(hex)) return;
   document.documentElement.style.setProperty('--accent', hex);
-  // derive a slightly darker version for hover states
   document.documentElement.style.setProperty('--accent-d', darkenHex(hex, 20));
-  // update btn-style-opt active background tint
   const style = document.getElementById('accent-tint-style') || (() => {
-    const s = document.createElement('style');
-    s.id = 'accent-tint-style';
-    document.head.appendChild(s);
-    return s;
+    const s = document.createElement('style'); s.id = 'accent-tint-style'; document.head.appendChild(s); return s;
   })();
   style.textContent = `.btn-style-opt.active { background: ${hex}14 !important; }`;
 }
-
 function darkenHex(hex, amount) {
-  let r = parseInt(hex.slice(1,3),16);
-  let g = parseInt(hex.slice(3,5),16);
-  let b = parseInt(hex.slice(5,7),16);
-  r = Math.max(0, r - amount);
-  g = Math.max(0, g - amount);
-  b = Math.max(0, b - amount);
+  let r = Math.max(0, parseInt(hex.slice(1,3),16) - amount);
+  let g = Math.max(0, parseInt(hex.slice(3,5),16) - amount);
+  let b = Math.max(0, parseInt(hex.slice(5,7),16) - amount);
   return '#' + [r,g,b].map(v => v.toString(16).padStart(2,'0')).join('');
 }
 
@@ -907,7 +984,6 @@ function darkenHex(hex, amount) {
 // HOMEPAGE TAB
 // ════════════════════════════════════════════════════════
 function initHomepage() {
-  // Wire main color pickers
   linkColorPair('hp-main-color', 'hp-main-color-hex', hex => {
     document.getElementById('hp-color-preview').style.background = hex;
     applyAccentColor(hex);
@@ -915,19 +991,15 @@ function initHomepage() {
   });
   linkColorPair('hp-main-header-color', 'hp-main-header-color-hex', () => applyHeaderPreviews());
   linkColorPair('hp-sub-header-color',  'hp-sub-header-color-hex',  () => applyHeaderPreviews());
-
-  // Hero text live preview
   ['hp-main-header','hp-main-header-font','hp-main-header-size',
    'hp-sub-header','hp-sub-header-font','hp-sub-header-size'].forEach(id => {
-    document.getElementById(id).addEventListener('input', applyHeaderPreviews);
-    document.getElementById(id).addEventListener('change', applyHeaderPreviews);
+    const el = document.getElementById(id);
+    el.addEventListener('input', applyHeaderPreviews);
+    el.addEventListener('change', applyHeaderPreviews);
   });
-
-  // Build icon pickers and action pickers
   ['1','2'].forEach(n => {
     buildIconPicker(n);
     buildActionPicker(n);
-    // Style picker
     document.getElementById(`hp-btn${n}-style`).querySelectorAll('.btn-style-opt').forEach(btn => {
       btn.addEventListener('click', () => {
         document.getElementById(`hp-btn${n}-style`).querySelectorAll('.btn-style-opt').forEach(b => b.classList.remove('active'));
@@ -935,60 +1007,41 @@ function initHomepage() {
         applyButtonPreview(n);
       });
     });
-    // Text live preview
     document.getElementById(`hp-btn${n}-text`).addEventListener('input', () => applyButtonPreview(n));
   });
-
-  // Countdown live ticker
   document.getElementById('hp-countdown-date').addEventListener('input', updateCountdownPreview);
   setInterval(updateCountdownPreview, 1000);
-
-  // Save
   document.getElementById('hp-save-btn').addEventListener('click', saveHomepageSettings);
-
-  // Load from Sanity
   loadHomepageSettings();
 }
 
 function linkColorPair(pickerId, hexId, onChange) {
   const picker = document.getElementById(pickerId);
   const hexEl  = document.getElementById(hexId);
-  picker.addEventListener('input', () => {
-    hexEl.value = picker.value.toUpperCase();
-    if (onChange) onChange(picker.value);
-  });
+  picker.addEventListener('input', () => { hexEl.value = picker.value.toUpperCase(); if (onChange) onChange(picker.value); });
   hexEl.addEventListener('input', () => {
     const v = hexEl.value.startsWith('#') ? hexEl.value : '#' + hexEl.value;
     if (isValidHex(v)) { picker.value = v; if (onChange) onChange(v); }
   });
 }
-
 function applyHeaderPreviews() {
   const mp = document.getElementById('hp-main-header-preview');
-  mp.textContent   = document.getElementById('hp-main-header').value || 'Wild Things';
+  mp.textContent = document.getElementById('hp-main-header').value || 'Wild Things';
   mp.style.fontFamily = `'${document.getElementById('hp-main-header-font').value}', sans-serif`;
   mp.style.fontSize   = (document.getElementById('hp-main-header-size').value || 80) + 'px';
   const mc = document.getElementById('hp-main-header-color-hex').value;
   if (isValidHex(mc)) mp.style.color = mc;
-
   const sp = document.getElementById('hp-sub-header-preview');
-  sp.textContent   = document.getElementById('hp-sub-header').value || 'New single — out June 24';
+  sp.textContent = document.getElementById('hp-sub-header').value || 'New single — out June 24';
   sp.style.fontFamily = `'${document.getElementById('hp-sub-header-font').value}', sans-serif`;
   sp.style.fontSize   = (document.getElementById('hp-sub-header-size').value || 18) + 'px';
   const sc = document.getElementById('hp-sub-header-color-hex').value;
   if (isValidHex(sc)) sp.style.color = sc;
 }
-
-// ── ICON DEFINITIONS ─────────────────────────────────────────────
-// Each entry: { val, label, svg }  — val is stored in Sanity
-// Return the SVG string for a given icon val (for the live preview)
 function getIconSvg(val) {
   const found = BTN_ICONS.find(i => i.val === val);
-  if (!found || val === 'none') return '';
-  return found.svg;
+  return (!found || val === 'none') ? '' : found.svg;
 }
-
-// Build icon picker for button n
 function buildIconPicker(n) {
   const wrap = document.getElementById(`hp-btn${n}-icon-picker`);
   wrap.innerHTML = '';
@@ -1005,8 +1058,6 @@ function buildIconPicker(n) {
     wrap.appendChild(opt);
   });
 }
-
-// Build action picker for button n
 function buildActionPicker(n) {
   const wrap    = document.getElementById(`hp-btn${n}-action`);
   const urlWrap = document.getElementById(`hp-btn${n}-url-wrap`);
@@ -1018,49 +1069,29 @@ function buildActionPicker(n) {
     });
   });
 }
-
-function getActiveIcon(n) {
-  const active = document.querySelector(`#hp-btn${n}-icon-picker .icon-opt.active`);
-  return active ? active.dataset.val : 'none';
-}
-
-function getActiveAction(n) {
-  const active = document.querySelector(`#hp-btn${n}-action .action-opt.active`);
-  return active ? active.dataset.val : 'url';
-}
-
+function getActiveIcon(n) { const a = document.querySelector(`#hp-btn${n}-icon-picker .icon-opt.active`); return a ? a.dataset.val : 'none'; }
+function getActiveAction(n) { const a = document.querySelector(`#hp-btn${n}-action .action-opt.active`); return a ? a.dataset.val : 'url'; }
 function setActiveIcon(n, val) {
-  const wrap = document.getElementById(`hp-btn${n}-icon-picker`);
-  wrap.querySelectorAll('.icon-opt').forEach(o => {
+  document.getElementById(`hp-btn${n}-icon-picker`).querySelectorAll('.icon-opt').forEach(o => {
     o.classList.toggle('active', o.dataset.val === (val || 'none'));
   });
 }
-
 function setActiveAction(n, val) {
   const wrap    = document.getElementById(`hp-btn${n}-action`);
   const urlWrap = document.getElementById(`hp-btn${n}-url-wrap`);
-  wrap.querySelectorAll('.action-opt').forEach(o => {
-    o.classList.toggle('active', o.dataset.val === (val || 'url'));
-  });
-  urlWrap.classList.toggle('hidden', (val || 'url') !== 'url');
+  wrap.querySelectorAll('.action-opt').forEach(o => { o.classList.toggle('active', o.dataset.val === (val||'url')); });
+  urlWrap.classList.toggle('hidden', (val||'url') !== 'url');
 }
-
 function applyButtonPreview(n) {
-  const text     = document.getElementById(`hp-btn${n}-text`).value || (n === '1' ? 'Pre-Save' : 'Subscribe');
-  const iconVal  = getActiveIcon(n);
-  const styleEl  = document.querySelector(`#hp-btn${n}-style .btn-style-opt.active`);
-  const style    = styleEl ? styleEl.dataset.val : 'filled';
-  const prev     = document.getElementById(`hp-btn${n}-preview`);
-  const iconSvg  = getIconSvg(iconVal);
-  prev.innerHTML = iconSvg + text;
+  const text    = document.getElementById(`hp-btn${n}-text`).value || (n==='1'?'Pre-Save':'Subscribe');
+  const iconVal = getActiveIcon(n);
+  const styleEl = document.querySelector(`#hp-btn${n}-style .btn-style-opt.active`);
+  const style   = styleEl ? styleEl.dataset.val : 'filled';
+  const prev    = document.getElementById(`hp-btn${n}-preview`);
+  prev.innerHTML = getIconSvg(iconVal) + text;
   prev.className = 'cta-preview ' + style;
 }
-
-function refreshButtonPreviews() {
-  applyButtonPreview('1');
-  applyButtonPreview('2');
-}
-
+function refreshButtonPreviews() { applyButtonPreview('1'); applyButtonPreview('2'); }
 function updateCountdownPreview() {
   const input = document.getElementById('hp-countdown-date').value;
   const live  = document.getElementById('hp-countdown-live');
@@ -1068,28 +1099,21 @@ function updateCountdownPreview() {
   live.style.display = 'flex';
   const diff = new Date(input).getTime() - Date.now();
   if (diff <= 0) { document.getElementById('hp-countdown-display').textContent = 'LAUNCHED'; return; }
-  const d = Math.floor(diff / 86400000);
-  const h = Math.floor((diff % 86400000) / 3600000);
-  const m = Math.floor((diff % 3600000)  / 60000);
-  const s = Math.floor((diff % 60000)    / 1000);
+  const d = Math.floor(diff/86400000), h = Math.floor((diff%86400000)/3600000),
+        m = Math.floor((diff%3600000)/60000), s = Math.floor((diff%60000)/1000);
   document.getElementById('hp-countdown-display').textContent = `${d}d ${h}h ${m}m ${s}s`;
 }
-
 async function loadHomepageSettings() {
   try {
     const res  = await fetch(sanityUrl(`*[_type=="siteSettings"][0]{ homepageSettings }`));
     const data = await res.json();
     const hs   = data?.result?.homepageSettings;
     if (!hs) return;
-
-    // Main color
     const color = hs.mainColor || '#ff3b2e';
     document.getElementById('hp-main-color').value     = color;
     document.getElementById('hp-main-color-hex').value = color.toUpperCase();
     document.getElementById('hp-color-preview').style.background = color;
     applyAccentColor(color);
-
-    // Main header
     const mh = hs.mainHeader || {};
     document.getElementById('hp-main-header').value           = mh.text  || '';
     document.getElementById('hp-main-header-font').value      = mh.font  || 'Splatink';
@@ -1097,8 +1121,6 @@ async function loadHomepageSettings() {
     const mhc = mh.color || '#f5f1e6';
     document.getElementById('hp-main-header-color').value     = mhc;
     document.getElementById('hp-main-header-color-hex').value = mhc.toUpperCase();
-
-    // Sub header
     const sh = hs.subHeader || {};
     document.getElementById('hp-sub-header').value           = sh.text  || '';
     document.getElementById('hp-sub-header-font').value      = sh.font  || 'DM Sans';
@@ -1106,18 +1128,14 @@ async function loadHomepageSettings() {
     const shc = sh.color || '#f5f1e6';
     document.getElementById('hp-sub-header-color').value     = shc;
     document.getElementById('hp-sub-header-color-hex').value = shc.toUpperCase();
-
-    // Countdown
     const cd = hs.countdown || {};
     setToggle('hp-countdown-enabled', cd.enabled);
     if (cd.endDate) {
-      const d   = new Date(cd.endDate);
+      const d = new Date(cd.endDate);
       const pad = n => String(n).padStart(2,'0');
       document.getElementById('hp-countdown-date').value =
         `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}T${pad(d.getHours())}:${pad(d.getMinutes())}`;
     }
-
-    // Buttons
     ['btn1','btn2'].forEach(k => {
       const n = k.slice(-1);
       const b = hs[k] || {};
@@ -1126,70 +1144,31 @@ async function loadHomepageSettings() {
       document.getElementById(`hp-${k}-link`).value = b.link || '';
       setActiveIcon(n, b.icon || 'none');
       setActiveAction(n, b.action || 'url');
-      const styleWrap = document.getElementById(`hp-${k}-style`);
-      styleWrap.querySelectorAll('.btn-style-opt').forEach(opt => {
+      document.getElementById(`hp-${k}-style`).querySelectorAll('.btn-style-opt').forEach(opt => {
         opt.classList.toggle('active', opt.dataset.val === (b.style || 'filled'));
       });
       applyButtonPreview(n);
     });
-
     applyHeaderPreviews();
-  } catch(e) {
-    console.warn('Homepage settings load failed:', e);
-  }
+  } catch(e) { console.warn('Homepage settings load failed:', e); }
 }
-
 async function saveHomepageSettings() {
   const statusEl = document.getElementById('hp-status');
   const saveBtn  = document.getElementById('hp-save-btn');
   statusEl.textContent = 'Saving…'; statusEl.className = 'save-status loading';
   saveBtn.disabled = true;
-
-  const getStyle = id => {
-    const el = document.querySelector(`#${id} .btn-style-opt.active`);
-    return el ? el.dataset.val : 'filled';
-  };
-
+  const getStyle = id => { const el = document.querySelector(`#${id} .btn-style-opt.active`); return el ? el.dataset.val : 'filled'; };
   let countdownDate = null;
   const rawDate = document.getElementById('hp-countdown-date').value;
   if (rawDate) countdownDate = new Date(rawDate).toISOString();
-
   const homepageSettings = {
     mainColor: document.getElementById('hp-main-color-hex').value || '#ff3b2e',
-    mainHeader: {
-      text:  document.getElementById('hp-main-header').value,
-      font:  document.getElementById('hp-main-header-font').value,
-      size:  parseInt(document.getElementById('hp-main-header-size').value) || 80,
-      color: document.getElementById('hp-main-header-color-hex').value || '#f5f1e6',
-    },
-    subHeader: {
-      text:  document.getElementById('hp-sub-header').value,
-      font:  document.getElementById('hp-sub-header-font').value,
-      size:  parseInt(document.getElementById('hp-sub-header-size').value) || 18,
-      color: document.getElementById('hp-sub-header-color-hex').value || '#f5f1e6',
-    },
-    countdown: {
-      enabled: document.getElementById('hp-countdown-enabled').checked,
-      endDate: countdownDate,
-    },
-    btn1: {
-      enabled: document.getElementById('hp-btn1-enabled').checked,
-      text:    document.getElementById('hp-btn1-text').value,
-      link:    document.getElementById('hp-btn1-link').value,
-      style:   getStyle('hp-btn1-style'),
-      icon:    getActiveIcon('1'),
-      action:  getActiveAction('1'),
-    },
-    btn2: {
-      enabled: document.getElementById('hp-btn2-enabled').checked,
-      text:    document.getElementById('hp-btn2-text').value,
-      link:    document.getElementById('hp-btn2-link').value,
-      style:   getStyle('hp-btn2-style'),
-      icon:    getActiveIcon('2'),
-      action:  getActiveAction('2'),
-    },
+    mainHeader: { text: document.getElementById('hp-main-header').value, font: document.getElementById('hp-main-header-font').value, size: parseInt(document.getElementById('hp-main-header-size').value)||80, color: document.getElementById('hp-main-header-color-hex').value||'#f5f1e6' },
+    subHeader:  { text: document.getElementById('hp-sub-header').value,  font: document.getElementById('hp-sub-header-font').value,  size: parseInt(document.getElementById('hp-sub-header-size').value)||18,  color: document.getElementById('hp-sub-header-color-hex').value||'#f5f1e6' },
+    countdown: { enabled: document.getElementById('hp-countdown-enabled').checked, endDate: countdownDate },
+    btn1: { enabled: document.getElementById('hp-btn1-enabled').checked, text: document.getElementById('hp-btn1-text').value, link: document.getElementById('hp-btn1-link').value, style: getStyle('hp-btn1-style'), icon: getActiveIcon('1'), action: getActiveAction('1') },
+    btn2: { enabled: document.getElementById('hp-btn2-enabled').checked, text: document.getElementById('hp-btn2-text').value, link: document.getElementById('hp-btn2-link').value, style: getStyle('hp-btn2-style'), icon: getActiveIcon('2'), action: getActiveAction('2') },
   };
-
   try {
     await workerPost({ action: 'patchHomepageSettings', homepageSettings });
     statusEl.textContent = '✓ Saved — changes are live.'; statusEl.className = 'save-status ok';
@@ -1204,102 +1183,426 @@ async function saveHomepageSettings() {
 // ════════════════════════════════════════════════════════
 // BAND HUB TAB
 // ════════════════════════════════════════════════════════
-async function loadHubSettings() {
+
+// Section definitions (key, display info, body builder)
+const DEFAULT_SECTION_ORDER = [
+  'featuredRelease', 'music', 'shows', 'stream',
+  'video', 'merch', 'subscribe', 'socials', 'customLinks'
+];
+
+const SECTION_DEFS = {
+  featuredRelease: {
+    label: 'Featured Release',
+    sub: 'Pre-Save or Listen Now button at the top',
+    stateKey: 'showRelease',
+    buildBody(body, hub) {
+      // no extra settings for this section
+      body.innerHTML = '<p style="font-size:0.78rem;color:var(--muted);padding-top:12px;line-height:1.5">Pulls the release marked <strong style="color:var(--text)">featured</strong> in Sanity Studio. No further settings.</p>';
+    },
+    readData() { return {}; }
+  },
+  music: {
+    label: 'Full Catalog',
+    sub: 'Link to /music.html',
+    stateKey: 'showMusic',
+    buildBody(body, hub) {
+      body.innerHTML = `
+        <div class="field">
+          <label>Button Label</label>
+          <input type="text" id="hs-music-label" placeholder="View our full catalog" value="${esc(hub.musicLabel||'')}" />
+        </div>`;
+    },
+    readData() { return { musicLabel: document.getElementById('hs-music-label')?.value || '' }; }
+  },
+  shows: {
+    label: 'Shows / Tour',
+    sub: 'Pulls live from Bandsintown — auto-hides when no shows',
+    stateKey: 'showShows',
+    buildBody(body, hub) {
+      body.innerHTML = '<p style="font-size:0.78rem;color:var(--muted);padding-top:12px;line-height:1.5">Show dates sync automatically from Bandsintown. No further settings here.</p>';
+    },
+    readData() { return {}; }
+  },
+  stream: {
+    label: 'Stream',
+    sub: 'Horizontal streaming platform icons',
+    stateKey: 'showStream',
+    buildBody(body, hub) {
+      const hidden = hub.hiddenStreamPlatforms || [];
+      body.innerHTML = '<div class="hs-platform-list" id="hs-stream-platforms"></div>';
+      const list = body.querySelector('#hs-stream-platforms');
+      STREAM_PLATFORMS.forEach(p => {
+        const isOn = !hidden.includes(p.key);
+        const row  = document.createElement('div');
+        row.className = 'hs-platform-row';
+        row.innerHTML = `
+          <div class="hs-platform-icon">${ICONS[p.icon]||ICONS.music}</div>
+          <div class="hs-platform-name">${p.label}</div>
+          <label class="toggle sm">
+            <input type="checkbox" data-stream-key="${p.key}" ${isOn ? 'checked' : ''} />
+            <span class="toggle-slider"></span>
+          </label>`;
+        list.appendChild(row);
+      });
+    },
+    readData() {
+      const hidden = [];
+      document.querySelectorAll('[data-stream-key]').forEach(el => {
+        if (!el.checked) hidden.push(el.dataset.streamKey);
+      });
+      return { hiddenStreamPlatforms: hidden };
+    }
+  },
+  video: {
+    label: 'Latest Video',
+    sub: 'Most recent video from Sanity',
+    stateKey: 'showVideo',
+    buildBody(body, hub) {
+      body.innerHTML = '<p style="font-size:0.78rem;color:var(--muted);padding-top:12px;line-height:1.5">Shows the most recently published video document from Sanity. Populate videos in Sanity Studio.</p>';
+    },
+    readData() { return {}; }
+  },
+  merch: {
+    label: 'Merch Store',
+    sub: 'Links to Shopify store',
+    stateKey: 'showMerch',
+    buildBody(body, hub) {
+      body.innerHTML = `
+        <div class="field">
+          <label>Button Label</label>
+          <input type="text" id="hs-merch-label" placeholder="Merch Store" value="${esc(hub.merchLabel||'')}" />
+        </div>
+        <div class="field">
+          <label>Store URL</label>
+          <input type="url" id="hs-merch-url" placeholder="https://wd-han.myshopify.com" value="${esc(hub.merchUrl||'')}" />
+        </div>`;
+    },
+    readData() {
+      return {
+        merchLabel: document.getElementById('hs-merch-label')?.value || '',
+        merchUrl:   document.getElementById('hs-merch-url')?.value   || '',
+      };
+    }
+  },
+  subscribe: {
+    label: 'Newsletter Signup',
+    sub: 'Email subscribe modal',
+    stateKey: 'showSubscribe',
+    buildBody(body, hub) {
+      body.innerHTML = `
+        <div class="field">
+          <label>Button Label</label>
+          <input type="text" id="hs-sub-label" placeholder="Join the Mailing List" value="${esc(hub.subscribeLabel||'')}" />
+        </div>`;
+    },
+    readData() { return { subscribeLabel: document.getElementById('hs-sub-label')?.value || '' }; }
+  },
+  socials: {
+    label: 'Social Links',
+    sub: 'Horizontal social icons',
+    stateKey: 'showSocials',
+    buildBody(body, hub) {
+      body.innerHTML = '<p style="font-size:0.78rem;color:var(--muted);padding-top:12px;line-height:1.5">Social URLs are managed in Sanity Site Settings (socials object).</p>';
+    },
+    readData() { return {}; }
+  },
+  customLinks: {
+    label: 'Custom Links',
+    sub: 'Your own links with icons',
+    stateKey: null, // always shown if links exist
+    buildBody(body, hub) {
+      body.innerHTML = '<div id="hs-custom-links-list"></div><button class="add-link-btn" id="hs-add-link-btn">+ Add link</button>';
+      renderCustomLinksList(hub.customLinks || []);
+      document.getElementById('hs-add-link-btn').addEventListener('click', () => {
+        customLinksData.push({ label: '', url: '', icon: 'link' });
+        renderCustomLinksList(customLinksData);
+      });
+    },
+    readData() { return { customLinks: customLinksData.filter(l => l.label || l.url) }; }
+  },
+};
+
+let currentHubData = {};
+let sectionOrder   = [...DEFAULT_SECTION_ORDER];
+let customLinksData = [];
+
+// Drag state
+let dragSrc = null;
+
+async function initHub() {
   try {
-    const res = await fetch(sanityUrl(`*[_type == "bandHubSettings"][0]`));
+    const res  = await fetch(sanityUrl(`*[_type == "bandHubSettings"][0]`));
     const data = await res.json();
-    const s    = data.result || {};
-    setToggle('hub-show-release',   s.showRelease   !== false);
-    setToggle('hub-show-music',     s.showMusic     !== false);
-    setToggle('hub-show-shows',     s.showShows     !== false);
-    setToggle('hub-show-video',     s.showVideo     !== false);
-    setToggle('hub-show-merch',     s.showMerch     !== false);
-    setToggle('hub-show-subscribe', s.showSubscribe !== false);
-    setToggle('hub-show-socials',   s.showSocials   !== false);
-    if (s.customLinks) renderCustomLinks(s.customLinks);
+    currentHubData = data.result || {};
   } catch(e) {
-    console.warn('Hub settings load failed:', e);
+    console.warn('Hub load failed:', e);
+    currentHubData = {};
   }
+
+  // Restore header settings
+  setToggle('hub-show-logo',    currentHubData.showLogo    !== false);
+  setToggle('hub-show-name',    currentHubData.showName    !== false);
+  setToggle('hub-show-tagline', currentHubData.showTagline !== false);
+  document.getElementById('hub-header-name').value    = currentHubData.headerName    || '';
+  document.getElementById('hub-header-tagline').value = currentHubData.headerTagline || '';
+
+  // Restore section order
+  if (currentHubData.sectionOrder?.length) {
+    // Merge saved order with any new keys not yet in saved order
+    const saved = currentHubData.sectionOrder;
+    const extras = DEFAULT_SECTION_ORDER.filter(k => !saved.includes(k));
+    sectionOrder = [...saved, ...extras];
+  }
+
+  // Restore custom links
+  customLinksData = currentHubData.customLinks || [];
+
+  buildSectionList();
+
+  document.getElementById('hub-save-btn').addEventListener('click', saveHub);
 }
 
-document.getElementById('hub-save-btn').addEventListener('click', async () => {
-  const status = document.getElementById('hub-status');
+function buildSectionList() {
+  const container = document.getElementById('hub-sections');
+  container.innerHTML = '';
+
+  sectionOrder.forEach(key => {
+    const def = SECTION_DEFS[key];
+    if (!def) return;
+
+    const isEnabled = def.stateKey ? currentHubData[def.stateKey] !== false : true;
+
+    const card = document.createElement('div');
+    card.className = 'hub-section';
+    card.dataset.key = key;
+    card.draggable = true;
+
+    card.innerHTML = `
+      <div class="hs-header">
+        <div class="hs-drag" title="Drag to reorder">${ICONS.drag}</div>
+        <div style="flex:1">
+          <div class="hs-label">${def.label}</div>
+          <div class="hs-sub">${def.sub}</div>
+        </div>
+        ${def.stateKey ? `
+          <label class="toggle sm" onclick="event.stopPropagation()">
+            <input type="checkbox" data-section-toggle="${def.stateKey}" ${isEnabled ? 'checked' : ''} />
+            <span class="toggle-slider"></span>
+          </label>` : ''}
+        <button class="hs-expand" aria-label="Expand">${ICONS.chevron}</button>
+      </div>
+      <div class="hs-body"></div>`;
+
+    // Build section body
+    const body    = card.querySelector('.hs-body');
+    const expand  = card.querySelector('.hs-expand');
+    const header  = card.querySelector('.hs-header');
+
+    def.buildBody(body, currentHubData);
+
+    // Expand/collapse on chevron or header click (not toggle)
+    expand.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const isOpen = body.classList.toggle('open');
+      expand.classList.toggle('open', isOpen);
+    });
+    header.addEventListener('click', (e) => {
+      if (e.target.closest('.toggle') || e.target.closest('.hs-drag')) return;
+      const isOpen = body.classList.toggle('open');
+      expand.classList.toggle('open', isOpen);
+    });
+
+    // Drag events
+    const dragHandle = card.querySelector('.hs-drag');
+    dragHandle.addEventListener('mousedown', () => { card.draggable = true; });
+
+    card.addEventListener('dragstart', (e) => {
+      dragSrc = card;
+      card.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+    });
+    card.addEventListener('dragend', () => {
+      card.classList.remove('dragging');
+      container.querySelectorAll('.hub-section').forEach(c => c.classList.remove('drag-over'));
+      // Update order from DOM
+      sectionOrder = [...container.querySelectorAll('.hub-section')].map(c => c.dataset.key);
+    });
+    card.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      if (dragSrc && dragSrc !== card) {
+        card.classList.add('drag-over');
+        e.dataTransfer.dropEffect = 'move';
+      }
+    });
+    card.addEventListener('dragleave', () => {
+      card.classList.remove('drag-over');
+    });
+    card.addEventListener('drop', (e) => {
+      e.preventDefault();
+      card.classList.remove('drag-over');
+      if (dragSrc && dragSrc !== card) {
+        const allCards = [...container.querySelectorAll('.hub-section')];
+        const srcIdx  = allCards.indexOf(dragSrc);
+        const dstIdx  = allCards.indexOf(card);
+        if (srcIdx < dstIdx) {
+          container.insertBefore(dragSrc, card.nextSibling);
+        } else {
+          container.insertBefore(dragSrc, card);
+        }
+      }
+    });
+
+    container.appendChild(card);
+  });
+}
+
+// ── CUSTOM LINKS LIST ──────────────────────────────────
+let openIconDropdown = null;
+
+function renderCustomLinksList(links) {
+  customLinksData = links;
+  const list = document.getElementById('hs-custom-links-list');
+  if (!list) return;
+  list.innerHTML = '';
+
+  links.forEach((link, i) => {
+    const item = document.createElement('div');
+    item.className = 'custom-link-item';
+
+    // Icon selector
+    const currentIcon = link.icon || 'link';
+    const currentSvg  = ICONS[currentIcon] || ICONS.link;
+    const iconWrap    = document.createElement('div');
+    iconWrap.className = 'cl-icon-select';
+    iconWrap.innerHTML = currentSvg;
+    iconWrap.title = 'Choose icon';
+
+    // Dropdown
+    const dropdown = document.createElement('div');
+    dropdown.className = 'cl-icon-dropdown hidden';
+    CL_ICON_OPTIONS.forEach(opt => {
+      const o = document.createElement('div');
+      o.className = 'cl-icon-opt' + (opt.val === currentIcon ? ' active' : '');
+      o.dataset.val = opt.val;
+      o.innerHTML = opt.svg;
+      o.title = opt.val;
+      o.addEventListener('click', (e) => {
+        e.stopPropagation();
+        customLinksData[i].icon = opt.val;
+        dropdown.classList.add('hidden');
+        openIconDropdown = null;
+        renderCustomLinksList(customLinksData);
+      });
+      dropdown.appendChild(o);
+    });
+    iconWrap.style.position = 'relative';
+    iconWrap.appendChild(dropdown);
+    iconWrap.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (openIconDropdown && openIconDropdown !== dropdown) {
+        openIconDropdown.classList.add('hidden');
+      }
+      dropdown.classList.toggle('hidden');
+      openIconDropdown = dropdown.classList.contains('hidden') ? null : dropdown;
+    });
+
+    const inputs = document.createElement('div');
+    inputs.className = 'cl-inputs';
+    inputs.innerHTML = `
+      <input type="text" placeholder="Label" value="${esc(link.label||'')}" data-i="${i}" data-field="label" />
+      <input type="url"  placeholder="URL"   value="${esc(link.url||'')}"   data-i="${i}" data-field="url" />`;
+
+    const rmBtn = document.createElement('button');
+    rmBtn.className = 'cl-rm';
+    rmBtn.textContent = '✕';
+    rmBtn.addEventListener('click', () => {
+      customLinksData.splice(i, 1);
+      renderCustomLinksList(customLinksData);
+    });
+
+    item.appendChild(iconWrap);
+    item.appendChild(inputs);
+    item.appendChild(rmBtn);
+    list.appendChild(item);
+
+    inputs.querySelectorAll('input').forEach(inp => {
+      inp.addEventListener('input', () => {
+        customLinksData[parseInt(inp.dataset.i)][inp.dataset.field] = inp.value;
+      });
+    });
+  });
+}
+
+// Close dropdowns on outside click
+document.addEventListener('click', () => {
+  if (openIconDropdown) { openIconDropdown.classList.add('hidden'); openIconDropdown = null; }
+});
+
+async function saveHub() {
+  const status  = document.getElementById('hub-status');
+  const saveBtn = document.getElementById('hub-save-btn');
   status.textContent = 'Saving…'; status.className = 'save-status loading';
+  saveBtn.disabled = true;
+
+  // Read section order from DOM
+  sectionOrder = [...document.querySelectorAll('.hub-section')].map(c => c.dataset.key);
+
+  // Read section toggle states
+  const sectionToggles = {};
+  document.querySelectorAll('[data-section-toggle]').forEach(el => {
+    sectionToggles[el.dataset.sectionToggle] = el.checked;
+  });
+
+  // Read section body data
+  let extraData = {};
+  sectionOrder.forEach(key => {
+    const def = SECTION_DEFS[key];
+    if (def?.readData) extraData = { ...extraData, ...def.readData() };
+  });
 
   const doc = {
-    _id: 'bandHubSettings', _type: 'bandHubSettings',
-    showRelease:   document.getElementById('hub-show-release').checked,
-    showMusic:     document.getElementById('hub-show-music').checked,
-    showShows:     document.getElementById('hub-show-shows').checked,
-    showVideo:     document.getElementById('hub-show-video').checked,
-    showMerch:     document.getElementById('hub-show-merch').checked,
-    showSubscribe: document.getElementById('hub-show-subscribe').checked,
-    showSocials:   document.getElementById('hub-show-socials').checked,
-    customLinks:   readCustomLinks(),
+    _id:   'bandHubSettings',
+    _type: 'bandHubSettings',
+    // Header
+    showLogo:       document.getElementById('hub-show-logo').checked,
+    showName:       document.getElementById('hub-show-name').checked,
+    showTagline:    document.getElementById('hub-show-tagline').checked,
+    headerName:     document.getElementById('hub-header-name').value,
+    headerTagline:  document.getElementById('hub-header-tagline').value,
+    // Section order + toggles
+    sectionOrder,
+    ...sectionToggles,
+    // Section body data
+    ...extraData,
   };
 
   try {
     const result = await sanityMutate([{ createOrReplace: doc }]);
     if (result?.results?.length) {
-      status.textContent = '✓ Saved — changes are live.'; status.className = 'save-status ok';
+      status.textContent = '✓ Saved — changes are live.';
+      status.className = 'save-status ok';
+      currentHubData = doc;
     } else {
-      status.textContent = result?.error?.description || 'Save failed.'; status.className = 'save-status err';
+      status.textContent = result?.error?.description || 'Save failed.';
+      status.className = 'save-status err';
     }
   } catch(e) {
-    status.textContent = '✗ ' + e.message; status.className = 'save-status err';
+    status.textContent = '✗ ' + e.message;
+    status.className = 'save-status err';
+  } finally {
+    saveBtn.disabled = false;
+    setTimeout(() => { status.textContent = ''; status.className = 'save-status'; }, 5000);
   }
-});
-
-// ════════════════════════════════════════════════════════
-// CUSTOM LINKS
-// ════════════════════════════════════════════════════════
-let customLinksData = [];
-
-function initCustomLinks() {
-  document.getElementById('add-link-btn').addEventListener('click', () => {
-    customLinksData.push({ label: '', url: '' });
-    renderCustomLinks(customLinksData);
-  });
 }
-
-function renderCustomLinks(links) {
-  customLinksData = links;
-  const list = document.getElementById('custom-links-list');
-  list.innerHTML = '';
-  links.forEach((link, i) => {
-    const row = document.createElement('div');
-    row.className = 'cl-row';
-    row.innerHTML = `
-      <input type="text" placeholder="Label" value="${esc(link.label||'')}" data-i="${i}" data-field="label" style="flex:0.8" />
-      <input type="url"  placeholder="URL"   value="${esc(link.url||'')}"   data-i="${i}" data-field="url" />
-      <button class="cl-rm" data-i="${i}">✕</button>`;
-    list.appendChild(row);
-  });
-  list.querySelectorAll('input').forEach(input => {
-    input.addEventListener('input', () => { customLinksData[input.dataset.i][input.dataset.field] = input.value; });
-  });
-  list.querySelectorAll('.cl-rm').forEach(btn => {
-    btn.addEventListener('click', () => {
-      customLinksData.splice(parseInt(btn.dataset.i), 1);
-      renderCustomLinks(customLinksData);
-    });
-  });
-}
-
-function readCustomLinks() { return customLinksData.filter(l => l.label || l.url); }
 
 // ════════════════════════════════════════════════════════
 // RELEASES TAB
 // ════════════════════════════════════════════════════════
-let releases       = [];
-let selectedRelease = null;
+let releases = [], selectedRelease = null;
 
 async function loadReleases() {
   try {
-    const res = await fetch(sanityUrl(`*[_type == "release"] | order(releaseDate desc){
-      _id, title, releaseType, releaseDate, "slug": slug.current,
-      "artUrl": artwork.asset->url, streamingLinks
-    }`));
+    const res  = await fetch(sanityUrl(`*[_type == "release"] | order(releaseDate desc){ _id, title, releaseType, releaseDate, "slug": slug.current, "artUrl": artwork.asset->url, streamingLinks }`));
     const data = await res.json();
     releases = data.result || [];
     renderReleaseList();
@@ -1317,10 +1620,7 @@ function renderReleaseList() {
     const year = rel.releaseDate ? new Date(rel.releaseDate).getFullYear() : '';
     row.innerHTML = `
       <img class="rel-art" src="${esc(rel.artUrl||'')}" alt="" onerror="this.style.visibility='hidden'" />
-      <div class="rel-info">
-        <div class="rel-title">${esc(rel.title)}</div>
-        <div class="rel-meta">${esc(rel.releaseType||'')}${year ? ' · ' + year : ''}</div>
-      </div>
+      <div class="rel-info"><div class="rel-title">${esc(rel.title)}</div><div class="rel-meta">${esc(rel.releaseType||'')}${year ? ' · '+year : ''}</div></div>
       <div class="rel-status draft" id="status-${esc(rel._id)}">DRAFT</div>`;
     row.addEventListener('click', () => openEditor(rel));
     list.appendChild(row);
@@ -1347,29 +1647,22 @@ function openEditor(rel) {
   document.querySelectorAll('.release-row').forEach(r => r.classList.remove('selected'));
   const idx = releases.indexOf(rel);
   document.querySelectorAll('.release-row')[idx]?.classList.add('selected');
-
-  document.getElementById('editor-art').src         = rel.artUrl || '';
+  document.getElementById('editor-art').src = rel.artUrl || '';
   document.getElementById('editor-title').textContent = rel.title;
   const year = rel.releaseDate ? new Date(rel.releaseDate).getFullYear() : '';
-  document.getElementById('editor-meta').textContent = `${rel.releaseType||''}${year ? ' · ' + year : ''}`;
-  document.getElementById('ed-slug').value           = rel.slug;
+  document.getElementById('editor-meta').textContent = `${rel.releaseType||''}${year ? ' · '+year : ''}`;
+  document.getElementById('ed-slug').value = rel.slug;
   document.getElementById('slug-preview-val').textContent = rel.slug;
-  document.getElementById('ed-preview-btn').href     = `/s/?slug=${rel.slug}`;
-  document.getElementById('ed-video-url').value      = '';
-
-  // Reset toggles to defaults before loading saved state
+  document.getElementById('ed-preview-btn').href = `/s/?slug=${rel.slug}`;
+  document.getElementById('ed-video-url').value = '';
   setToggle('ed-active', true);
   setToggle('ed-show-video', true);
   setToggle('ed-show-streaming', true);
   setToggle('ed-show-subscribe', true);
-
-  // Reset accent color to current main color
   const currentAccent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim() || '#ff3b2e';
   document.getElementById('ed-accent-color').value     = currentAccent;
   document.getElementById('ed-accent-color-hex').value = currentAccent;
-
   loadExistingShortLink(rel.slug, rel.streamingLinks || {});
-
   document.getElementById('editor-panel').classList.add('open');
   document.getElementById('editor-panel').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -1398,13 +1691,10 @@ document.getElementById('editor-close').addEventListener('click', () => {
   document.querySelectorAll('.release-row').forEach(r => r.classList.remove('selected'));
   selectedRelease = null;
 });
-
 document.getElementById('ed-slug').addEventListener('input', function() {
   document.getElementById('slug-preview-val').textContent = this.value || '…';
   document.getElementById('ed-preview-btn').href = `/s/?slug=${encodeURIComponent(this.value)}`;
 });
-
-// Accent color sync in release editor
 document.getElementById('ed-accent-color').addEventListener('input', function() {
   document.getElementById('ed-accent-color-hex').value = this.value;
 });
@@ -1421,32 +1711,25 @@ document.getElementById('ed-save-btn').addEventListener('click', async () => {
   if (!selectedRelease) return;
   const status = document.getElementById('ed-status');
   status.textContent = 'Saving…'; status.className = 'save-status loading';
-
-  const slug         = document.getElementById('ed-slug').value.trim();
-  const videoUrl     = document.getElementById('ed-video-url').value.trim();
-  const accentColor  = document.getElementById('ed-accent-color-hex').value.trim();
+  const slug = document.getElementById('ed-slug').value.trim();
+  const videoUrl = document.getElementById('ed-video-url').value.trim();
+  const accentColor = document.getElementById('ed-accent-color-hex').value.trim();
   const streamingLinks  = getStreamingLinks();
   const hiddenPlatforms = getHiddenPlatforms();
-
   const mutations = [
     { patch: { id: selectedRelease._id, set: { streamingLinks } } },
-    {
-      createOrReplace: {
-        _id:   `shortLink-${selectedRelease._id}`,
-        _type: 'shortLink',
-        slug:  { _type: 'slug', current: slug },
-        active:          document.getElementById('ed-active').checked,
-        showVideo:       document.getElementById('ed-show-video').checked,
-        showStreaming:   document.getElementById('ed-show-streaming').checked,
-        showSubscribe:   document.getElementById('ed-show-subscribe').checked,
-        accentColor:     isValidHex(accentColor) ? accentColor : '#ff3b2e',
-        hiddenPlatforms,
-        release: { _type: 'reference', _ref: selectedRelease._id },
-        ...(videoUrl ? { videoUrl } : {}),
-      }
-    }
+    { createOrReplace: {
+      _id: `shortLink-${selectedRelease._id}`, _type: 'shortLink',
+      slug: { _type: 'slug', current: slug },
+      active:          document.getElementById('ed-active').checked,
+      showVideo:       document.getElementById('ed-show-video').checked,
+      showStreaming:   document.getElementById('ed-show-streaming').checked,
+      showSubscribe:   document.getElementById('ed-show-subscribe').checked,
+      accentColor:     isValidHex(accentColor) ? accentColor : '#ff3b2e',
+      hiddenPlatforms, release: { _type: 'reference', _ref: selectedRelease._id },
+      ...(videoUrl ? { videoUrl } : {}),
+    }}
   ];
-
   try {
     const result = await sanityMutate(mutations);
     if (result?.results?.length) {
@@ -1454,16 +1737,13 @@ document.getElementById('ed-save-btn').addEventListener('click', async () => {
       selectedRelease.streamingLinks = streamingLinks;
       loadShortLinkStatuses();
     } else {
-      status.textContent = result?.error?.description || 'Save failed — check your token.'; status.className = 'save-status err';
+      status.textContent = result?.error?.description || 'Save failed.'; status.className = 'save-status err';
     }
   } catch(e) {
     status.textContent = '✗ ' + e.message; status.className = 'save-status err';
   }
 });
 
-// ════════════════════════════════════════════════════════
-// PLATFORM GRID
-// ════════════════════════════════════════════════════════
 function buildPlatformGrid(existingLinks = {}, hiddenPlatforms = []) {
   const grid = document.getElementById('streaming-overrides');
   grid.innerHTML = '';
@@ -1472,35 +1752,22 @@ function buildPlatformGrid(existingLinks = {}, hiddenPlatforms = []) {
     const row = document.createElement('div');
     row.className = 'platform-row';
     row.innerHTML = `
-      <div class="platform-icon">${ICONS[p.icon] || ICONS.music}</div>
+      <div class="platform-icon">${ICONS[p.icon]||ICONS.music}</div>
       <div class="platform-label">${p.label}</div>
-      <input type="url" class="platform-override" data-key="${p.key}"
-        placeholder="No link" value="${esc(existingLinks[p.key] || '')}"
-        style="opacity:${isHidden ? '0.4' : '1'}" />
-      <label class="toggle" title="Show on page">
-        <input type="checkbox" class="platform-toggle" data-key="${p.key}" ${isHidden ? '' : 'checked'} />
-        <span class="toggle-slider"></span>
-      </label>`;
+      <input type="url" class="platform-override" data-key="${p.key}" placeholder="No link" value="${esc(existingLinks[p.key]||'')}" style="opacity:${isHidden?'0.4':'1'}" />
+      <label class="toggle" title="Show on page"><input type="checkbox" class="platform-toggle" data-key="${p.key}" ${isHidden?'':'checked'} /><span class="toggle-slider"></span></label>`;
     grid.appendChild(row);
     const toggle = row.querySelector('.platform-toggle');
     const input  = row.querySelector('.platform-override');
     toggle.addEventListener('change', () => { input.style.opacity = toggle.checked ? '1' : '0.4'; });
   });
 }
-
 function getHiddenPlatforms() {
-  return PLATFORMS.filter(p => {
-    const el = document.querySelector(`.platform-toggle[data-key="${p.key}"]`);
-    return el && !el.checked;
-  }).map(p => p.key);
+  return PLATFORMS.filter(p => { const el = document.querySelector(`.platform-toggle[data-key="${p.key}"]`); return el && !el.checked; }).map(p => p.key);
 }
-
 function getStreamingLinks() {
   const links = {};
-  PLATFORMS.forEach(p => {
-    const el = document.querySelector(`.platform-override[data-key="${p.key}"]`);
-    if (el?.value.trim()) links[p.key] = el.value.trim();
-  });
+  PLATFORMS.forEach(p => { const el = document.querySelector(`.platform-override[data-key="${p.key}"]`); if (el?.value.trim()) links[p.key] = el.value.trim(); });
   return links;
 }
 </script>
