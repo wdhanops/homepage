@@ -305,6 +305,36 @@
     }
     .add-link-btn:hover { opacity: 0.75; }
 
+    /* ── TYPE SELECTOR (add custom link) ── */
+    .cl-type-row { display: flex; gap: 8px; flex-wrap: wrap; }
+    .cl-type-opt {
+      flex: 1; min-width: 80px; padding: 10px 14px; border-radius: 8px;
+      font-family: var(--font-body); font-size: 0.85rem; font-weight: 500;
+      cursor: pointer; border: 1px solid var(--border);
+      background: var(--surface2); color: var(--muted);
+      transition: all 0.15s; display: flex; align-items: center;
+      justify-content: center; gap: 6px;
+    }
+    .cl-type-opt:hover { border-color: var(--border2); color: var(--text); }
+    .cl-type-opt.active { border-color: var(--accent); color: var(--accent); background: rgba(255,59,46,0.08); }
+    .cl-type-icon { font-size: 1rem; }
+
+    /* ── CUSTOM LINK DRAGGABLE CARD ── */
+    .hub-section.is-custom-link .hs-remove {
+      background: none; border: none; color: var(--muted); cursor: pointer;
+      padding: 4px 8px; border-radius: 4px; font-size: 1rem;
+      transition: color 0.15s;
+    }
+    .hub-section.is-custom-link .hs-remove:hover { color: var(--red); }
+    .custom-link-badge {
+      font-size: 0.62rem; font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase; padding: 2px 6px; border-radius: 4px;
+      flex-shrink: 0; margin-left: 4px;
+    }
+    .badge-link    { background: rgba(245,241,230,0.08); color: var(--muted); }
+    .badge-video   { background: rgba(255,59,46,0.12); color: var(--accent); }
+    .badge-song    { background: rgba(76,175,114,0.12); color: #4caf72; }
+
     /* ── RELEASE LIST (unchanged from original) ── */
     .release-list { display: flex; flex-direction: column; gap: 10px; }
     .release-row {
@@ -707,6 +737,74 @@
       Drag ⠿ to reorder sections. Expand each to edit labels, settings, and platform toggles.
     </p>
     <div class="hub-sections" id="hub-sections"><!-- built by JS --></div>
+
+    <!-- Add Custom Link card -->
+    <div class="card" id="add-custom-link-card" style="margin-top:8px">
+      <div class="card-title">Add Custom Link</div>
+
+      <!-- Type selector -->
+      <div class="field" style="margin-bottom:14px">
+        <label class="field-label">Type</label>
+        <div class="cl-type-row" id="cl-type-row">
+          <button class="cl-type-opt active" data-val="link">
+            <span class="cl-type-icon">🔗</span> Link
+          </button>
+          <button class="cl-type-opt" data-val="video">
+            <span class="cl-type-icon">▶</span> Video
+          </button>
+          <button class="cl-type-opt" data-val="song">
+            <span class="cl-type-icon">♪</span> Song
+          </button>
+        </div>
+      </div>
+
+      <!-- Fields: Link type -->
+      <div id="clf-link">
+        <div class="field">
+          <label class="field-label">Label</label>
+          <input type="text" id="clf-link-label" class="field-input" placeholder="e.g. Our Website" />
+        </div>
+        <div class="field">
+          <label class="field-label">URL</label>
+          <input type="url" id="clf-link-url" class="field-input" placeholder="https://..." />
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label class="field-label">Icon</label>
+          <div class="icon-picker" id="clf-icon-picker"></div>
+        </div>
+      </div>
+
+      <!-- Fields: Video type -->
+      <div id="clf-video" style="display:none">
+        <div class="field">
+          <label class="field-label">YouTube URL</label>
+          <input type="url" id="clf-video-url" class="field-input" placeholder="https://www.youtube.com/watch?v=..." />
+          <div class="field-hint">Paste the full YouTube share link.</div>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label class="field-label">Caption <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+          <input type="text" id="clf-video-caption" class="field-input" placeholder="e.g. Live at The Forum" />
+        </div>
+      </div>
+
+      <!-- Fields: Song type -->
+      <div id="clf-song" style="display:none">
+        <div class="field">
+          <label class="field-label">Spotify URL</label>
+          <input type="url" id="clf-song-url" class="field-input" placeholder="https://open.spotify.com/track/..." />
+          <div class="field-hint">Paste the share link from Spotify — track, album, or playlist.</div>
+        </div>
+        <div class="field" style="margin-bottom:0">
+          <label class="field-label">Caption <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+          <input type="text" id="clf-song-caption" class="field-input" placeholder="e.g. Latest single" />
+        </div>
+      </div>
+
+      <div style="margin-top:16px">
+        <button class="btn btn-primary" id="clf-add-btn" style="width:100%">+ Add to Page</button>
+        <div class="save-status" id="clf-status" style="text-align:center"></div>
+      </div>
+    </div>
 
     <div class="btn-row">
       <button class="btn btn-primary" id="hub-save-btn">Save Band Hub</button>
@@ -1185,9 +1283,10 @@ async function saveHomepageSettings() {
 // ════════════════════════════════════════════════════════
 
 // Section definitions (key, display info, body builder)
+// Built-in keys only — custom links appear as 'customLink:UUID' entries in sectionOrder
 const DEFAULT_SECTION_ORDER = [
   'featuredRelease', 'music', 'shows', 'stream',
-  'video', 'merch', 'subscribe', 'socials', 'customLinks'
+  'video', 'merch', 'subscribe', 'socials'
 ];
 
 const SECTION_DEFS = {
@@ -1306,32 +1405,26 @@ const SECTION_DEFS = {
     },
     readData() { return {}; }
   },
-  customLinks: {
-    label: 'Custom Links',
-    sub: 'Your own links with icons',
-    stateKey: null, // always shown if links exist
-    buildBody(body, hub) {
-      body.innerHTML = '<div id="hs-custom-links-list"></div><button class="add-link-btn" id="hs-add-link-btn">+ Add link</button>';
-      // Use the reference we already have to body — don't rely on getElementById
-      // which can fail if another section's body hasn't rendered its IDs yet
-      const addBtn  = body.querySelector('#hs-add-link-btn');
-      const listEl  = body.querySelector('#hs-custom-links-list');
-      renderCustomLinksList(hub.customLinks || [], listEl);
-      addBtn.addEventListener('click', () => {
-        customLinksData.push({ label: '', url: '', icon: 'link' });
-        renderCustomLinksList(customLinksData, listEl);
-      });
-    },
-    readData() { return { customLinks: customLinksData.filter(l => l.label || l.url) }; }
-  },
 };
 
 let currentHubData = {};
 let sectionOrder   = [...DEFAULT_SECTION_ORDER];
-let customLinksData = [];
+// customLinks stored directly in sectionOrder as 'customLink:UUID' keys
+// with data in currentHubData.customLinks (keyed by UUID)
 
 // Drag state
 let dragSrc = null;
+
+// ── Custom link helpers ──
+function clUUID() { return Math.random().toString(36).slice(2,10); }
+function getCustomLinks() {
+  // Pull all customLink:* entries from sectionOrder in current DOM order
+  return [...document.querySelectorAll('.hub-section[data-key^="customLink:"]')]
+    .map(el => {
+      const id = el.dataset.key.slice('customLink:'.length);
+      return currentHubData.customLinksMap?.[id] || null;
+    }).filter(Boolean);
+}
 
 async function initHub() {
   try {
@@ -1358,10 +1451,23 @@ async function initHub() {
     sectionOrder = [...saved, ...extras];
   }
 
-  // Restore custom links
-  customLinksData = currentHubData.customLinks || [];
+  // Restore custom links — each stored as customLink:UUID in sectionOrder
+  // and data in currentHubData.customLinksMap
+  // Merge: saved sectionOrder may include customLink:* keys
+  // Ensure customLinksMap exists
+  if (!currentHubData.customLinksMap) currentHubData.customLinksMap = {};
+
+  // Migrate legacy customLinks array if present
+  if (currentHubData.customLinks && !Object.keys(currentHubData.customLinksMap).length) {
+    currentHubData.customLinks.forEach(cl => {
+      const id  = clUUID();
+      currentHubData.customLinksMap[id] = { type: 'link', ...cl };
+      sectionOrder.push('customLink:' + id);
+    });
+  }
 
   buildSectionList();
+  initAddCustomLinkForm();
 
   document.getElementById('hub-save-btn').addEventListener('click', saveHub);
 }
@@ -1371,176 +1477,326 @@ function buildSectionList() {
   container.innerHTML = '';
 
   sectionOrder.forEach(key => {
-    const def = SECTION_DEFS[key];
-    if (!def) return;
-
-    const isEnabled = def.stateKey ? currentHubData[def.stateKey] !== false : true;
-
-    const card = document.createElement('div');
-    card.className = 'hub-section';
-    card.dataset.key = key;
-    card.draggable = true;
-
-    card.innerHTML = `
-      <div class="hs-header">
-        <div class="hs-drag" title="Drag to reorder">${ICONS.drag}</div>
-        <div style="flex:1">
-          <div class="hs-label">${def.label}</div>
-          <div class="hs-sub">${def.sub}</div>
-        </div>
-        ${def.stateKey ? `
-          <label class="toggle sm" onclick="event.stopPropagation()">
-            <input type="checkbox" data-section-toggle="${def.stateKey}" ${isEnabled ? 'checked' : ''} />
-            <span class="toggle-slider"></span>
-          </label>` : ''}
-        <button class="hs-expand" aria-label="Expand">${ICONS.chevron}</button>
-      </div>
-      <div class="hs-body"></div>`;
-
-    // Build section body
-    const body    = card.querySelector('.hs-body');
-    const expand  = card.querySelector('.hs-expand');
-    const header  = card.querySelector('.hs-header');
-
-    def.buildBody(body, currentHubData);
-
-    // Expand/collapse on chevron or header click (not toggle)
-    expand.addEventListener('click', (e) => {
-      e.stopPropagation();
-      const isOpen = body.classList.toggle('open');
-      expand.classList.toggle('open', isOpen);
-    });
-    header.addEventListener('click', (e) => {
-      if (e.target.closest('.toggle') || e.target.closest('.hs-drag')) return;
-      const isOpen = body.classList.toggle('open');
-      expand.classList.toggle('open', isOpen);
-    });
-
-    // Drag events
-    const dragHandle = card.querySelector('.hs-drag');
-    dragHandle.addEventListener('mousedown', () => { card.draggable = true; });
-
-    card.addEventListener('dragstart', (e) => {
-      dragSrc = card;
-      card.classList.add('dragging');
-      e.dataTransfer.effectAllowed = 'move';
-    });
-    card.addEventListener('dragend', () => {
-      card.classList.remove('dragging');
-      container.querySelectorAll('.hub-section').forEach(c => c.classList.remove('drag-over'));
-      // Update order from DOM
-      sectionOrder = [...container.querySelectorAll('.hub-section')].map(c => c.dataset.key);
-    });
-    card.addEventListener('dragover', (e) => {
-      e.preventDefault();
-      if (dragSrc && dragSrc !== card) {
-        card.classList.add('drag-over');
-        e.dataTransfer.dropEffect = 'move';
-      }
-    });
-    card.addEventListener('dragleave', () => {
-      card.classList.remove('drag-over');
-    });
-    card.addEventListener('drop', (e) => {
-      e.preventDefault();
-      card.classList.remove('drag-over');
-      if (dragSrc && dragSrc !== card) {
-        const allCards = [...container.querySelectorAll('.hub-section')];
-        const srcIdx  = allCards.indexOf(dragSrc);
-        const dstIdx  = allCards.indexOf(card);
-        if (srcIdx < dstIdx) {
-          container.insertBefore(dragSrc, card.nextSibling);
-        } else {
-          container.insertBefore(dragSrc, card);
-        }
-      }
-    });
-
+    let card;
+    if (key.startsWith('customLink:')) {
+      const id   = key.slice('customLink:'.length);
+      const data = currentHubData.customLinksMap?.[id];
+      if (!data) return;
+      card = buildCustomLinkCard(key, data);
+    } else {
+      const def = SECTION_DEFS[key];
+      if (!def) return;
+      card = buildBuiltInCard(key, def);
+    }
+    attachDragEvents(card, container);
     container.appendChild(card);
   });
 }
 
-// ── CUSTOM LINKS LIST ──────────────────────────────────
-let openIconDropdown = null;
+function buildBuiltInCard(key, def) {
+  const isEnabled = def.stateKey ? currentHubData[def.stateKey] !== false : true;
+  const card = document.createElement('div');
+  card.className = 'hub-section';
+  card.dataset.key = key;
+  card.draggable = true;
 
-function renderCustomLinksList(links, listEl) {
-  customLinksData = links;
-  const list = listEl || document.getElementById('hs-custom-links-list');
-  if (!list) return;
-  list.innerHTML = '';
+  card.innerHTML = `
+    <div class="hs-header">
+      <div class="hs-drag" title="Drag to reorder">${ICONS.drag}</div>
+      <div style="flex:1">
+        <div class="hs-label">${def.label}</div>
+        <div class="hs-sub">${def.sub}</div>
+      </div>
+      ${def.stateKey ? `
+        <label class="toggle sm" onclick="event.stopPropagation()">
+          <input type="checkbox" data-section-toggle="${def.stateKey}" ${isEnabled ? 'checked' : ''} />
+          <span class="toggle-slider"></span>
+        </label>` : ''}
+      <button class="hs-expand" aria-label="Expand">${ICONS.chevron}</button>
+    </div>
+    <div class="hs-body"></div>`;
 
-  links.forEach((link, i) => {
-    const item = document.createElement('div');
-    item.className = 'custom-link-item';
+  const body   = card.querySelector('.hs-body');
+  const expand = card.querySelector('.hs-expand');
+  const header = card.querySelector('.hs-header');
+  def.buildBody(body, currentHubData);
 
-    // Icon selector
-    const currentIcon = link.icon || 'link';
-    const currentSvg  = ICONS[currentIcon] || ICONS.link;
-    const iconWrap    = document.createElement('div');
-    iconWrap.className = 'cl-icon-select';
-    iconWrap.innerHTML = currentSvg;
-    iconWrap.title = 'Choose icon';
+  expand.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = body.classList.toggle('open');
+    expand.classList.toggle('open', isOpen);
+  });
+  header.addEventListener('click', (e) => {
+    if (e.target.closest('.toggle') || e.target.closest('.hs-drag')) return;
+    const isOpen = body.classList.toggle('open');
+    expand.classList.toggle('open', isOpen);
+  });
+  return card;
+}
 
-    // Dropdown
-    const dropdown = document.createElement('div');
-    dropdown.className = 'cl-icon-dropdown hidden';
-    CL_ICON_OPTIONS.forEach(opt => {
-      const o = document.createElement('div');
-      o.className = 'cl-icon-opt' + (opt.val === currentIcon ? ' active' : '');
-      o.dataset.val = opt.val;
-      o.innerHTML = opt.svg;
-      o.title = opt.val;
-      o.addEventListener('click', (e) => {
-        e.stopPropagation();
-        customLinksData[i].icon = opt.val;
-        dropdown.classList.add('hidden');
-        openIconDropdown = null;
-        renderCustomLinksList(customLinksData, list);
-      });
-      dropdown.appendChild(o);
+function buildCustomLinkCard(key, data) {
+  const id = key.slice('customLink:'.length);
+  const BADGE = { link: 'badge-link', video: 'badge-video', song: 'badge-song' };
+  const LABEL = { link: 'Link', video: 'Video', song: 'Song' };
+  const type  = data.type || 'link';
+
+  // Summary line shown in collapsed state
+  let subText = '';
+  if (type === 'link')  subText = data.label || data.url || 'Custom link';
+  if (type === 'video') subText = data.caption || data.url || 'YouTube video';
+  if (type === 'song')  subText = data.caption || data.url || 'Spotify track';
+
+  const card = document.createElement('div');
+  card.className = 'hub-section is-custom-link';
+  card.dataset.key = key;
+  card.draggable = true;
+
+  card.innerHTML = `
+    <div class="hs-header">
+      <div class="hs-drag" title="Drag to reorder">${ICONS.drag}</div>
+      <div style="flex:1;min-width:0">
+        <div class="hs-label" style="display:flex;align-items:center;gap:6px">
+          <span>${esc(subText)}</span>
+          <span class="custom-link-badge ${BADGE[type]}">${LABEL[type]}</span>
+        </div>
+      </div>
+      <button class="hs-remove" title="Remove" data-id="${id}">✕</button>
+      <button class="hs-expand" aria-label="Expand">${ICONS.chevron}</button>
+    </div>
+    <div class="hs-body"></div>`;
+
+  // Build editable body
+  const body   = card.querySelector('.hs-body');
+  const expand = card.querySelector('.hs-expand');
+  const header = card.querySelector('.hs-header');
+
+  body.innerHTML = buildCustomLinkBody(id, data);
+
+  // Wire live-update of label in header
+  const labelInput = body.querySelector('[data-cl-field="label"]');
+  const urlInput   = body.querySelector('[data-cl-field="url"]');
+  const capInput   = body.querySelector('[data-cl-field="caption"]');
+  const titleSpan  = card.querySelector('.hs-label > span');
+
+  function syncHeader() {
+    const d = currentHubData.customLinksMap[id];
+    let s = '';
+    if (d.type === 'link')  s = d.label || d.url || 'Custom link';
+    if (d.type === 'video') s = d.caption || d.url || 'YouTube video';
+    if (d.type === 'song')  s = d.caption || d.url || 'Spotify track';
+    titleSpan.textContent = s;
+  }
+
+  [labelInput, urlInput, capInput].forEach(inp => {
+    if (!inp) return;
+    inp.addEventListener('input', () => {
+      if (!currentHubData.customLinksMap[id]) return;
+      currentHubData.customLinksMap[id][inp.dataset.clField] = inp.value;
+      syncHeader();
     });
-    iconWrap.style.position = 'relative';
-    iconWrap.appendChild(dropdown);
-    iconWrap.addEventListener('click', (e) => {
-      e.stopPropagation();
-      if (openIconDropdown && openIconDropdown !== dropdown) {
-        openIconDropdown.classList.add('hidden');
-      }
-      dropdown.classList.toggle('hidden');
-      openIconDropdown = dropdown.classList.contains('hidden') ? null : dropdown;
+  });
+
+  // Icon picker in body
+  const iconPicker = body.querySelector('.cl-body-icon-picker');
+  if (iconPicker) buildBodyIconPicker(iconPicker, data.icon || 'link', id);
+
+  // Remove button
+  card.querySelector('.hs-remove').addEventListener('click', (e) => {
+    e.stopPropagation();
+    delete currentHubData.customLinksMap[id];
+    sectionOrder = sectionOrder.filter(k => k !== key);
+    card.remove();
+  });
+
+  expand.addEventListener('click', (e) => {
+    e.stopPropagation();
+    const isOpen = body.classList.toggle('open');
+    expand.classList.toggle('open', isOpen);
+  });
+  header.addEventListener('click', (e) => {
+    if (e.target.closest('.hs-remove') || e.target.closest('.hs-drag')) return;
+    const isOpen = body.classList.toggle('open');
+    expand.classList.toggle('open', isOpen);
+  });
+
+  return card;
+}
+
+function buildCustomLinkBody(id, data) {
+  const type = data.type || 'link';
+  if (type === 'link') {
+    return `
+      <div class="field"><label>Label</label>
+        <input type="text" data-cl-field="label" value="${esc(data.label||'')}" placeholder="Link label" /></div>
+      <div class="field"><label>URL</label>
+        <input type="url" data-cl-field="url" value="${esc(data.url||'')}" placeholder="https://..." /></div>
+      <div class="field" style="margin-bottom:0"><label>Icon</label>
+        <div class="cl-body-icon-picker"></div></div>`;
+  }
+  if (type === 'video') {
+    return `
+      <div class="field"><label>YouTube URL</label>
+        <input type="url" data-cl-field="url" value="${esc(data.url||'')}" placeholder="https://www.youtube.com/watch?v=..." /></div>
+      <div class="field" style="margin-bottom:0"><label>Caption <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+        <input type="text" data-cl-field="caption" value="${esc(data.caption||'')}" placeholder="e.g. Live at The Forum" /></div>`;
+  }
+  if (type === 'song') {
+    return `
+      <div class="field"><label>Spotify URL</label>
+        <input type="url" data-cl-field="url" value="${esc(data.url||'')}" placeholder="https://open.spotify.com/track/..." />
+        <div class="field-hint">Paste the share link from Spotify — track, album, or playlist.</div></div>
+      <div class="field" style="margin-bottom:0"><label>Caption <span style="font-weight:400;text-transform:none;letter-spacing:0">(optional)</span></label>
+        <input type="text" data-cl-field="caption" value="${esc(data.caption||'')}" placeholder="e.g. Latest single" /></div>`;
+  }
+  return '';
+}
+
+function buildBodyIconPicker(container, currentIcon, id) {
+  CL_ICON_OPTIONS.forEach(opt => {
+    const o = document.createElement('div');
+    o.className = 'cl-icon-opt' + (opt.val === currentIcon ? ' active' : '');
+    o.dataset.val = opt.val;
+    o.innerHTML = opt.svg;
+    o.title = opt.val;
+    o.addEventListener('click', () => {
+      container.querySelectorAll('.cl-icon-opt').forEach(x => x.classList.remove('active'));
+      o.classList.add('active');
+      if (currentHubData.customLinksMap[id]) currentHubData.customLinksMap[id].icon = opt.val;
     });
-
-    const inputs = document.createElement('div');
-    inputs.className = 'cl-inputs';
-    inputs.innerHTML = `
-      <input type="text" placeholder="Label" value="${esc(link.label||'')}" data-i="${i}" data-field="label" />
-      <input type="url"  placeholder="URL"   value="${esc(link.url||'')}"   data-i="${i}" data-field="url" />`;
-
-    const rmBtn = document.createElement('button');
-    rmBtn.className = 'cl-rm';
-    rmBtn.textContent = '✕';
-    rmBtn.addEventListener('click', () => {
-      customLinksData.splice(i, 1);
-      renderCustomLinksList(customLinksData, list);
-    });
-
-    item.appendChild(iconWrap);
-    item.appendChild(inputs);
-    item.appendChild(rmBtn);
-    list.appendChild(item);
-
-    inputs.querySelectorAll('input').forEach(inp => {
-      inp.addEventListener('input', () => {
-        customLinksData[parseInt(inp.dataset.i)][inp.dataset.field] = inp.value;
-      });
-    });
+    container.appendChild(o);
   });
 }
 
-// Close dropdowns on outside click
-document.addEventListener('click', () => {
-  if (openIconDropdown) { openIconDropdown.classList.add('hidden'); openIconDropdown = null; }
-});
+function attachDragEvents(card, container) {
+  card.addEventListener('dragstart', (e) => {
+    dragSrc = card;
+    card.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+  });
+  card.addEventListener('dragend', () => {
+    card.classList.remove('dragging');
+    container.querySelectorAll('.hub-section').forEach(c => c.classList.remove('drag-over'));
+    sectionOrder = [...container.querySelectorAll('.hub-section')].map(c => c.dataset.key);
+  });
+  card.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    if (dragSrc && dragSrc !== card) { card.classList.add('drag-over'); e.dataTransfer.dropEffect = 'move'; }
+  });
+  card.addEventListener('dragleave', () => { card.classList.remove('drag-over'); });
+  card.addEventListener('drop', (e) => {
+    e.preventDefault();
+    card.classList.remove('drag-over');
+    if (dragSrc && dragSrc !== card) {
+      const all = [...container.querySelectorAll('.hub-section')];
+      if (all.indexOf(dragSrc) < all.indexOf(card)) container.insertBefore(dragSrc, card.nextSibling);
+      else container.insertBefore(dragSrc, card);
+    }
+  });
+}
+
+// ── ADD CUSTOM LINK FORM ──────────────────────────────
+let clfActiveType = 'link';
+let clfActiveIcon = 'link';
+
+function initAddCustomLinkForm() {
+  // Type selector
+  const typeRow = document.getElementById('cl-type-row');
+  typeRow.querySelectorAll('.cl-type-opt').forEach(btn => {
+    btn.addEventListener('click', () => {
+      typeRow.querySelectorAll('.cl-type-opt').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      clfActiveType = btn.dataset.val;
+      document.getElementById('clf-link').style.display  = clfActiveType === 'link'  ? '' : 'none';
+      document.getElementById('clf-video').style.display = clfActiveType === 'video' ? '' : 'none';
+      document.getElementById('clf-song').style.display  = clfActiveType === 'song'  ? '' : 'none';
+    });
+  });
+
+  // Icon picker for link type
+  const iconPicker = document.getElementById('clf-icon-picker');
+  CL_ICON_OPTIONS.forEach(opt => {
+    const o = document.createElement('div');
+    o.className = 'cl-icon-opt' + (opt.val === 'link' ? ' active' : '');
+    o.dataset.val = opt.val;
+    o.innerHTML = opt.svg;
+    o.title = opt.val;
+    o.addEventListener('click', () => {
+      iconPicker.querySelectorAll('.cl-icon-opt').forEach(x => x.classList.remove('active'));
+      o.classList.add('active');
+      clfActiveIcon = opt.val;
+    });
+    iconPicker.appendChild(o);
+  });
+
+  // Add button
+  document.getElementById('clf-add-btn').addEventListener('click', () => {
+    const status = document.getElementById('clf-status');
+    let data = { type: clfActiveType };
+
+    if (clfActiveType === 'link') {
+      const label = document.getElementById('clf-link-label').value.trim();
+      const url   = document.getElementById('clf-link-url').value.trim();
+      if (!url) { status.textContent = 'Please enter a URL.'; status.className = 'save-status err'; return; }
+      data.label = label;
+      data.url   = url;
+      data.icon  = clfActiveIcon;
+    } else if (clfActiveType === 'video') {
+      const url     = document.getElementById('clf-video-url').value.trim();
+      const caption = document.getElementById('clf-video-caption').value.trim();
+      if (!url) { status.textContent = 'Please enter a YouTube URL.'; status.className = 'save-status err'; return; }
+      // Extract video ID
+      const vid = extractYouTubeId(url);
+      if (!vid) { status.textContent = 'Couldn\'t parse that YouTube URL.'; status.className = 'save-status err'; return; }
+      data.url     = url;
+      data.videoId = vid;
+      data.caption = caption;
+    } else if (clfActiveType === 'song') {
+      const url     = document.getElementById('clf-song-url').value.trim();
+      const caption = document.getElementById('clf-song-caption').value.trim();
+      if (!url) { status.textContent = 'Please enter a Spotify URL.'; status.className = 'save-status err'; return; }
+      const embedUri = spotifyUrlToEmbed(url);
+      if (!embedUri) { status.textContent = 'Couldn\'t parse that Spotify URL.'; status.className = 'save-status err'; return; }
+      data.url      = url;
+      data.embedUri = embedUri;
+      data.caption  = caption;
+    }
+
+    // Add to customLinksMap and sectionOrder
+    const id  = clUUID();
+    const key = 'customLink:' + id;
+    if (!currentHubData.customLinksMap) currentHubData.customLinksMap = {};
+    currentHubData.customLinksMap[id] = data;
+    sectionOrder.push(key);
+
+    // Build card and append to section list
+    const container = document.getElementById('hub-sections');
+    const card = buildCustomLinkCard(key, data);
+    attachDragEvents(card, container);
+    container.appendChild(card);
+
+    // Clear form
+    document.getElementById('clf-link-label').value   = '';
+    document.getElementById('clf-link-url').value     = '';
+    document.getElementById('clf-video-url').value    = '';
+    document.getElementById('clf-video-caption').value = '';
+    document.getElementById('clf-song-url').value     = '';
+    document.getElementById('clf-song-caption').value = '';
+    status.textContent = '✓ Added — remember to Save Band Hub.';
+    status.className = 'save-status ok';
+    setTimeout(() => { status.textContent = ''; status.className = 'save-status'; }, 4000);
+  });
+}
+
+function extractYouTubeId(url) {
+  const m = url.match(/(?:v=|youtu\.be\/|embed\/)([\w-]{11})/);
+  return m ? m[1] : null;
+}
+
+function spotifyUrlToEmbed(url) {
+  // https://open.spotify.com/track/ID or /album/ID or /playlist/ID
+  const m = url.match(/open\.spotify\.com\/(track|album|playlist)\/([A-Za-z0-9]+)/);
+  return m ? `${m[1]}/${m[2]}` : null;
+}
 
 async function saveHub() {
   const status  = document.getElementById('hub-status');
@@ -1557,12 +1813,43 @@ async function saveHub() {
     sectionToggles[el.dataset.sectionToggle] = el.checked;
   });
 
-  // Read section body data
+  // Read section body data from built-in sections
   let extraData = {};
   sectionOrder.forEach(key => {
+    if (key.startsWith('customLink:')) return;
     const def = SECTION_DEFS[key];
     if (def?.readData) extraData = { ...extraData, ...def.readData() };
   });
+
+  // Read any edits to custom link body fields
+  document.querySelectorAll('.hub-section[data-key^="customLink:"]').forEach(card => {
+    const id  = card.dataset.key.slice('customLink:'.length);
+    const map = currentHubData.customLinksMap;
+    if (!map || !map[id]) return;
+    const urlInp = card.querySelector('[data-cl-field="url"]');
+    const lblInp = card.querySelector('[data-cl-field="label"]');
+    const capInp = card.querySelector('[data-cl-field="caption"]');
+    if (urlInp) map[id].url     = urlInp.value;
+    if (lblInp) map[id].label   = lblInp.value;
+    if (capInp) map[id].caption = capInp.value;
+    // Re-extract ids if URL changed
+    if (map[id].type === 'video' && urlInp) {
+      const vid = extractYouTubeId(urlInp.value);
+      if (vid) map[id].videoId = vid;
+    }
+    if (map[id].type === 'song' && urlInp) {
+      const embed = spotifyUrlToEmbed(urlInp.value);
+      if (embed) map[id].embedUri = embed;
+    }
+  });
+
+  // Build ordered customLinks array for links page to consume
+  const orderedCustomLinks = sectionOrder
+    .filter(k => k.startsWith('customLink:'))
+    .map(k => {
+      const id = k.slice('customLink:'.length);
+      return currentHubData.customLinksMap?.[id] ? { id, ...currentHubData.customLinksMap[id] } : null;
+    }).filter(Boolean);
 
   const doc = {
     _id:   'bandHubSettings',
@@ -1578,6 +1865,9 @@ async function saveHub() {
     ...sectionToggles,
     // Section body data
     ...extraData,
+    // Custom links
+    customLinksMap:   currentHubData.customLinksMap || {},
+    customLinksOrdered: orderedCustomLinks,
   };
 
   try {
